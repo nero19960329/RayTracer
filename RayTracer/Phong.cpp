@@ -1,5 +1,7 @@
 #include "Constants.h"
-#include "Phong.h"
+#include "Scene.h"
+
+using namespace std;
 
 Vec3 Phong::getColor(const Ray &ray) const {
 	auto intersect = scene.getIntersect(ray);
@@ -22,12 +24,8 @@ Vec3 Phong::getPhongLocal(const IntersectInfo &info, const Ray &ray) const {
 	Vec3 N = info.normal;
 	Vec3 V = (ray.orig - info.interPoint).getNormalized();
 	for (auto &light : scene.lights) {
-		Vec3 toLight = light->getCenter() - info.interPoint;
-		Vec3 dirToLight = toLight.getNormalized();
-		real_t distToLight = toLight.norm();
-		Ray shadowTestRay{ info.interPoint + epsilon * dirToLight, dirToLight };
-		if (scene.isIntersect(shadowTestRay, distToLight)) {
-			return Vec3::BLACK;
+		if (isShadow(light, info)) {
+			continue;
 		}
 
 		Vec3 L = (light->getCenter() - info.interPoint).getNormalized();
@@ -45,4 +43,12 @@ Vec3 Phong::getPhongLocal(const IntersectInfo &info, const Ray &ray) const {
 	}
 
 	return diffuse + specular;
+}
+
+bool Phong::isShadow(const shared_ptr<Light> &light, const IntersectInfo &info) const {
+	Vec3 toLight = light->getCenter() - info.interPoint;
+	Vec3 dirToLight = toLight.getNormalized();
+	real_t distToLight = toLight.norm();
+	Ray shadowTestRay{ info.interPoint + epsilon * dirToLight, dirToLight };
+	return scene.isIntersect(shadowTestRay, distToLight);
 }

@@ -38,6 +38,9 @@ protected:
 
 	mutable real_t distToInter = std::numeric_limits<real_t>::infinity();	// distance to intersection point
 
+	virtual const Object *getObj() const = 0;
+	virtual std::shared_ptr<Surface> getInterPointSurfaceProperty() const = 0;
+
 public:
 	explicit Intersect(const Ray &_ray) : ray(_ray) {}
 	virtual ~Intersect() {}
@@ -45,18 +48,23 @@ public:
 	Intersect(const Intersect &) = delete;
 	Intersect &operator = (const Intersect &) = delete;
 
-	virtual const Object *getObj() const = 0;
 	virtual real_t getDistToInter() const = 0;
 
 	virtual bool isIntersect() const = 0;		// only finding if they're intersected
-	virtual Vec3 getIntersection() const {														// find intersection point
+	virtual Vec3 getIntersection() const {		// find intersection point
 		return ray.getDistPoint(distToInter);
 	}
-	virtual Vec3 getNormal() const = 0;															// get normal vector
+	virtual Vec3 getNormal() const = 0;			// get normal vector
+
+	std::shared_ptr<Surface> getSurface() const {
+		auto surface = getObj()->getTexture()->getSurfaceProperty();
+		if (surface) return surface;
+		return getInterPointSurfaceProperty();
+	};
 
 	virtual IntersectInfo getIntersectInfo() {
 		auto obj = getObj();
 		assert(obj->getTexture());
-		return IntersectInfo{ getIntersection(), getNormal(), getObj()->getTexture()->getSurfaceProperty() };
+		return IntersectInfo{ getIntersection(), getNormal(), getSurface() };
 	}
 };

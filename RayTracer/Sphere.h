@@ -30,13 +30,17 @@ private:
 	mutable real_t halfCord2;
 	mutable Vec3 interPoint;
 
-public:
-	SphereIntersect(const Sphere &_sphere, const Ray &_ray) : Intersect(_ray), sphere(_sphere) {}
-	~SphereIntersect() {}
+	virtual std::shared_ptr<Surface> getInterPointSurfaceProperty() const override {
+		return nullptr;
+	};
 
 	const Object *getObj() const override {
 		return &sphere;
 	}
+
+public:
+	SphereIntersect(const Sphere &_sphere, const Ray &_ray) : Intersect(_ray), sphere(_sphere) {}
+	~SphereIntersect() {}
 
 	real_t getDistToInter() const override;
 

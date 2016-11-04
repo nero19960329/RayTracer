@@ -5,9 +5,8 @@ using namespace std;
 shared_ptr<Shader> Scene::getShader(ShaderType type) const {
 	if (type == PHONG) {
 		return make_shared<Phong>(*this);
-	} else {
-		return nullptr;
 	}
+	return nullptr;
 }
 
 void Scene::addLight(const shared_ptr<Light> &light) {
@@ -21,11 +20,8 @@ void Scene::addObject(const shared_ptr<Object> &object) {
 bool Scene::isIntersect(const Ray &ray, real_t dist) const {
 	for (const auto &obj : objs) {
 		auto intersect = obj->getTrace(ray, dist);
-		if (intersect) {
-			return true;
-		}
+		if (intersect) return true;
 	}
-
 	return false;
 }
 

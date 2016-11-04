@@ -55,13 +55,17 @@ private:
 
 	mutable real_t projOrigToInter, projDir;
 
-public:
-	PlaneIntersect(const Plane &_plane, const Ray &_ray) : Intersect(_ray), plane(_plane) {}
-	~PlaneIntersect() {}
+	virtual std::shared_ptr<Surface> getInterPointSurfaceProperty() const override {
+		return nullptr;
+	};
 
 	const Object *getObj() const override {
 		return &plane;
 	}
+
+public:
+	PlaneIntersect(const Plane &_plane, const Ray &_ray) : Intersect(_ray), plane(_plane) {}
+	~PlaneIntersect() {}
 
 	real_t getDistToInter() const override;
 

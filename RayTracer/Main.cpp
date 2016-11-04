@@ -13,7 +13,7 @@ using namespace std;
 int main() {
 	Viewer viewer{ { 800, 600 }, { 0.0, 0.0, 0.0 }, { 0.0, 0.0, -1.0 }, { 0.0, 1.0, 0.0 }, 60 };
 	Scene scene;
-	scene.addLight(make_shared<Light>(Light({ 0.0, 0.0, 1.0 }, { 0.5, 0.5, 0.5 })));
+	scene.addLight(make_shared<Light>(Light({ 0.0, 0.0, 1.0 }, { 0.25, 0.25, 0.25 })));
 	scene.addLight(make_shared<Light>(Light({ -1.0, 5.0, -10.0 }, { 1.0, 1.0, 1.0 })));
 	scene.addObject(make_shared<Sphere>(Sphere(make_shared<PureTexture>(Surface::MAGENTA), { -3.0, 1.0, -10.0 }, 2.0)));
 	scene.addObject(make_shared<Sphere>(Sphere(make_shared<PureTexture>(Surface::BLUE), { 3.0, 1.0, -10.0 }, 2.0)));

@@ -10,6 +10,7 @@ public:
 	virtual ~Texture() {}
 
 	virtual std::shared_ptr<Surface> getSurfaceProperty() const = 0;
+	virtual std::shared_ptr<Surface> getSurfaceProperty(real_t x, real_t y) const = 0;
 };
 
 class PureTexture : public Texture {
@@ -24,5 +25,10 @@ public:
 
 	std::shared_ptr<Surface> getSurfaceProperty() const {
 		return surface;
+	}
+
+	std::shared_ptr<Surface> getSurfaceProperty(real_t x, real_t y) const {
+		assert(false);
+		return nullptr;
 	}
 };
