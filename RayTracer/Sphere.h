@@ -29,10 +29,9 @@ private:
 	mutable real_t distToProjCenter;
 	mutable real_t halfCord2;
 	mutable Vec3 interPoint;
+	mutable Vec3 normal;
 
-	virtual std::shared_ptr<Surface> getInterPointSurfaceProperty() const override {
-		return nullptr;
-	};
+	virtual std::shared_ptr<Surface> getInterPointSurfaceProperty() const override;
 
 	const Object *getObj() const override {
 		return &sphere;

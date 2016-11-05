@@ -37,6 +37,7 @@ protected:
 	Ray ray;
 
 	mutable real_t distToInter = std::numeric_limits<real_t>::infinity();	// distance to intersection point
+	mutable Vec3 interPoint = Vec3::infinity();
 
 	virtual const Object *getObj() const = 0;
 	virtual std::shared_ptr<Surface> getInterPointSurfaceProperty() const = 0;
@@ -52,7 +53,8 @@ public:
 
 	virtual bool isIntersect() const = 0;		// only finding if they're intersected
 	virtual Vec3 getIntersection() const {		// find intersection point
-		return ray.getDistPoint(distToInter);
+		interPoint = ray.getDistPoint(distToInter);
+		return interPoint;
 	}
 	virtual Vec3 getNormal() const = 0;			// get normal vector
 

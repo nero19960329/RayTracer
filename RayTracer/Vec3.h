@@ -145,6 +145,14 @@ public:
 		return{ x * t, y * t, z * t };
 	}
 
+	bool isZero() const {
+		return fabs(x) < epsilon && fabs(y) < epsilon && fabs(z) < epsilon;
+	}
+
+	bool isFinite() const {
+		return isfinite(x) && isfinite(y) && isfinite(z);
+	}
+
 	// static methods
 	static Vec3 zeros() {
 		return{ 0.0, 0.0, 0.0 };

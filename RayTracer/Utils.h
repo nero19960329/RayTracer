@@ -2,6 +2,9 @@
 
 #include <cassert>
 #include <cstdio>
+#include <string>
+#include <sstream>
+#include <iostream>
 
 using real_t = double;
 
@@ -41,6 +44,15 @@ inline bool updateMax(T &value, const T &max) {
 	return false;
 }
 
+extern size_t getConsoleWidth();
+
 inline void printProgress(real_t p) {
-	printf("\r%.2lf%%", p * 100);
+	size_t consoleWidth = getConsoleWidth();
+	std::string prefix = "Rendering ... => ";
+	size_t progressLen = (getConsoleWidth() - prefix.size() - 2) / 2;
+	int f = (int) (p * progressLen);
+	std::ostringstream oss;
+	rep(i, f) oss << "\u25A0";
+	rep(i, progressLen - f) oss << "  ";
+	std::cout << "\r" << prefix << "[" << oss.str() << "]";
 }

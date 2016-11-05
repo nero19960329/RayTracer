@@ -34,3 +34,13 @@ real_t PlaneIntersect::getDistToInter() const {
 Vec3 PlaneIntersect::getNormal() const {
 	return plane.normal;
 }
+
+shared_ptr<Surface> PlaneIntersect::getInterPointSurfaceProperty() const {
+	Vec3 x{ -plane.normal.y, plane.normal.x, 0 };
+	Vec3 y{ 0, -plane.normal.z, plane.normal.y };
+	if (x.isZero()) {
+		x = { -plane.normal.z, 0, plane.normal.x };
+	}
+
+	return plane.getTexture()->getSurfaceProperty(interPoint.dot(x), interPoint.dot(y));
+}

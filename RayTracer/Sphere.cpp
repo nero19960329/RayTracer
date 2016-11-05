@@ -42,5 +42,17 @@ real_t SphereIntersect::getDistToInter() const {
 }
 
 Vec3 SphereIntersect::getNormal() const {
-	return (interPoint - sphere.center).getNormalized();
+	normal = (interPoint - sphere.center).getNormalized();
+	return normal;
+}
+
+shared_ptr<Surface> SphereIntersect::getInterPointSurfaceProperty() const {
+	if (fabs(interPoint.x) < epsilon && fabs(interPoint.y) < epsilon) {
+		return sphere.getTexture()->getSurfaceProperty(0, 0);
+	} else {
+		real_t u, v;
+		u = atan2(normal.y, normal.x) / (PI + PI);
+		v = asin(normal.z) / (PI + PI);
+		return sphere.getTexture()->getSurfaceProperty(u, v);
+	}
 }

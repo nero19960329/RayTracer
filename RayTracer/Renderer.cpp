@@ -14,18 +14,16 @@ Mat Renderer::rawRender() const {
 	auto rays = viewer.getRayVector();
 	Geometry screen = viewer.getScreen();
 
-	Mat res{ screen.height, screen.width, CV_32FC3 };
+	Mat res{ screen.height, screen.width, CV_64FC3 };
 	int i = 0, j, allPixels = screen.width * screen.height;
 	for (const auto &rayVec : rays) {
-		if (!(i % 50)) {
-			printProgress(i * screen.height * 1.0 / allPixels);
-		}
+		printProgress(i * screen.height * 1.0 / allPixels);
 		j = 0;
 		for (const auto &ray : rayVec) {
-			Vec3 color = shader->getColor(ray);
-			res.at<Vec3f>(j, i)[0] = color[2];
-			res.at<Vec3f>(j, i)[1] = color[1];
-			res.at<Vec3f>(j, i)[2] = color[0];
+			Vec3 color = shader->color(ray);
+			res.at<Vec3d>(j, i)[0] = color[2];
+			res.at<Vec3d>(j, i)[1] = color[1];
+			res.at<Vec3d>(j, i)[2] = color[0];
 			++j;
 		}
 		++i;
@@ -37,15 +35,15 @@ Mat Renderer::rawRender() const {
 }
 
 void Renderer::normalize(Mat &img) const {
-	float maxValue;
+	double maxValue;
 	rep(i, img.rows) rep(j, img.cols) {
-		Vec3f rgb = img.at<Vec3f>(i, j);
+		Vec3d rgb = img.at<Vec3d>(i, j);
 		rep(k, 3) updateMax(maxValue, rgb[k]);
 	}
 
 	if (maxValue > 1.0f) {
 		rep(i, img.rows) rep(j, img.cols) {
-			img.at<Vec3f>(i, j) /= maxValue;
+			img.at<Vec3d>(i, j) /= maxValue;
 		}
 	}
 }

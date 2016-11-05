@@ -55,9 +55,7 @@ private:
 
 	mutable real_t projOrigToInter, projDir;
 
-	virtual std::shared_ptr<Surface> getInterPointSurfaceProperty() const override {
-		return nullptr;
-	};
+	virtual std::shared_ptr<Surface> getInterPointSurfaceProperty() const override;
 
 	const Object *getObj() const override {
 		return &plane;

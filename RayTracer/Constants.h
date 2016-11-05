@@ -4,6 +4,4 @@
 
 const Vec3 AMBIENT_INTENSITY{ 0.2, 0.2, 0.2 };
 
-const real_t INTENSITY_DECAY_A = 1.0;
-const real_t INTENSITY_DECAY_B = 1e-3;
-const real_t INTENSITY_DECAY_C = 1e-6;
+const real_t AIR_BEER_DENSITY = 1e-2;

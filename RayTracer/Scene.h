@@ -36,7 +36,7 @@ public:
 	Shader(const Scene &_scene) : scene(_scene) {}
 	virtual ~Shader() {}
 
-	virtual Vec3 getColor(const Ray &ray) const = 0;
+	virtual Vec3 color(const Ray &ray) const = 0;
 };
 
 class Phong : public Shader {
@@ -44,10 +44,11 @@ public:
 	explicit Phong(const Scene &_scene) : Shader(_scene) {}
 	~Phong() {}
 
-	Vec3 getColor(const Ray &ray) const override;
+	Vec3 color(const Ray &ray) const override;
 
 private:
-	Vec3 getPhongLocal(const IntersectInfo &info, const Ray &ray) const;
+	Vec3 getColor(DistRay &ray) const;
+	Vec3 getPhongLocal(const IntersectInfo &info, const DistRay &ray) const;
 
 	bool isShadow(const std::shared_ptr<Light> &light, const IntersectInfo &info) const;
 };

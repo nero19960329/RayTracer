@@ -13,5 +13,5 @@ public:
 		ambient(_ambient), diffuse(_diffuse), specular(_specular), shininess(_shininess), emission(_emission) {}
 	~Surface() {}
 
-	static const Surface WHITE, RED, GREEN, BLUE, YELLOW, CYAN, MAGENTA;
+	static const Surface BLACK, WHITE, RED, GREEN, BLUE, YELLOW, CYAN, MAGENTA;
 };
