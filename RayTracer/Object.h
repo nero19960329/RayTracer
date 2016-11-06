@@ -19,6 +19,10 @@ public:
 		return false;
 	}
 
+	virtual bool hasInside() const {
+		return false;
+	}
+
 	virtual std::shared_ptr<Intersect> getTrace(const Ray &ray, real_t dist = std::numeric_limits<real_t>::max()) const = 0;
 
 	const std::shared_ptr<Texture> &getTexture() const {
@@ -30,11 +34,12 @@ struct IntersectInfo {
 	Vec3 interPoint;
 	Vec3 normal;
 	std::shared_ptr<Surface> surface;
+	real_t nextRefrIdx;
 };
 
 class Intersect {
 protected:
-	Ray ray;
+	const Ray &ray;
 
 	mutable real_t distToInter = std::numeric_limits<real_t>::infinity();	// distance to intersection point
 	mutable Vec3 interPoint = Vec3::infinity();
@@ -56,6 +61,14 @@ public:
 		interPoint = ray.getDistPoint(distToInter);
 		return interPoint;
 	}
+
+	virtual IntersectInfo getIntersectInfo() {
+		auto obj = getObj();
+		assert(obj->getTexture());
+		return IntersectInfo{ getIntersection(), getNormal(), getSurface(), getNextRefractionIndex() };
+	}
+
+private:
 	virtual Vec3 getNormal() const = 0;			// get normal vector
 
 	std::shared_ptr<Surface> getSurface() const {
@@ -64,9 +77,7 @@ public:
 		return getInterPointSurfaceProperty();
 	};
 
-	virtual IntersectInfo getIntersectInfo() {
-		auto obj = getObj();
-		assert(obj->getTexture());
-		return IntersectInfo{ getIntersection(), getNormal(), getSurface() };
+	virtual real_t getNextRefractionIndex() const {
+		return ray.refrIdx;
 	}
 };

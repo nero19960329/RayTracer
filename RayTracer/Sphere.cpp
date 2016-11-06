@@ -14,17 +14,17 @@ shared_ptr<Intersect> Sphere::getTrace(const Ray &ray, real_t dist) const {
 
 bool SphereIntersect::isIntersect() const {
 	real_t distToCenter2 = (ray.orig - sphere.center).sqr();
-	if (distToCenter2 < sqr(sphere.radius)) {
-		return true;
-	}
+	inside = distToCenter2 < sqr(sphere.radius);
 
 	distToProjCenter = (sphere.center - ray.orig).dot(ray.dir);
-	if (distToProjCenter < 0) {
+	toward = distToProjCenter > 0;
+
+	if (!inside && !toward) {
 		return false;
 	}
 
 	halfCord2 = sqr(sphere.radius) - distToCenter2 + sqr(distToProjCenter);
-	if (halfCord2 < 0) {
+	if (!inside && halfCord2 < 0) {
 		return false;
 	}
 
@@ -36,13 +36,18 @@ real_t SphereIntersect::getDistToInter() const {
 		return distToInter;
 	}
 
-	distToInter = distToProjCenter - sqrt(halfCord2);
+	if (!inside) distToInter = distToProjCenter - sqrt(halfCord2);
+	else if (toward) distToInter = distToProjCenter + sqrt(halfCord2);
+	else distToInter = sqrt(halfCord2) - distToProjCenter;
+
 	interPoint = Intersect::getIntersection();
 	return distToInter;
 }
 
 Vec3 SphereIntersect::getNormal() const {
-	normal = (interPoint - sphere.center).getNormalized();
+	if (!inside) normal = (interPoint - sphere.center).getNormalized();
+	else normal = (sphere.center - interPoint).getNormalized();
+
 	return normal;
 }
 
@@ -59,4 +64,9 @@ shared_ptr<Surface> SphereIntersect::getInterPointSurfaceProperty() const {
 		v = asin(normal.z) / (PI + PI);
 		return sphere.getTexture()->getSurfaceProperty(u, v);
 	}
+}
+
+real_t SphereIntersect::getNextRefractionIndex() const {
+	if (inside) return VACUUM_REFRACTION_INDEX;
+	else return sphere.innerRefrIdx;
 }

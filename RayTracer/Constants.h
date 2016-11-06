@@ -10,3 +10,7 @@ const real_t DEFAULT_SHININESS = 5.0;
 const real_t AIR_BEER_DENSITY = 2e-2;
 
 const int MAX_TRACING_DEPTH = 5;
+
+const real_t VACUUM_REFRACTION_INDEX = 1.0;
+const real_t WATER_REFRACTION_INDEX = 1.333;
+const real_t GLASS_REFRACTION_INDEX = 1.5;

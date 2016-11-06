@@ -12,14 +12,16 @@ using namespace cv;
 using namespace std;
 
 int main() {
-	Viewer viewer{ { 800, 600 }, { 0.0, 0.0, 0.0 }, { 0.0, 0.0, -1.0 }, { 0.0, 1.0, 0.0 }, 60 };
+	Viewer viewer{ { 800, 600 }, { 0.0, 2.0, 0.0 }, { 0.0, 1.0, -10.0 }, { 0.0, 1.0, 0.0 }, 60 };
 	Scene scene;
 	scene.addLight(make_shared<Light>(Light({ 0.0, 0.0, 1.0 }, { 1.0, 1.0, 1.0 }, 0.25)));
-	scene.addLight(make_shared<Light>(Light({ -1.0, 5.0, -10.0 }, { 1.0, 1.0, 1.0 }, 1.0)));
-	scene.addObject(make_shared<Sphere>(Sphere(make_shared<GridTexture>(Material::A_BIT_MIRROR, 16), { -3.0, 1.0, -10.0 }, 2.0)));
-	//scene.addObject(make_shared<Sphere>(Sphere(make_shared<PureTexture>(Material::A_BIT_MIRROR, Vec3::BLUE), { -3.0, 1.0, -10.0 }, 2.0)));
-	scene.addObject(make_shared<Sphere>(Sphere(make_shared<ImageTexture>(Material::PLASTIC, "../texture/stone.jpg"), { 3.0, 1.0, -10.0 }, 2.0)));
-	scene.addObject(make_shared<Plane>(Plane(make_shared<ImageTexture>(Material::FLOOR, "../texture/floor.jpg"), { 0.0, 1.0, 0.0 }, -1.0)));
+	scene.addLight(make_shared<Light>(Light({ -1.0, 10.0, -4.0 }, { 1.0, 1.0, 1.0 }, 1.0)));
+	scene.addObject(make_shared<Sphere>(Sphere(make_shared<PureTexture>(Material::TRANSPARENT_MATERIAL, Vec3::BLACK), { -3.0, 1.0, -10.0 }, 2.0, WATER_REFRACTION_INDEX)));
+	//scene.addObject(make_shared<Sphere>(Sphere(make_shared<GridTexture>(Material::A_BIT_MIRROR, 16), { -3.0, 1.0, -10.0 }, 2.0)));
+	//scene.addObject(make_shared<Sphere>(Sphere(make_shared<PureTexture>(Material::PLASTIC, Vec3::BLUE), { 0.0, 1.0, -10.0 }, 2.0)));
+	scene.addObject(make_shared<Sphere>(Sphere(make_shared<PureTexture>(Material::A_BIT_MIRROR, Vec3::MAGENTA), { 3.0, 1.0, -10.0 }, 2.0)));
+	//scene.addObject(make_shared<Plane>(Plane(make_shared<ImageTexture>(Material::FLOOR, "../texture/floor.jpg"), { 0.0, 1.0, 1.0 }, -10.0, false)));
+	scene.addObject(make_shared<Plane>(Plane(make_shared<GridTexture>(Material::FLOOR, 2), { 0.0, 1.0, 0.0 }, -1.0, false)));
 	//scene.addObject(make_shared<Plane>(Plane(make_shared<PureTexture>(Material::FLOOR, Vec3::WHITE), { 0.0, 1.0, 0.0 }, -2.0)));
 	Renderer renderer{ viewer, scene };
 

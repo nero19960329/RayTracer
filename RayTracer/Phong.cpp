@@ -23,8 +23,9 @@ Vec3 Phong::getColor(DistRay &ray, int depth) const {
 		local *= exp(-ray.dist * AIR_BEER_DENSITY);
 
 		Vec3 refl = getReflection(info, ray, depth);
+		Vec3 refr = getRefraction(info, ray, depth);
 
-		return ambient + local + refl;
+		return ambient + local + refl + refr;
 	} else {
 		return Vec3::BLACK;
 	}
@@ -40,19 +41,17 @@ Vec3 Phong::getPhongLocal(const IntersectInfo &info, const DistRay &ray, int dep
 		if (isShadow(light, info)) {
 			continue;
 		}
-
+	
 		Vec3 toLight = light->getCenter() - info.interPoint;
 		Vec3 L = toLight.getNormalized();
 		Vec3 I = light->color * light->intensity * exp(-toLight.norm() * AIR_BEER_DENSITY);
 		real_t tmp = L.dot(N);
-		if (tmp > 0) {
-			diffuse += I.mul(info.surface->diffuse) * L.dot(N);
-		}
+		if (tmp > 0) diffuse += I.mul(info.surface->diffuse) * tmp;
 
-		Vec3 R = L.reflection(N).getNormalized();
-		tmp = R.dot(V);
-		if (tmp > 0) {
-			specular += I * info.surface->specular * pow(R.dot(V), info.surface->shininess);
+		if (info.surface->specular > epsilon) {
+			Vec3 R = L.reflection(N).getNormalized();
+			tmp = R.dot(V);
+			if (tmp > 0) specular += I * info.surface->specular * pow(tmp, info.surface->shininess);
 		}
 	}
 
@@ -67,9 +66,26 @@ Vec3 Phong::getReflection(const IntersectInfo &info, const DistRay &ray, int dep
 	Vec3 N = info.normal;
 	Vec3 V = (ray.orig - info.interPoint).getNormalized();
 	Vec3 R = V.reflection(N).getNormalized();
-	DistRay newRay(Ray{ info.interPoint + epsilon * R, R }, ray.dist);
+	DistRay newRay(Ray{ info.interPoint + epsilon * R, R, ray.refrIdx }, ray.dist);
 	Vec3 reflection = getColor(newRay, depth + 1);
+
 	return info.surface->refl * reflection;
+}
+
+Vec3 Phong::getRefraction(const IntersectInfo &info, const DistRay &ray, int depth) const {
+	if (info.surface->refr < epsilon) {
+		return Vec3::BLACK;
+	}
+
+	Vec3 N = info.normal;
+	Vec3 V = (ray.orig - info.interPoint).getNormalized();
+	Vec3 T = V.refraction(N, info.nextRefrIdx / ray.refrIdx);
+	//real_t diff = ray.refrIdx * sqrt(1 - sqr(V.dot(N))) - info.nextRefrIdx * sqrt(1 - sqr((-N).dot(T)));
+	//assert(fabs(diff) < epsilon);
+	DistRay newRay(Ray{ info.interPoint + epsilon * T, T, info.nextRefrIdx }, ray.dist);
+	Vec3 refraction = getColor(newRay, depth + 1);
+
+	return info.surface->refr * refraction;
 }
 
 bool Phong::isShadow(const shared_ptr<Light> &light, const IntersectInfo &info) const {

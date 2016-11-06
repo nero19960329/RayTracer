@@ -137,6 +137,16 @@ public:
 		return (normal + normal) * normal.dot(*this) - *this;
 	}
 
+	inline Vec3 refraction(const Vec3 &normal, real_t eta) const {
+		real_t tmp = 1.0 / eta;
+		real_t cos1 = dot(normal);
+		if (1 - ::sqr(cos1) > ::sqr(eta)) {
+			return Vec3::zeros();
+		}
+		real_t cos2 = sqrt(1 - (1 - ::sqr(cos1)) * ::sqr(tmp));
+		return -(*this) * tmp - (cos2 - cos1 * tmp) * normal;
+	}
+
 	inline void normalize() {
 		real_t t = 1.0 / norm();
 		x *= t;

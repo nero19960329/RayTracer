@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Constants.h"
 #include "Object.h"
 #include "Vec3.h"
 
@@ -12,9 +13,11 @@ protected:
 	Vec3 center;
 	real_t radius;
 
+	real_t innerRefrIdx;
+
 public:
-	Sphere(const std::shared_ptr<Texture> &_texture, const Vec3 &_center, real_t _radius) :
-		Object(_texture), center(_center), radius(_radius) {
+	Sphere(const std::shared_ptr<Texture> &_texture, const Vec3 &_center, real_t _radius, real_t _innerRefrIdx = VACUUM_REFRACTION_INDEX) :
+		Object(_texture), center(_center), radius(_radius), innerRefrIdx(_innerRefrIdx) {
 		assert(radius > 0);
 	}
 	~Sphere() {}
@@ -26,6 +29,7 @@ class SphereIntersect : public Intersect {
 private:
 	Sphere sphere;
 
+	mutable bool toward, inside;
 	mutable real_t distToProjCenter;
 	mutable real_t halfCord2;
 	mutable Vec3 interPoint;
@@ -42,7 +46,9 @@ public:
 	~SphereIntersect() {}
 
 	real_t getDistToInter() const override;
-
 	bool isIntersect() const override;
+
+private:
 	Vec3 getNormal() const override;
+	real_t getNextRefractionIndex() const override;
 };
