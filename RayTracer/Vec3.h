@@ -113,43 +113,47 @@ public:
 	}
 
 	// other operation
-	real_t dot(const Vec3 &v) const {
+	inline real_t dot(const Vec3 &v) const {
 		return x * v.x + y * v.y + z * v.z;
 	}
 
-	Vec3 cross(const Vec3 &v) const {
+	inline Vec3 cross(const Vec3 &v) const {
 		return{ y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x };
 	}
 
-	Vec3 mul(const Vec3 &v) const {
+	inline Vec3 mul(const Vec3 &v) const {
 		return{ x * v.x, y * v.y, z * v.z };
 	}
 
-	real_t sqr() const {
+	inline real_t sqr() const {
 		return ::sqr(x) + ::sqr(y) + ::sqr(z);
 	}
 
-	real_t norm() const {
+	inline real_t norm() const {
 		return sqrt(sqr());
 	}
 
-	void normalize() {
+	inline Vec3 reflection(const Vec3 &normal) const {
+		return (normal + normal) * normal.dot(*this) - *this;
+	}
+
+	inline void normalize() {
 		real_t t = 1.0 / norm();
 		x *= t;
 		y *= t;
 		z *= t;
 	}
 
-	Vec3 getNormalized() const {
+	inline Vec3 getNormalized() const {
 		real_t t = 1.0 / norm();
 		return{ x * t, y * t, z * t };
 	}
 
-	bool isZero() const {
+	inline bool isZero() const {
 		return fabs(x) < epsilon && fabs(y) < epsilon && fabs(z) < epsilon;
 	}
 
-	bool isFinite() const {
+	inline bool isFinite() const {
 		return isfinite(x) && isfinite(y) && isfinite(z);
 	}
 

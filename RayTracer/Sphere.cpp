@@ -52,6 +52,10 @@ shared_ptr<Surface> SphereIntersect::getInterPointSurfaceProperty() const {
 	} else {
 		real_t u, v;
 		u = atan2(normal.y, normal.x) / (PI + PI);
+		// cuz (u+1.0)-floor(u+1.0) = u-floor(u), so omit it
+		if ((normal.x < 0) ^ (normal.y > 0)) {
+			u += 0.5;
+		}
 		v = asin(normal.z) / (PI + PI);
 		return sphere.getTexture()->getSurfaceProperty(u, v);
 	}

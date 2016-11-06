@@ -23,7 +23,7 @@ public:
 		start = tmp.QuadPart;
 	}
 
-	real_t getDuring() {
+	real_t getDuration() {
 		LARGE_INTEGER tmp;
 		QueryPerformanceCounter(&tmp);
 		end = tmp.QuadPart;

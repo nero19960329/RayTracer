@@ -116,5 +116,8 @@
     <ClInclude Include="Timer.h">
       <Filter>头文件\Lib</Filter>
     </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>头文件\Material</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

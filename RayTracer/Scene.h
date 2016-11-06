@@ -40,15 +40,19 @@ public:
 };
 
 class Phong : public Shader {
+private:
+	int maxDepth;
+
 public:
-	explicit Phong(const Scene &_scene) : Shader(_scene) {}
+	explicit Phong(const Scene &_scene, int _maxDepth = MAX_TRACING_DEPTH) : Shader(_scene), maxDepth(_maxDepth) {}
 	~Phong() {}
 
 	Vec3 color(const Ray &ray) const override;
 
 private:
-	Vec3 getColor(DistRay &ray) const;
-	Vec3 getPhongLocal(const IntersectInfo &info, const DistRay &ray) const;
+	Vec3 getColor(DistRay &ray, int depth = 0) const;
+	Vec3 getPhongLocal(const IntersectInfo &info, const DistRay &ray, int depth = 0) const;
+	Vec3 getReflection(const IntersectInfo &info, const DistRay &ray, int depth = 0) const;
 
 	bool isShadow(const std::shared_ptr<Light> &light, const IntersectInfo &info) const;
 };

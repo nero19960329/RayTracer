@@ -8,7 +8,11 @@ Vec3 Phong::color(const Ray &ray) const {
 	return getColor(distRay);
 }
 
-Vec3 Phong::getColor(DistRay &ray) const {
+Vec3 Phong::getColor(DistRay &ray, int depth) const {
+	if (depth > maxDepth) {
+		return Vec3::BLACK;
+	}
+
 	auto intersect = scene.getIntersect(ray);
 	if (intersect) {
 		IntersectInfo info = scene.getIntersect(ray)->getIntersectInfo();
@@ -18,13 +22,15 @@ Vec3 Phong::getColor(DistRay &ray) const {
 		ray.dist += intersect->getDistToInter();
 		local *= exp(-ray.dist * AIR_BEER_DENSITY);
 
-		return ambient + local;
+		Vec3 refl = getReflection(info, ray, depth);
+
+		return ambient + local + refl;
 	} else {
 		return Vec3::BLACK;
 	}
 }
 
-Vec3 Phong::getPhongLocal(const IntersectInfo &info, const DistRay &ray) const {
+Vec3 Phong::getPhongLocal(const IntersectInfo &info, const DistRay &ray, int depth) const {
 	Vec3 diffuse = Vec3::zeros();
 	Vec3 specular = Vec3::zeros();
 
@@ -43,7 +49,7 @@ Vec3 Phong::getPhongLocal(const IntersectInfo &info, const DistRay &ray) const {
 			diffuse += I.mul(info.surface->diffuse) * L.dot(N);
 		}
 
-		Vec3 R = (2 * N * N.dot(L) - L).getNormalized();
+		Vec3 R = L.reflection(N).getNormalized();
 		tmp = R.dot(V);
 		if (tmp > 0) {
 			specular += I * info.surface->specular * pow(R.dot(V), info.surface->shininess);
@@ -51,6 +57,19 @@ Vec3 Phong::getPhongLocal(const IntersectInfo &info, const DistRay &ray) const {
 	}
 
 	return diffuse + specular;
+}
+
+Vec3 Phong::getReflection(const IntersectInfo &info, const DistRay &ray, int depth) const {
+	if (info.surface->refl < epsilon) {
+		return Vec3::BLACK;
+	}
+
+	Vec3 N = info.normal;
+	Vec3 V = (ray.orig - info.interPoint).getNormalized();
+	Vec3 R = V.reflection(N).getNormalized();
+	DistRay newRay(Ray{ info.interPoint + epsilon * R, R }, ray.dist);
+	Vec3 reflection = getColor(newRay, depth + 1);
+	return info.surface->refl * reflection;
 }
 
 bool Phong::isShadow(const shared_ptr<Light> &light, const IntersectInfo &info) const {
