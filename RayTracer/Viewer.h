@@ -6,11 +6,18 @@
 
 #include <vector>
 
+class SceneReader;
+
 class Viewer {
+	friend SceneReader;
+
 private:
 	Geometry screen;
 	Vec3 center, dir, up;
 	real_t fovy;
+
+protected:
+	Viewer() : screen{ 0, 0 }, center{ 0.0, 0.0, 0.0 } {}
 
 public:
 	Viewer(Geometry _screen, Vec3 _center, Vec3 _target, Vec3 _up, real_t _fovy) :

@@ -5,9 +5,11 @@
 #include "Vec3.h"
 
 class SphereIntersect;
+class SceneReader;
 
 class Sphere : public Object {
-	friend SphereIntersect;
+	friend class SphereIntersect;
+	friend class SceneReader;
 
 protected:
 	Vec3 center;
@@ -16,6 +18,7 @@ protected:
 	real_t innerRefrIdx;
 
 public:
+	Sphere() : Object(nullptr), innerRefrIdx(VACUUM_REFRACTION_INDEX) {}
 	Sphere(const std::shared_ptr<Texture> &_texture, const Vec3 &_center, real_t _radius, real_t _innerRefrIdx = VACUUM_REFRACTION_INDEX) :
 		Object(_texture), center(_center), radius(_radius), innerRefrIdx(_innerRefrIdx) {
 		assert(radius > 0);

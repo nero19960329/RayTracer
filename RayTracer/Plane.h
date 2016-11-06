@@ -4,15 +4,19 @@
 #include "Vec3.h"
 
 class PlaneIntersect;
+class SceneReader;
 
 class Plane : public Object {
-	friend PlaneIntersect;
+	friend class PlaneIntersect;
+	friend class SceneReader;
 
 protected:
 	Vec3 normal;
 	real_t offset;
 
 public:
+	Plane() : Object(nullptr) {}
+
 	Plane(const std::shared_ptr<Texture> &_texture, const Vec3 &_normal, real_t _offset, bool isNormalized = true) :
 		Object(_texture), normal(_normal), offset(_offset) {
 		if (!isNormalized) {

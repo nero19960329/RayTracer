@@ -3,3 +3,4 @@
 3. 增加了黑白格纹理及图像纹理。黑白格纹理的粒度可以调整，图像纹理只支持正方形。
 4. 使用Beer-Lambert定律，实现光强衰减的模拟。两次光强衰减：光线到交点、交点到视点。I=I0*exp(-dist * density)。Ref: Beer-Lambert Law -> https://en.wikipedia.org/wiki/Beer–Lambert_law
 5. 增加反射效果，表面增加了反射系数、折射系数。重构Surface，增加了Material，每个Surface由一个Material以及diffuse和emission构成。
+6. 增加折射效果，并未实现球套球的这种现象。

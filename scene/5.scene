@@ -1,0 +1,37 @@
+# Scene File
+
+# Viewer geometry center target up fovy
+Viewer
+geo 	800 600
+center 	0.0 0.0 0.0
+target 	0.0 0.0 -10.0
+up 		0.0 1.0 0.0
+fovy 	60
+
+# Light origin color intensity
+Light
+origin 		0.0 0.0 1.0
+color 		WHITE
+intensity 	0.25
+
+Light
+origin		-1.0 5.0 -10.0
+color		WHITE
+intensity 	1.0
+
+# Sphere texture center radius refraction_index*
+Sphere
+texture GridTexture A_BIT_MIRROR 16
+center 	-3.0 1.0 -10.0
+radius 	2.0
+
+Sphere
+texture ImageTexture PLASTIC ../texture/stone.jpg
+center 	3.0 1.0 -10.0
+radius 	2.0
+
+# Plane texture normal offset
+Plane
+texture ImageTexture FLOOR ../texture/floor.jpg
+normal 	0.0 1.0 0.0
+offset 	-1.0

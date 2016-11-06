@@ -146,6 +146,7 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Phong.cpp" />
+    <ClCompile Include="SceneReader.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="StaticConstants.cpp" />
     <ClCompile Include="Utils.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Phong.h" />
+    <ClInclude Include="SceneReader.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Surface.h" />
     <ClInclude Include="Texture.h" />

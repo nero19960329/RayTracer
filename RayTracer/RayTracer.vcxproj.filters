@@ -66,6 +66,9 @@
     <ClCompile Include="Utils.cpp">
       <Filter>源文件\Lib</Filter>
     </ClCompile>
+    <ClCompile Include="SceneReader.cpp">
+      <Filter>源文件\Lib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vec3.h">
@@ -118,6 +121,9 @@
     </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>头文件\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneReader.h">
+      <Filter>头文件\Lib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
