@@ -70,7 +70,8 @@ public:
 	~PlaneIntersect() {}
 
 	real_t getDistToInter() const override;
-
 	bool isIntersect() const override;
+
+private:
 	Vec3 getNormal() const override;
 };

@@ -80,8 +80,6 @@ Vec3 Phong::getRefraction(const IntersectInfo &info, const DistRay &ray, int dep
 	Vec3 N = info.normal;
 	Vec3 V = (ray.orig - info.interPoint).getNormalized();
 	Vec3 T = V.refraction(N, info.nextRefrIdx / ray.refrIdx);
-	//real_t diff = ray.refrIdx * sqrt(1 - sqr(V.dot(N))) - info.nextRefrIdx * sqrt(1 - sqr((-N).dot(T)));
-	//assert(fabs(diff) < epsilon);
 	DistRay newRay(Ray{ info.interPoint + epsilon * T, T, info.nextRefrIdx }, ray.dist);
 	Vec3 refraction = getColor(newRay, depth + 1);
 

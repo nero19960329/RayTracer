@@ -4,6 +4,7 @@
 #include "Object.h"
 #include "Plane.h"
 #include "Scene.h"
+#include "Triangle.h"
 #include "Utils.h"
 #include "Viewer.h"
 
@@ -45,6 +46,7 @@ private:
 	int readLight(std::ifstream &fin, std::shared_ptr<Light>);
 	int readSphere(std::ifstream &fin, std::shared_ptr<Sphere>);
 	int readPlane(std::ifstream &fin, std::shared_ptr<Plane>);
+	int readTri(std::ifstream &fin, std::shared_ptr<Tri>);
 
 	void fillMap();
 

@@ -4,11 +4,7 @@ using namespace std;
 
 shared_ptr<Intersect> Sphere::getTrace(const Ray &ray, real_t dist) const {
 	auto res = make_shared<SphereIntersect>(*this, ray);
-	if (res->isIntersect()) {
-		if (res->getDistToInter() < dist) {
-			return res;
-		}
-	}
+	if (res->isIntersect() && res->getDistToInter() < dist) return res;
 	return nullptr;
 }
 

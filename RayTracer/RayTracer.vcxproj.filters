@@ -69,6 +69,9 @@
     <ClCompile Include="SceneReader.cpp">
       <Filter>源文件\Lib</Filter>
     </ClCompile>
+    <ClCompile Include="Triangle.cpp">
+      <Filter>源文件\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vec3.h">
@@ -124,6 +127,9 @@
     </ClInclude>
     <ClInclude Include="SceneReader.h">
       <Filter>头文件\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="Triangle.h">
+      <Filter>头文件\Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

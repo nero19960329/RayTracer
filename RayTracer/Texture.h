@@ -72,9 +72,14 @@ public:
 	explicit ImageTexture(const Material &_material, const std::string &_inputFileName) :
 		Texture(_material) {
 		cv::Mat image = cv::imread(_inputFileName);
-		assert(image.rows);
-		assert(image.rows == image.cols);
-		assert(image.type() == CV_8UC3);
+
+		if (!image.rows) {
+			error_exit("Texture image not found!\n");
+		} else if (image.rows != image.cols) {
+			error_exit("Texture image is not square!\n");
+		} else if (image.type() != CV_8UC3) {
+			error_exit("Should input a 8UC3 image!\n");
+		}
 
 		rgbMat = cv::Mat{ image.rows, image.cols, CV_64FC3 };
 		image.convertTo(rgbMat, CV_64FC3, 1.0 / 255, 0.0);

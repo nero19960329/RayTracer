@@ -45,14 +45,8 @@ inline bool updateMax(T &value, const T &max) {
 }
 
 extern size_t getConsoleWidth();
-
-inline void printProgress(real_t p) {
-	size_t consoleWidth = getConsoleWidth();
-	std::string prefix = "Rendering ... => ";
-	size_t progressLen = (getConsoleWidth() - prefix.size() - 2) / 2;
-	int f = (int) (p * progressLen);
-	std::ostringstream oss;
-	rep(i, f) oss << "\u25A0";
-	rep(i, progressLen - f) oss << "  ";
-	std::cout << "\r" << prefix << "[" << oss.str() << "]";
+__declspec(noreturn) inline void error_exit(const char *msg) {
+	printf("\n%s", msg);
+	abort();
 }
+extern void printProgress(real_t p);

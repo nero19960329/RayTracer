@@ -4,3 +4,5 @@
 4. 使用Beer-Lambert定律，实现光强衰减的模拟。两次光强衰减：光线到交点、交点到视点。I=I0*exp(-dist * density)。Ref: Beer-Lambert Law -> https://en.wikipedia.org/wiki/Beer–Lambert_law
 5. 增加反射效果，表面增加了反射系数、折射系数。重构Surface，增加了Material，每个Surface由一个Material以及diffuse和emission构成。
 6. 增加折射效果，并未实现球套球的这种现象。
+7. 透明球后有一纯色球，可以看到倒影效果。
+8. 可以渲染三角形，准备渲染网格模型。光线与三角形求交：Moller-Trumbore方法(Journal of Graphic Tools, 1997)，Ref: http://pkuwwt.github.io/scholarship/2014-04-03-ray-triangle-intersection-tests-for-dummies/

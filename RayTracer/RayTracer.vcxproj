@@ -149,6 +149,7 @@
     <ClCompile Include="SceneReader.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="StaticConstants.cpp" />
+    <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Viewer.cpp" />
   </ItemGroup>
@@ -168,6 +169,7 @@
     <ClInclude Include="Surface.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="Triangle.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Vec3.h" />
     <ClInclude Include="Viewer.h" />

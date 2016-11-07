@@ -1,19 +1,14 @@
-#include <memory>
-
-#include "Constants.h"
-#include "Light.h"
-#include "Plane.h"
 #include "Renderer.h"
-#include "Scene.h"
 #include "SceneReader.h"
 #include "Timer.h"
-#include "Viewer.h"
+
+#include <opencv2/opencv.hpp>
 
 using namespace cv;
 using namespace std;
 
 int main() {
-	SceneReader sceneReader("../scene/2.scene");
+	SceneReader sceneReader("../scene/8.scene");
 	Renderer renderer{ sceneReader.getViewer(), sceneReader.getScene() };
 
 	Timer timer;

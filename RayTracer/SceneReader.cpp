@@ -14,30 +14,27 @@ SceneReader::SceneReader(const string &sceneFileName) {
 		string line;
 		getline(fin, line);
 
-		if (!line.size() || line[0] == '#') {
-			continue;
-		}
+		if (!line.size() || line[0] == '#') continue;
 
+		int backTrack = 1;
 		if (line.find("Viewer") == 0) {
-			int backTrack = readViewer(fin);
-			if (backTrack > 0) return;
-			else fin.seekg(backTrack, ios::cur);
+			backTrack = readViewer(fin);
 		} else if (line.find("Light") == 0) {
 			shared_ptr<Light> nowLight = make_shared<Light>();
-			int backTrack = readLight(fin, nowLight);
-			if (backTrack > 0) return;
-			else fin.seekg(backTrack, ios::cur);
+			backTrack = readLight(fin, nowLight);
 		} else if (line.find("Sphere") == 0) {
 			shared_ptr<Sphere> nowSphere = make_shared<Sphere>();
-			int backTrack = readSphere(fin, nowSphere);
-			if (backTrack > 0) return;
-			else fin.seekg(backTrack, ios::cur);
+			backTrack = readSphere(fin, nowSphere);
 		} else if (line.find("Plane") == 0) {
 			shared_ptr<Plane> nowPlane = make_shared<Plane>();
-			int backTrack = readPlane(fin, nowPlane);
-			if (backTrack > 0) return;
-			else fin.seekg(backTrack, ios::cur);
+			backTrack = readPlane(fin, nowPlane);
+		} else if (line.find("Tri") == 0) {
+			shared_ptr<Tri> nowTri = make_shared<Tri>();
+			backTrack = readTri(fin, nowTri);
 		}
+
+		if (backTrack <= 0) fin.seekg(backTrack, ios::cur);
+		else break;
 	}
 }
 
@@ -66,30 +63,21 @@ Vec3 SceneReader::readColor(const string &str) const {
 	auto end = colorMap.cend();
 	auto res = colorMap.find(str);
 	if (res != end) return res->second;
-	else {
-		assert(false);
-		return{};
-	}
+	else error_exit("No such color!\n");
 }
 
 Material SceneReader::readMaterial(const string &str) const {
 	auto end = materialMap.cend();
 	auto res = materialMap.find(str);
 	if (res != end) return res->second;
-	else {
-		assert(false);
-		return Material::PLASTIC;
-	}
+	else error_exit("No such material!\n");
 }
 
 real_t SceneReader::readRefrIdx(const string &str) const {
 	auto end = refrIdxMap.cend();
 	auto res = refrIdxMap.find(str);
 	if (res != end) return res->second;
-	else {
-		assert(false);
-		return{};
-	}
+	else error_exit("No such refraction index!\n");
 }
 
 shared_ptr<Texture> SceneReader::readTexture(const string &str) const {
@@ -110,8 +98,7 @@ shared_ptr<Texture> SceneReader::readTexture(const string &str) const {
 		iss >> fileName;
 		return std::make_shared<ImageTexture>(readMaterial(materialStr), fileName);
 	} else {
-		assert(false);
-		return nullptr;
+		error_exit("No such texture!\n");
 	}
 }
 
@@ -141,11 +128,8 @@ int SceneReader::readSth(ifstream &fin, function<bool(istringstream &, const str
 
 	modifyFunc();
 
-	if (!isEOF) {
-		return place - fin.tellg();
-	} else {
-		return 1;
-	}
+	if (!isEOF) return place - fin.tellg();
+	else return 1;
 }
 
 int SceneReader::readViewer(ifstream &fin) {
@@ -223,18 +207,26 @@ int SceneReader::readSphere(ifstream &fin, shared_ptr<Sphere> nowSphere) {
 
 int SceneReader::readPlane(ifstream &fin, shared_ptr<Plane> nowPlane) {
 	return readSth(fin, [&](istringstream &iss, const string &line) {
-		if (line.find("texture") == 0) {
-			nowPlane->setTexture(readTexture(line.substr(iss.tellg())));
-		} else if (line.find("normal") == 0) {
-			iss >> nowPlane->normal[0] >> nowPlane->normal[1] >> nowPlane->normal[2];
-		} else if (line.find("offset") == 0) {
-			iss >> nowPlane->offset;
-		} else {
-			return false;
-		}
+		if (line.find("texture") == 0) nowPlane->setTexture(readTexture(line.substr(iss.tellg())));
+		else if (line.find("normal") == 0) iss >> nowPlane->normal[0] >> nowPlane->normal[1] >> nowPlane->normal[2];
+		else if (line.find("offset") == 0) iss >> nowPlane->offset;
+		else return false;
 		return true;
 	}, [&]() {
 		nowPlane->normal.normalize();
 		scene.addObject(nowPlane);
+	});
+}
+
+int SceneReader::readTri(ifstream &fin, shared_ptr<Tri> nowTri) {
+	return readSth(fin, [&](istringstream &iss, const string &line) {
+		if (line.find("texture") == 0) nowTri->setTexture(readTexture(line.substr(iss.tellg())));
+		else if (line.find("a") == 0) iss >> nowTri->a[0] >> nowTri->a[1] >> nowTri->a[2];
+		else if (line.find("b") == 0) iss >> nowTri->b[0] >> nowTri->b[1] >> nowTri->b[2];
+		else if (line.find("c") == 0) iss >> nowTri->c[0] >> nowTri->c[1] >> nowTri->c[2];
+		else return false;
+		return true;
+	}, [&]() {
+		scene.addObject(nowTri);
 	});
 }

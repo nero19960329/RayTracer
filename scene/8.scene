@@ -1,11 +1,10 @@
 # Scene File
-# A plane with two spheres, one is transparent, the other one is reflective
 
 # Viewer geometry center target up fovy
 Viewer
 geo 	800 600
 center 	0.0 2.0 0.0
-target 	0.0 1.0 -10.0
+target 	0.0 2.0 -10.0
 up 		0.0 1.0 0.0
 fovy 	60
 
@@ -16,24 +15,30 @@ color 		WHITE
 intensity 	0.25
 
 Light
-origin		-1.0 10.0 -4.0
+origin		-1.0 5.0 -10.0
 color		WHITE
 intensity 	1.0
 
 # Sphere texture center radius refraction_index*
 Sphere
-texture PureTexture TRANSPARENT_MATERIAL BLACK
+texture GridTexture A_BIT_MIRROR 16
 center 	-3.0 1.0 -10.0
 radius 	2.0
-refraction_index WATER_REFRACTION_INDEX
 
 Sphere
-texture PureTexture A_BIT_MIRROR MAGENTA
+texture ImageTexture PLASTIC ../texture/stone.jpg
 center 	3.0 1.0 -10.0
 radius 	2.0
 
+# Tri texture a b c
+Tri
+texture PureTexture PLASTIC MAGENTA
+a 		-2 -0.8 -8.0
+b 		2 -0.8 -8.0
+c 		0.0 2.664 -8.0
+
 # Plane texture normal offset
 Plane
-texture GridTexture FLOOR 2
+texture ImageTexture FLOOR ../texture/floor.jpg
 normal 	0.0 1.0 0.0
 offset 	-1.0

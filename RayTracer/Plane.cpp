@@ -4,11 +4,7 @@ using namespace std;
 
 shared_ptr<Intersect> Plane::getTrace(const Ray &ray, real_t dist) const {
 	auto res = make_shared<PlaneIntersect>(*this, ray);
-	if (res->isIntersect()) {
-		if (res->getDistToInter() < dist) {
-			return res;
-		}
-	}
+	if (res->isIntersect() && res->getDistToInter() < dist) return res;
 	return nullptr;
 }
 
@@ -32,7 +28,8 @@ real_t PlaneIntersect::getDistToInter() const {
 }
 
 Vec3 PlaneIntersect::getNormal() const {
-	return plane.normal;
+	if (ray.dir.dot(plane.normal) < 0) return plane.normal;
+	else return -plane.normal;
 }
 
 shared_ptr<Surface> PlaneIntersect::getInterPointSurfaceProperty() const {
