@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Light.h"
+#include "Mesh.h"
 #include "Object.h"
+#include "ObjReader.h"
 #include "Plane.h"
 #include "Scene.h"
 #include "Triangle.h"
@@ -47,6 +49,7 @@ private:
 	int readSphere(std::ifstream &fin, std::shared_ptr<Sphere>);
 	int readPlane(std::ifstream &fin, std::shared_ptr<Plane>);
 	int readTri(std::ifstream &fin, std::shared_ptr<Tri>);
+	int readMesh(std::ifstream &fin, std::shared_ptr<ObjReader>, std::shared_ptr<Mesh>);
 
 	void fillMap();
 

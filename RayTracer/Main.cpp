@@ -8,7 +8,7 @@ using namespace cv;
 using namespace std;
 
 int main() {
-	SceneReader sceneReader("../scene/8.scene");
+	SceneReader sceneReader("../scene/9.scene");
 	Renderer renderer{ sceneReader.getViewer(), sceneReader.getScene() };
 
 	Timer timer;

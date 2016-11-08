@@ -10,6 +10,8 @@ SceneReader::SceneReader(const string &sceneFileName) {
 	fillMap();
 
 	ifstream fin(sceneFileName);
+	if (!fin) error_exit("Scene file not found!\n");
+
 	while (!fin.eof()) {
 		string line;
 		getline(fin, line);
@@ -31,6 +33,10 @@ SceneReader::SceneReader(const string &sceneFileName) {
 		} else if (line.find("Tri") == 0) {
 			shared_ptr<Tri> nowTri = make_shared<Tri>();
 			backTrack = readTri(fin, nowTri);
+		} else if (line.find("Mesh") == 0) {
+			shared_ptr<ObjReader> nowReader = nullptr;
+			shared_ptr<Mesh> nowMesh = make_shared<Mesh>();
+			backTrack = readMesh(fin, nowReader, nowMesh);
 		}
 
 		if (backTrack <= 0) fin.seekg(backTrack, ios::cur);
@@ -228,5 +234,33 @@ int SceneReader::readTri(ifstream &fin, shared_ptr<Tri> nowTri) {
 		return true;
 	}, [&]() {
 		scene.addObject(nowTri);
+	});
+}
+
+int SceneReader::readMesh(ifstream &fin, shared_ptr<ObjReader> nowReader, shared_ptr<Mesh> nowMesh) {
+	return readSth(fin, [&](istringstream &iss, const string &line) {
+		if (line.find("texture") == 0) {
+			nowMesh->setTexture(readTexture(line.substr(iss.tellg())));
+		} else if (line.find("file") == 0) {
+			string fileName;
+			iss >> fileName;
+			nowReader = make_shared<ObjReader>(fileName);
+		} else if (line.find("center") == 0) {
+			Vec3 center;
+			iss >> center[0] >> center[1] >> center[2];
+			if (!nowReader) error_exit("Mesh: must input \"file\" first!\n");
+			nowReader->setCenter(center);
+		} else if (line.find("radius") == 0) {
+			real_t radius;
+			iss >> radius;
+			if (!nowReader) error_exit("Mesh: must input \"file\" first!\n");
+			nowReader->setRadius(radius);
+		} else {
+			return false;
+		}
+		return true;
+	}, [&]() {
+		nowMesh->tris = std::move(nowReader->getMesh()->tris);
+		scene.addObject(nowMesh);
 	});
 }

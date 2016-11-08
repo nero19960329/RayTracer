@@ -65,6 +65,7 @@ public:
 		interPoint = ray.getDistPoint(distToInter);
 		return interPoint;
 	}
+	virtual Vec3 getNormal() const = 0;			// get normal vector
 
 	virtual IntersectInfo getIntersectInfo() {
 		auto obj = getObj();
@@ -73,8 +74,6 @@ public:
 	}
 
 private:
-	virtual Vec3 getNormal() const = 0;			// get normal vector
-
 	std::shared_ptr<Surface> getSurface() const {
 		auto surface = getObj()->getTexture()->getSurfaceProperty();
 		if (surface) return surface;

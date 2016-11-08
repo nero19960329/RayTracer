@@ -72,6 +72,12 @@
     <ClCompile Include="Triangle.cpp">
       <Filter>源文件\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="ObjReader.cpp">
+      <Filter>源文件\Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>源文件\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vec3.h">
@@ -129,6 +135,12 @@
       <Filter>头文件\Lib</Filter>
     </ClInclude>
     <ClInclude Include="Triangle.h">
+      <Filter>头文件\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjReader.h">
+      <Filter>头文件\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
       <Filter>头文件\Objects</Filter>
     </ClInclude>
   </ItemGroup>
