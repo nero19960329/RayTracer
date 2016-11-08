@@ -19,24 +19,25 @@ SceneReader::SceneReader(const string &sceneFileName) {
 		if (!line.size() || line[0] == '#') continue;
 
 		int backTrack = 1;
+		shared_ptr<Texture> texture = nullptr;
 		if (line.find("Viewer") == 0) {
 			backTrack = readViewer(fin);
 		} else if (line.find("Light") == 0) {
 			shared_ptr<Light> nowLight = make_shared<Light>();
 			backTrack = readLight(fin, nowLight);
 		} else if (line.find("Sphere") == 0) {
-			shared_ptr<Sphere> nowSphere = make_shared<Sphere>();
-			backTrack = readSphere(fin, nowSphere);
+			shared_ptr<PureSphere> nowPureSphere = make_shared<PureSphere>();
+			real_t refrIdx;
+			backTrack = readSphere(fin, nowPureSphere, refrIdx, texture);
 		} else if (line.find("Plane") == 0) {
-			shared_ptr<Plane> nowPlane = make_shared<Plane>();
-			backTrack = readPlane(fin, nowPlane);
+			shared_ptr<InfPlane> nowInfPlane = make_shared<InfPlane>();
+			backTrack = readPlane(fin, nowInfPlane, texture);
 		} else if (line.find("Tri") == 0) {
 			shared_ptr<Tri> nowTri = make_shared<Tri>();
-			backTrack = readTri(fin, nowTri);
+			backTrack = readFace(fin, nowTri, texture);
 		} else if (line.find("Mesh") == 0) {
 			shared_ptr<ObjReader> nowReader = nullptr;
-			shared_ptr<Mesh> nowMesh = make_shared<Mesh>();
-			backTrack = readMesh(fin, nowReader, nowMesh);
+			backTrack = readMesh(fin, nowReader, texture);
 		}
 
 		if (backTrack <= 0) fin.seekg(backTrack, ios::cur);
@@ -94,15 +95,15 @@ shared_ptr<Texture> SceneReader::readTexture(const string &str) const {
 	if (catagory == "PureTexture") {
 		string colorStr;
 		iss >> colorStr;
-		return std::make_shared<PureTexture>(readMaterial(materialStr), readColor(colorStr));
+		return make_shared<PureTexture>(readMaterial(materialStr), readColor(colorStr));
 	} else if (catagory == "GridTexture") {
 		int grid;
 		iss >> grid;
-		return std::make_shared<GridTexture>(readMaterial(materialStr), grid);
+		return make_shared<GridTexture>(readMaterial(materialStr), grid);
 	} else if (catagory == "ImageTexture") {
 		string fileName;
 		iss >> fileName;
-		return std::make_shared<ImageTexture>(readMaterial(materialStr), fileName);
+		return make_shared<ImageTexture>(readMaterial(materialStr), fileName);
 	} else {
 		error_exit("No such texture!\n");
 	}
@@ -172,7 +173,9 @@ int SceneReader::readViewer(ifstream &fin) {
 int SceneReader::readLight(ifstream &fin, shared_ptr<Light> nowLight) {
 	return readSth(fin, [&](istringstream &iss, const string &line) {
 		if (line.find("origin") == 0) {
-			iss >> nowLight->center[0] >> nowLight->center[1] >> nowLight->center[2];
+			Vec3 center;
+			iss >> center[0] >> center[1] >> center[2];
+			nowLight->setCenter(center);
 		} else if (line.find("color") == 0) {
 			string color;
 			iss >> color;
@@ -188,59 +191,58 @@ int SceneReader::readLight(ifstream &fin, shared_ptr<Light> nowLight) {
 	});
 }
 
-int SceneReader::readSphere(ifstream &fin, shared_ptr<Sphere> nowSphere) {
+int SceneReader::readSphere(ifstream &fin, shared_ptr<PureSphere> nowPureSphere, real_t refrIdx, shared_ptr<Texture> texture) {
 	return readSth(fin, [&](istringstream &iss, const string &line) {
 		if (line.find("texture") == 0) {
-			nowSphere->setTexture(readTexture(line.substr(iss.tellg())));
+			texture = readTexture(line.substr(iss.tellg()));
 		} else if (line.find("center") == 0) {
 			Vec3 center;
 			iss >> center[0] >> center[1] >> center[2];
-			nowSphere->center = center;
+			nowPureSphere->center = center;
 		} else if (line.find("radius") == 0) {
-			iss >> nowSphere->radius;
+			iss >> nowPureSphere->radius;
 		} else if (line.find("refraction_index") == 0) {
 			string refrIdxStr;
 			iss >> refrIdxStr;
-			nowSphere->innerRefrIdx = readRefrIdx(refrIdxStr);
+			refrIdx = readRefrIdx(refrIdxStr);
 		} else {
 			return false;
 		}
 		return true;
 	}, [&]() {
-		scene.addObject(nowSphere);
+		scene.addObject(make_shared<Sphere>(texture, *nowPureSphere, refrIdx));
 	});
 }
 
-int SceneReader::readPlane(ifstream &fin, shared_ptr<Plane> nowPlane) {
+int SceneReader::readPlane(ifstream &fin, shared_ptr<InfPlane> nowInfPlane, shared_ptr<Texture> texture) {
 	return readSth(fin, [&](istringstream &iss, const string &line) {
-		if (line.find("texture") == 0) nowPlane->setTexture(readTexture(line.substr(iss.tellg())));
-		else if (line.find("normal") == 0) iss >> nowPlane->normal[0] >> nowPlane->normal[1] >> nowPlane->normal[2];
-		else if (line.find("offset") == 0) iss >> nowPlane->offset;
+		if (line.find("texture") == 0) texture = readTexture(line.substr(iss.tellg()));
+		else if (line.find("normal") == 0) iss >> nowInfPlane->normal[0] >> nowInfPlane->normal[1] >> nowInfPlane->normal[2];
+		else if (line.find("offset") == 0) iss >> nowInfPlane->offset;
 		else return false;
 		return true;
 	}, [&]() {
-		nowPlane->normal.normalize();
-		scene.addObject(nowPlane);
+		scene.addObject(make_shared<Plane>(texture, nowInfPlane->normal, nowInfPlane->offset, false));
 	});
 }
 
-int SceneReader::readTri(ifstream &fin, shared_ptr<Tri> nowTri) {
+int SceneReader::readFace(ifstream &fin, shared_ptr<Tri> nowTri, shared_ptr<Texture> texture) {
 	return readSth(fin, [&](istringstream &iss, const string &line) {
-		if (line.find("texture") == 0) nowTri->setTexture(readTexture(line.substr(iss.tellg())));
+		if (line.find("texture") == 0) texture = readTexture(line.substr(iss.tellg()));
 		else if (line.find("a") == 0) iss >> nowTri->a[0] >> nowTri->a[1] >> nowTri->a[2];
 		else if (line.find("b") == 0) iss >> nowTri->b[0] >> nowTri->b[1] >> nowTri->b[2];
 		else if (line.find("c") == 0) iss >> nowTri->c[0] >> nowTri->c[1] >> nowTri->c[2];
 		else return false;
 		return true;
 	}, [&]() {
-		scene.addObject(nowTri);
+		scene.addObject(make_shared<Face>(texture, *nowTri));
 	});
 }
 
-int SceneReader::readMesh(ifstream &fin, shared_ptr<ObjReader> nowReader, shared_ptr<Mesh> nowMesh) {
+int SceneReader::readMesh(ifstream &fin, shared_ptr<ObjReader> nowReader, shared_ptr<Texture> texture) {
 	return readSth(fin, [&](istringstream &iss, const string &line) {
 		if (line.find("texture") == 0) {
-			nowMesh->setTexture(readTexture(line.substr(iss.tellg())));
+			texture = readTexture(line.substr(iss.tellg()));
 		} else if (line.find("file") == 0) {
 			string fileName;
 			iss >> fileName;
@@ -255,12 +257,18 @@ int SceneReader::readMesh(ifstream &fin, shared_ptr<ObjReader> nowReader, shared
 			iss >> radius;
 			if (!nowReader) error_exit("Mesh: must input \"file\" first!\n");
 			nowReader->setRadius(radius);
+		} else if (line.find("smooth") == 0) {
+			string flag;
+			iss >> flag;
+			if (flag == "true" || flag == "True") nowReader->setSmoothShading(true);
+			else nowReader->setSmoothShading(false);
 		} else {
 			return false;
 		}
 		return true;
 	}, [&]() {
-		nowMesh->tris = std::move(nowReader->getMesh()->tris);
-		scene.addObject(nowMesh);
+		shared_ptr<Mesh> mesh = nowReader->getMesh();
+		mesh->setTexture(texture);
+		scene.addObject(mesh);
 	});
 }

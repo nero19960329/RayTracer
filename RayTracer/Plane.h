@@ -1,5 +1,6 @@
 #pragma once
 
+#include "InfPlane.h"
 #include "Object.h"
 #include "Vec3.h"
 
@@ -11,37 +12,32 @@ class Plane : public Object {
 	friend class SceneReader;
 
 protected:
-	Vec3 normal;
-	real_t offset;
+	InfPlane infPlane;
 
 public:
 	Plane() : Object(nullptr) {}
 
 	Plane(const std::shared_ptr<Texture> &_texture, const Vec3 &_normal, real_t _offset, bool isNormalized = true) :
-		Object(_texture), normal(_normal), offset(_offset) {
-		if (!isNormalized) {
-			normal.normalize();
-		}
+		Object(_texture), infPlane(_normal, _offset) {
+		if (!isNormalized) infPlane.normal.normalize();
 	}
 
 	Plane(const std::shared_ptr<Texture> &_texture, const Vec3 &_normal, const Vec3 &_point, bool isNormalized = true) :
-		Object(_texture), normal(_normal) {
-		if (!isNormalized) {
-			normal.normalize();
-		}
-		offset = _point.dot(normal);
+		Object(_texture), infPlane(_normal) {
+		if (!isNormalized) infPlane.normal.normalize();
+		infPlane.offset = _point.dot(infPlane.normal);
 	}
 
 	Plane(const std::shared_ptr<Texture> &_texture, const Vec3 &a, const Vec3 &b, const Vec3 &c) :
 		Object(_texture) {
-		normal = (b - a).cross(c - b).getNormalized();
-		offset = a.dot(normal);
+		infPlane.normal = (b - a).cross(c - b).getNormalized();
+		infPlane.offset = a.dot(infPlane.normal);
 	}
 
 	Plane(const std::shared_ptr<Texture> &_texture, real_t a, real_t b, real_t c, real_t w) :
 		Object(_texture) {
-		normal = Vec3{ a, b, c }.getNormalized();
-		offset = -w;
+		infPlane.normal = Vec3{ a, b, c }.getNormalized();
+		infPlane.offset = -w;
 	}
 
 	~Plane() {}

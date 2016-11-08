@@ -1,12 +1,15 @@
 #pragma once
 
+#include "Face.h"
+#include "InfPlane.h"
 #include "Light.h"
 #include "Mesh.h"
 #include "Object.h"
 #include "ObjReader.h"
 #include "Plane.h"
+#include "PureSphere.h"
 #include "Scene.h"
-#include "Triangle.h"
+#include "Tri.h"
 #include "Utils.h"
 #include "Viewer.h"
 
@@ -46,10 +49,10 @@ private:
 
 	int readViewer(std::ifstream &fin);
 	int readLight(std::ifstream &fin, std::shared_ptr<Light>);
-	int readSphere(std::ifstream &fin, std::shared_ptr<Sphere>);
-	int readPlane(std::ifstream &fin, std::shared_ptr<Plane>);
-	int readTri(std::ifstream &fin, std::shared_ptr<Tri>);
-	int readMesh(std::ifstream &fin, std::shared_ptr<ObjReader>, std::shared_ptr<Mesh>);
+	int readSphere(std::ifstream &fin, std::shared_ptr<PureSphere>, real_t, std::shared_ptr<Texture>);
+	int readPlane(std::ifstream &fin, std::shared_ptr<InfPlane>, std::shared_ptr<Texture>);
+	int readFace(std::ifstream &fin, std::shared_ptr<Tri>, std::shared_ptr<Texture>);
+	int readMesh(std::ifstream &fin, std::shared_ptr<ObjReader>, std::shared_ptr<Texture>);
 
 	void fillMap();
 

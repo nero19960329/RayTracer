@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "Mesh.h"
-#include "Triangle.h"
+#include "Tri.h"
 #include "Vec3.h"
 
 class ObjReader {
@@ -17,18 +17,16 @@ private:
 
 	Vec3 center;
 	real_t radius;
+	bool smoothShadingFlag = false;
 
 public:
 	explicit ObjReader(const std::string &objFileName, const Vec3 &_center = Vec3::zeros(), real_t _radius = 1.0);
 	~ObjReader() {}
 
 	std::shared_ptr<Mesh> getMesh();
-	void setCenter(const Vec3 &_center) {
-		center = _center;
-	}
-	void setRadius(real_t _radius) {
-		radius = _radius;
-	}
+	void setCenter(const Vec3 &_center) { center = _center; }
+	void setRadius(real_t _radius) { radius = _radius; }
+	void setSmoothShading(bool _smoothShadingFlag) { smoothShadingFlag = _smoothShadingFlag; }
 
 private:
 	Vec3 readVec3(const std::string &str);

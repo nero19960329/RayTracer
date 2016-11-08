@@ -15,6 +15,9 @@ const real_t PI = 3.14159265359;
 #define repa(x, y, z) for (auto x = decltype(z){y}; x != z; ++x)
 #define repd(x, y, z) for (auto x = decltype(z){y}; x != z; --x)
 
+#define min(x, y) ((x) < (y) ? (x) : (y))
+#define max(x, y) ((x) > (y) ? (x) : (y))
+
 // left-closed and right-open
 template <typename T>
 inline bool betw(const T &x, const T &y, const T &z) {

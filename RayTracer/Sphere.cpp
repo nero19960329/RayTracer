@@ -9,17 +9,17 @@ shared_ptr<Intersect> Sphere::getTrace(const Ray &ray, real_t dist) const {
 }
 
 bool SphereIntersect::isIntersect() const {
-	real_t distToCenter2 = (ray.orig - sphere.center).sqr();
-	inside = distToCenter2 < sqr(sphere.radius);
+	real_t distToCenter2 = (ray.orig - sphere.pureSphere.center).sqr();
+	inside = distToCenter2 < sqr(sphere.pureSphere.radius);
 
-	distToProjCenter = (sphere.center - ray.orig).dot(ray.dir);
+	distToProjCenter = (sphere.pureSphere.center - ray.orig).dot(ray.dir);
 	toward = distToProjCenter > 0;
 
 	if (!inside && !toward) {
 		return false;
 	}
 
-	halfCord2 = sqr(sphere.radius) - distToCenter2 + sqr(distToProjCenter);
+	halfCord2 = sqr(sphere.pureSphere.radius) - distToCenter2 + sqr(distToProjCenter);
 	if (!inside && halfCord2 < 0) {
 		return false;
 	}
@@ -41,8 +41,8 @@ real_t SphereIntersect::getDistToInter() const {
 }
 
 Vec3 SphereIntersect::getNormal() const {
-	if (!inside) normal = (interPoint - sphere.center).getNormalized();
-	else normal = (sphere.center - interPoint).getNormalized();
+	if (!inside) normal = (interPoint - sphere.pureSphere.center).getNormalized();
+	else normal = (sphere.pureSphere.center - interPoint).getNormalized();
 
 	return normal;
 }

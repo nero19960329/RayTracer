@@ -151,19 +151,22 @@
     <ClCompile Include="SceneReader.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="StaticConstants.cpp" />
-    <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="Face.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Viewer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AABB.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Geometry.h" />
+    <ClInclude Include="InfPlane.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjReader.h" />
     <ClInclude Include="Plane.h" />
+    <ClInclude Include="PureSphere.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
@@ -173,7 +176,8 @@
     <ClInclude Include="Surface.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Timer.h" />
-    <ClInclude Include="Triangle.h" />
+    <ClInclude Include="Face.h" />
+    <ClInclude Include="Tri.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Vec3.h" />
     <ClInclude Include="Viewer.h" />

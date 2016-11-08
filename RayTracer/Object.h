@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AABB.h"
 #include "Ray.h"
 #include "Texture.h"
 
@@ -32,6 +33,10 @@ public:
 	void setTexture(const std::shared_ptr<Texture> &_texture) {
 		texture = _texture;
 	}
+
+	virtual AABB getAABB() const {
+		return{};
+	};
 };
 
 struct IntersectInfo {

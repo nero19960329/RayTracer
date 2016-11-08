@@ -17,7 +17,6 @@ public:
 		Sphere(nullptr, center, 0.1), color(_color), intensity(_intensity) {}
 	~Light() {}
 
-	Vec3 getCenter() const {
-		return center;
-	}
+	Vec3 getCenter() const { return pureSphere.center; }
+	void setCenter(const Vec3 &_center) { pureSphere.center = _center; }
 };

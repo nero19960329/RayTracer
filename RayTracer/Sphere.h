@@ -2,6 +2,7 @@
 
 #include "Constants.h"
 #include "Object.h"
+#include "PureSphere.h"
 #include "Vec3.h"
 
 class SphereIntersect;
@@ -12,20 +13,23 @@ class Sphere : public Object {
 	friend class SceneReader;
 
 protected:
-	Vec3 center;
-	real_t radius;
-
+	PureSphere pureSphere;
 	real_t innerRefrIdx;
 
 public:
 	Sphere() : Object(nullptr), innerRefrIdx(VACUUM_REFRACTION_INDEX) {}
 	Sphere(const std::shared_ptr<Texture> &_texture, const Vec3 &_center, real_t _radius, real_t _innerRefrIdx = VACUUM_REFRACTION_INDEX) :
-		Object(_texture), center(_center), radius(_radius), innerRefrIdx(_innerRefrIdx) {
-		assert(radius > 0);
-	}
+		Object(_texture), pureSphere(_center, _radius), innerRefrIdx(_innerRefrIdx) {}
+	Sphere(const std::shared_ptr<Texture> &_texture, const PureSphere &_pureSphere, real_t _innerRefrIdx = VACUUM_REFRACTION_INDEX) :
+		Object(_texture), pureSphere(_pureSphere), innerRefrIdx(_innerRefrIdx) {}
 	~Sphere() {}
 
 	std::shared_ptr<Intersect> getTrace(const Ray &ray, real_t dist = std::numeric_limits<real_t>::max()) const override;
+
+	AABB getAABB() const override {
+		Vec3 radiusVec{ pureSphere.radius, pureSphere.radius, pureSphere.radius };
+		return AABB{ pureSphere.center - radiusVec, pureSphere.center + radiusVec };
+	}
 };
 
 class SphereIntersect : public Intersect {

@@ -28,8 +28,30 @@ ObjReader::ObjReader(const string &objFileName, const Vec3 &_center, real_t _rad
 
 shared_ptr<Mesh> ObjReader::getMesh() {
 	fitSize();
-	for (const auto &idx : triIndices) tris.push_back({ nullptr, vertices[idx[0]], vertices[idx[1]], vertices[idx[2]] });
-	return make_shared<Mesh>(nullptr, tris);
+	for (const auto &idx : triIndices) tris.push_back({ vertices[idx[0]], vertices[idx[1]], vertices[idx[2]] });
+
+	if (smoothShadingFlag) {
+		if (!vertexNormals.size()) {
+			vector<int> vertexTris(vertices.size(), 0);		// vertex has how many adjacent triangles
+			vertexNormals = vector<Vec3>(vertices.size(), Vec3::zeros());
+
+			rep(i, tris.size()) {
+				Vec3 normal = tris[i].getNormal();
+				array<int, 3> idx = triIndices[i];
+				rep(k, 3) {
+					++vertexTris[idx[k]];
+					vertexNormals[idx[k]] += normal;
+				}
+			}
+
+			rep(i, vertices.size()) vertexNormals[i] /= vertexTris[i];
+		}
+
+		for (auto &vertexNormal : vertexNormals) vertexNormal.normalize();
+		return make_shared<Mesh>(nullptr, tris, triIndices, vertexNormals);
+	} else {
+		return make_shared<Mesh>(nullptr, tris, triIndices, vector<Vec3>{});
+	}
 }
 
 Vec3 ObjReader::readVec3(const string &str) {

@@ -69,13 +69,13 @@
     <ClCompile Include="SceneReader.cpp">
       <Filter>源文件\Lib</Filter>
     </ClCompile>
-    <ClCompile Include="Triangle.cpp">
-      <Filter>源文件\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="ObjReader.cpp">
       <Filter>源文件\Lib</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
+      <Filter>源文件\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Face.cpp">
       <Filter>源文件\Objects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -134,14 +134,26 @@
     <ClInclude Include="SceneReader.h">
       <Filter>头文件\Lib</Filter>
     </ClInclude>
-    <ClInclude Include="Triangle.h">
-      <Filter>头文件\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="ObjReader.h">
       <Filter>头文件\Lib</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>头文件\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Face.h">
+      <Filter>头文件\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Tri.h">
+      <Filter>头文件\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PureSphere.h">
+      <Filter>头文件\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="InfPlane.h">
+      <Filter>头文件\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="AABB.h">
+      <Filter>头文件\Geometry</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
