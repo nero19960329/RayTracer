@@ -4,6 +4,8 @@
 #include "Utils.h"
 #include "Vec3.h"
 
+#include <algorithm>
+
 class AABB {
 public:
 	Vec3 bounds[2];
@@ -22,8 +24,8 @@ public:
 			real_t t0 = (bounds[0][i] - ray.orig[i]) * invD;
 			real_t t1 = (bounds[1][i] - ray.orig[i]) * invD;
 			if (invD < 0.0f) std::swap(t0, t1);
-			tmin = min(t0, tmin);
-			tmax = max(t1, tmax);
+			tmin = std::min(t0, tmin);
+			tmax = std::max(t1, tmax);
 			if (tmax <= tmin) return false;
 		}
 		return true;

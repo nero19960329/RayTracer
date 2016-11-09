@@ -3,6 +3,8 @@
 #include "Object.h"
 #include "Tri.h"
 
+#include <algorithm>
+
 class FaceIntersect;
 class SceneReader;
 
@@ -26,8 +28,8 @@ public:
 	AABB getAABB() const {
 		Vec3 minVec, maxVec;
 		rep(k, 3) {
-			minVec[k] = min(min(tri.a[k], tri.b[k]), tri.c[k]);
-			maxVec[k] = max(max(tri.a[k], tri.b[k]), tri.c[k]);
+			minVec[k] = std::min(std::min(tri.a[k], tri.b[k]), tri.c[k]);
+			maxVec[k] = std::max(std::max(tri.a[k], tri.b[k]), tri.c[k]);
 		}
 		return AABB{ minVec - Vec3::epsilons(), maxVec + Vec3::epsilons() };
 	}
