@@ -180,6 +180,10 @@ public:
 		return{ epsilon, epsilon, epsilon };
 	}
 
+	static Vec3 min() {
+		return{ std::numeric_limits<real_t>::min(), std::numeric_limits<real_t>::min(), std::numeric_limits<real_t>::min() };
+	}
+
 	static Vec3 max() {
 		return{ std::numeric_limits<real_t>::max(), std::numeric_limits<real_t>::max(), std::numeric_limits<real_t>::max() };
 	}

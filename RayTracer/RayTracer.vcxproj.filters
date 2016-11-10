@@ -78,6 +78,9 @@
     <ClCompile Include="Face.cpp">
       <Filter>源文件\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="KDTree.cpp">
+      <Filter>源文件\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vec3.h">
@@ -154,6 +157,9 @@
     </ClInclude>
     <ClInclude Include="AABB.h">
       <Filter>头文件\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="KDTree.h">
+      <Filter>头文件\Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

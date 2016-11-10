@@ -6,6 +6,10 @@
 #include <sstream>
 #include <iostream>
 
+#include <algorithm>
+#include <functional>
+#include <vector>
+
 using real_t = double;
 
 const real_t epsilon = 1e-6;
@@ -42,6 +46,20 @@ inline bool updateMax(T &value, const T &max) {
 		return true;
 	}
 	return false;
+}
+
+template <typename T> 
+inline typename std::vector<T>::iterator findKthSmallest(std::vector<T> &vec, int k, std::function<bool(const T &, const T &)> cmp) {
+	auto low = vec.begin();
+	auto high = vec.end();
+	while (low != high) {
+		const T &tmp = *low;
+		auto p = std::stable_partition(low, high, std::bind(cmp, std::placeholders::_1, tmp));
+		auto delta = p - vec.begin() + 1;
+		if (delta == k) return p;
+		else if (delta < k) low = p + 1;
+		else high = p;
+	}
 }
 
 extern size_t getConsoleWidth();

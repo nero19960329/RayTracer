@@ -34,7 +34,7 @@ shared_ptr<Intersect> Scene::getIntersect(const Ray &ray) const {
 		if (intersect) {
 			real_t dis = intersect->getDistToInter();
 			if (updateMin(minDist, dis)) {
-				res = std::move(intersect);
+				res = intersect;
 			}
 		}
 	}

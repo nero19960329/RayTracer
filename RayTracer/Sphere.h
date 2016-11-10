@@ -27,8 +27,10 @@ public:
 	std::shared_ptr<Intersect> getTrace(const Ray &ray, real_t dist = std::numeric_limits<real_t>::max()) const override;
 
 	AABB getAABB() const override {
+		if (aabb.bounds[1] != Vec3::max()) return aabb;
 		Vec3 radiusVec{ pureSphere.radius, pureSphere.radius, pureSphere.radius };
-		return AABB{ pureSphere.center - radiusVec, pureSphere.center + radiusVec };
+		aabb = AABB{ pureSphere.center - radiusVec, pureSphere.center + radiusVec };
+		return aabb;
 	}
 };
 
@@ -44,9 +46,7 @@ private:
 
 	virtual std::shared_ptr<Surface> getInterPointSurfaceProperty() const override;
 
-	const Object *getObj() const override {
-		return &sphere;
-	}
+	const Object *getObj() const override { return &sphere; }
 
 public:
 	SphereIntersect(const Sphere &_sphere, const Ray &_ray) : Intersect(_ray), sphere(_sphere) {}

@@ -15,7 +15,7 @@ Vec3 Phong::getColor(DistRay &ray, int depth) const {
 
 	auto intersect = scene.getIntersect(ray);
 	if (intersect) {
-		IntersectInfo info = scene.getIntersect(ray)->getIntersectInfo();
+		IntersectInfo info = intersect->getIntersectInfo();
 
 		Vec3 ambient = AMBIENT_INTENSITY * info.surface->ambient;
 		Vec3 local = getPhongLocal(info, ray);

@@ -20,10 +20,10 @@ color       WHITE
 intensity   1.0
 
 # Plane texture normal offset
-Plane
-texture GridTexture FLOOR 2
-normal  0.0 1.0 0.0
-offset  -1.0
+#Plane
+#texture GridTexture FLOOR 2
+#normal  0.0 1.0 0.0
+#offset  -1.0
 
 # Mesh texture file(>) center radius smooth( = false)
 Mesh
@@ -31,5 +31,5 @@ texture PureTexture PLASTIC YELLOW
 file ../objs/gourd.obj
 center 0.0 3.0 -10.0
 radius 4.0
-#smooth false
+smooth false
 smooth true

@@ -25,13 +25,15 @@ public:
 
 	std::shared_ptr<Intersect> getTrace(const Ray &ray, real_t dist = std::numeric_limits<real_t>::max()) const override;
 
-	AABB getAABB() const {
+	AABB getAABB() const override {
+		if (aabb.bounds[1] != -Vec3::max()) return aabb;
 		Vec3 minVec, maxVec;
 		rep(k, 3) {
 			minVec[k] = std::min(std::min(tri.a[k], tri.b[k]), tri.c[k]);
 			maxVec[k] = std::max(std::max(tri.a[k], tri.b[k]), tri.c[k]);
 		}
-		return AABB{ minVec - Vec3::epsilons(), maxVec + Vec3::epsilons() };
+		aabb = AABB{ minVec - Vec3::epsilons(), maxVec + Vec3::epsilons() };
+		return aabb;
 	}
 };
 

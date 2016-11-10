@@ -12,6 +12,9 @@ class Object {
 private:
 	std::shared_ptr<Texture> texture;
 
+protected:
+	mutable AABB aabb;
+
 public:
 	explicit Object(const std::shared_ptr<Texture> &_texture) : texture(_texture) {}
 	virtual ~Object() {}
@@ -30,7 +33,7 @@ public:
 		return texture;
 	}
 
-	void setTexture(const std::shared_ptr<Texture> &_texture) {
+	virtual void setTexture(const std::shared_ptr<Texture> &_texture) {
 		texture = _texture;
 	}
 
@@ -79,7 +82,7 @@ public:
 	}
 
 private:
-	std::shared_ptr<Surface> getSurface() const {
+	virtual std::shared_ptr<Surface> getSurface() const {
 		auto surface = getObj()->getTexture()->getSurfaceProperty();
 		if (surface) return surface;
 		return getInterPointSurfaceProperty();
