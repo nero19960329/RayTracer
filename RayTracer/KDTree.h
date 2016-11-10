@@ -3,6 +3,9 @@
 #include "AABB.h"
 #include "Constants.h"
 #include "Object.h"
+#include "Timer.h"
+
+#undef max
 
 #include <memory>
 #include <vector>
@@ -36,7 +39,10 @@ public:
 	explicit KDTree(std::vector<std::shared_ptr<Object>> &_objs) : Object(nullptr) {
 		AABB aabb;
 		for (const auto &obj : _objs) aabb.expand(obj->getAABB());
+		Timer timer;
+		timer.begin();
 		root = KDNode::build(_objs, aabb);
+		printf("Building duration: %.4lfs\n", timer.getDuration());
 	}
 	~KDTree() {}
 

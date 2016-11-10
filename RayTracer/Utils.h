@@ -49,16 +49,15 @@ inline bool updateMax(T &value, const T &max) {
 }
 
 template <typename T> 
-inline typename std::vector<T>::iterator findKthSmallest(std::vector<T> &vec, int k, std::function<bool(const T &, const T &)> cmp) {
-	auto low = vec.begin();
-	auto high = vec.end();
+inline typename std::vector<T>::iterator findKthElement(std::vector<T> &vec, int k, std::function<bool(const T &, const T &)> cmp) {
+	auto low = vec.begin(), high = vec.end();
 	while (low != high) {
 		const T &tmp = *low;
 		auto p = std::stable_partition(low, high, std::bind(cmp, std::placeholders::_1, tmp));
 		auto delta = p - vec.begin() + 1;
-		if (delta == k) return p;
-		else if (delta < k) low = p + 1;
-		else high = p;
+		if (delta < k) low = p + 1;
+		else if (delta > k) high = p;
+		else return p;
 	}
 }
 

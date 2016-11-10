@@ -10,8 +10,6 @@ shared_ptr<KDNode> KDNode::build(vector<shared_ptr<Object>> &_objs, const AABB &
 	node->right = nullptr;
 	node->aabb = aabb;
 
-	if (!_objs.size()) return node;
-
 	if (_objs.size() < MIN_KDNODE_OBJS) {
 		for (const auto &obj : _objs) node->objs.push_back(obj);
 		return node;
@@ -20,7 +18,7 @@ shared_ptr<KDNode> KDNode::build(vector<shared_ptr<Object>> &_objs, const AABB &
 	int axis = node->aabb.getLongestAxis();
 	function<bool(const shared_ptr<Object> &, const shared_ptr<Object> &)> cmp = 
 		[=](const shared_ptr<Object> &elem, const shared_ptr<Object> &tmp) { return elem->getAABB().getMid()[axis] < tmp->getAABB().getMid()[axis]; };
-	auto median = findKthSmallest(_objs, _objs.size() / 2, cmp);
+	auto median = findKthElement(_objs, _objs.size() / 2, cmp);
 
 	vector<shared_ptr<Object>> leftObjs, rightObjs;
 	real_t split = (*median)->getAABB().getMid()[axis];
@@ -36,7 +34,7 @@ shared_ptr<KDNode> KDNode::build(vector<shared_ptr<Object>> &_objs, const AABB &
 
 	auto dupCnt = leftObjs.size() + rightObjs.size() - _objs.size();
 	real_t dupScale = dupCnt * 1.0 / _objs.size();
-	if (dupScale < DUPLICATE_RATIO) {
+	if (dupScale < DUPLICATE_RATIO && leftObjs.size() != _objs.size() && rightObjs.size() != _objs.size()) {
 		AABB leftAABB = aabb, rightAABB = aabb;
 		leftAABB.bounds[1][axis] = split;
 		rightAABB.bounds[0][axis] = split;
@@ -74,9 +72,8 @@ bool KDTreeIntersect::isIntersect(const shared_ptr<KDNode> &node, const Ray &ray
 			auto intersect = obj->getTrace(ray);
 			if (intersect) {
 				if (updateMin(distToInter, intersect->getDistToInter())) {
-					IntersectInfo info = intersect->getIntersectInfo();
-					normal = info.normal;
-					surface = info.surface;
+					normal = intersect->getNormal();
+					surface = intersect->getSurface();
 				}
 				flag = true;
 			}

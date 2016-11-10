@@ -81,12 +81,15 @@ public:
 		return IntersectInfo{ getIntersection(), getNormal(), getSurface(), getNextRefractionIndex() };
 	}
 
-private:
 	virtual std::shared_ptr<Surface> getSurface() const {
-		auto surface = getObj()->getTexture()->getSurfaceProperty();
+		auto texture = getObj()->getTexture();
+		if (!texture) return nullptr;
+		auto surface = texture->getSurfaceProperty();
 		if (surface) return surface;
 		return getInterPointSurfaceProperty();
 	};
+
+private:
 
 	virtual real_t getNextRefractionIndex() const {
 		return ray.refrIdx;

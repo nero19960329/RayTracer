@@ -14,7 +14,7 @@ int main() {
 	Timer timer;
 	timer.begin();
 	Mat img = renderer.render();
-	printf("Duration: %.4lfs\n", timer.getDuration());
+	printf("Rendering duration: %.4lfs\n", timer.getDuration());
 
 	imshow("Ray Tracing", img);
 	imwrite("../img/test.png", img);

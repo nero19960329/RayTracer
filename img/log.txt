@@ -6,5 +6,5 @@
 6. 增加折射效果，并未实现球套球的这种现象。
 7. 透明球后有一纯色球，可以看到倒影效果。
 8. 可以渲染三角形，准备渲染网格模型。光线与三角形求交：Moller-Trumbore方法(Journal of Graphic Tools, 1997)，Ref: http://pkuwwt.github.io/scholarship/2014-04-03-ray-triangle-intersection-tests-for-dummies/
-9. 可以渲染网格模型。gourd.obj -> 渲染时间：23s
+9. 可以渲染网格模型。gourd.obj -> 渲染时间：23s，dragon.obj实验数据见小本子
 10. 增加双线性法向插值，注意插值后的法向量首先要归一化，然后不能根据光线来的方向来确定正反，只能根据顶点法向量经过一次计算而成。

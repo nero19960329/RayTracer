@@ -51,7 +51,7 @@ public:
 
 class PlaneIntersect : public Intersect {
 private:
-	Plane plane;
+	const Plane &plane;
 
 	mutable real_t projOrigToInter, projDir;
 

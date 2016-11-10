@@ -9,7 +9,9 @@ shared_ptr<Intersect> Face::getTrace(const Ray &ray, real_t dist) const {
 }
 
 bool FaceIntersect::isIntersect() const {
-	return face.tri.intersect(ray, distToInter);
+	bool isIntersect = face.tri.intersect(ray, info);
+	distToInter = info.distToInter;
+	return isIntersect;
 }
 
 real_t FaceIntersect::getDistToInter() const {
@@ -17,9 +19,14 @@ real_t FaceIntersect::getDistToInter() const {
 }
 
 Vec3 FaceIntersect::getNormal() const {
-	normal = face.tri.getNormal();
-	if (ray.dir.dot(normal) < 0) return normal;
-	else return -normal;
+	if (face.smoothShadingFlag) {
+		normal = (1 - info.u - info.v) * face.normals[0] + info.u * face.normals[1] + info.v * face.normals[2];
+		return normal;
+	} else {
+		normal = face.tri.getNormal();
+		if (ray.dir.dot(normal) < 0) return normal;
+		else return -normal;
+	}
 }
 
 shared_ptr<Surface> FaceIntersect::getInterPointSurfaceProperty() const {

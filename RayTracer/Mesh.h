@@ -18,8 +18,6 @@ class Mesh : public Object {
 
 protected:
 	std::vector<Tri> tris;
-	std::vector<std::array<int, 3>> triIndices;
-	std::vector<Vec3> normals;
 
 	std::shared_ptr<KDTree> tree;
 	std::vector<std::shared_ptr<Object>> faces;
@@ -27,18 +25,20 @@ protected:
 public:
 	Mesh() : Object(nullptr) {}
 	Mesh(const std::shared_ptr<Texture> &_texture, const std::vector<Tri> &_tris, const std::vector<std::array<int, 3>> &_triIndices, const std::vector<Vec3> &_normals) :
-		Object(_texture), tris(_tris), triIndices(_triIndices), normals(_normals) {
-		for (const auto &tri : tris) faces.push_back(std::make_shared<Face>(nullptr, tri));
+		Object(_texture), tris(_tris) {
+		if (_normals.size()) {
+			rep(i, tris.size()) {
+				std::array<Vec3, 3> vertexNormals = { _normals[_triIndices[i][0]], _normals[_triIndices[i][1]], _normals[_triIndices[i][2]] };
+				faces.push_back(std::make_shared<Face>(nullptr, tris[i], true, vertexNormals));
+			}
+		} else {
+			for (const auto &tri : tris) faces.push_back(std::make_shared<Face>(nullptr, tri));
+		}
 		tree = std::make_shared<KDTree>(faces);
 	}
 	~Mesh() {}
 
 	std::shared_ptr<Intersect> getTrace(const Ray &ray, real_t dist = std::numeric_limits<real_t>::max()) const override;
-
-	void setTexture(const std::shared_ptr<Texture> &_texture) override {
-		Object::setTexture(_texture);
-		for (auto &face : faces) face->setTexture(_texture);
-	}
 };
 
 class MeshIntersect : public Intersect {

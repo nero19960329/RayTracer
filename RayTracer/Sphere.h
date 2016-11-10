@@ -36,7 +36,7 @@ public:
 
 class SphereIntersect : public Intersect {
 private:
-	Sphere sphere;
+	const Sphere &sphere;
 
 	mutable bool toward, inside;
 	mutable real_t distToProjCenter;
