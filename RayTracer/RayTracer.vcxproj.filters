@@ -63,9 +63,6 @@
     <ClCompile Include="Plane.cpp">
       <Filter>源文件\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Utils.cpp">
-      <Filter>源文件\Lib</Filter>
-    </ClCompile>
     <ClCompile Include="SceneReader.cpp">
       <Filter>源文件\Lib</Filter>
     </ClCompile>
@@ -163,6 +160,9 @@
     </ClInclude>
     <ClInclude Include="ProgressPrinter.h">
       <Filter>头文件\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="SplitPlane.h">
+      <Filter>头文件\Geometry</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

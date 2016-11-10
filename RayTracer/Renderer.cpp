@@ -31,7 +31,7 @@ Mat Renderer::rawRender() const {
 		}
 		++i;
 	}
-	printProgress(1);
+	printer.display(screen.height);
 	printf("\n");
 
 	return res;

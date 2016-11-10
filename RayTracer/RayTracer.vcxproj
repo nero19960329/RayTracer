@@ -153,7 +153,6 @@
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="StaticConstants.cpp" />
     <ClCompile Include="Face.cpp" />
-    <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Viewer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -176,6 +175,7 @@
     <ClInclude Include="Phong.h" />
     <ClInclude Include="SceneReader.h" />
     <ClInclude Include="Sphere.h" />
+    <ClInclude Include="SplitPlane.h" />
     <ClInclude Include="Surface.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Timer.h" />

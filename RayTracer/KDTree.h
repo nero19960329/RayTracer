@@ -6,7 +6,11 @@
 #include "Timer.h"
 
 #undef max
+#define LEFT_SIDE true
+#define RIGHT_SIDE false
+#define NONE_SIDE false
 
+#include <array>
 #include <memory>
 #include <vector>
 
@@ -27,6 +31,18 @@ public:
 	~KDNode() {}
 
 	static std::shared_ptr<KDNode> build(std::vector<std::shared_ptr<Object>> &_objs, const AABB &aabb, int depth = 0);
+
+private:
+	static std::array<SplitPlane, 6> PerfectSplits(const std::shared_ptr<Object> &obj, const AABB &aabb);
+	static std::array<std::vector<std::shared_ptr<Object>>, 3> Classify(const std::vector<std::shared_ptr<Object>> &objs, const AABB &left, const AABB &right, const SplitPlane &plane);
+
+	static inline real_t C(real_t leftRatio, real_t rightRatio, int leftCnt, int rightCnt) {
+		real_t res = KDTREE_SAH_KT + KDTREE_SAH_KI * (leftRatio * leftCnt + rightRatio * rightCnt);
+		if (!leftCnt || !rightCnt) return 0.8 * res;
+		else return res;
+	};
+
+	static real_t SAH(const SplitPlane &plane, const AABB &aabb, std::array<int, 3> cnts, bool &side);
 };
 
 class KDTree : public Object {

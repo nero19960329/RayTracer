@@ -39,6 +39,13 @@ public:
 		aabb = AABB{ minVec - Vec3::epsilons(), maxVec + Vec3::epsilons() };
 		return aabb;
 	}
+
+	bool liesInPlane(const SplitPlane &p) const override {
+		if (fabs(tri.a[p.axis] - p.value) < epsilon &&
+			fabs(tri.b[p.axis] - p.value) < epsilon &&
+			fabs(tri.c[p.axis] - p.value) < epsilon) return true;
+		else return false;
+	}
 };
 
 class FaceIntersect : public Intersect {

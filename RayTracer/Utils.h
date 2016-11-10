@@ -61,9 +61,7 @@ inline typename std::vector<T>::iterator findKthElement(std::vector<T> &vec, int
 	}
 }
 
-extern size_t getConsoleWidth();
 __declspec(noreturn) inline void error_exit(const char *msg) {
 	printf("\n%s", msg);
 	abort();
 }
-extern void printProgress(real_t p);

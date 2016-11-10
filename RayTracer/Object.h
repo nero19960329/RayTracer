@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AABB.h"
+#include "SplitPlane.h"
 #include "Ray.h"
 #include "Texture.h"
 
@@ -19,27 +20,17 @@ public:
 	explicit Object(const std::shared_ptr<Texture> &_texture) : texture(_texture) {}
 	virtual ~Object() {}
 
-	virtual bool isInfinity() const {
-		return false;
-	}
-
-	virtual bool hasInside() const {
-		return false;
-	}
+	virtual bool isInfinity() const { return false; }
+	virtual bool hasInside() const { return false; }
 
 	virtual std::shared_ptr<Intersect> getTrace(const Ray &ray, real_t dist = std::numeric_limits<real_t>::max()) const = 0;
 
-	const std::shared_ptr<Texture> &getTexture() const {
-		return texture;
-	}
+	const std::shared_ptr<Texture> &getTexture() const { return texture; }
+	virtual void setTexture(const std::shared_ptr<Texture> &_texture) { texture = _texture; }
 
-	virtual void setTexture(const std::shared_ptr<Texture> &_texture) {
-		texture = _texture;
-	}
+	virtual AABB getAABB() const { return{}; };
 
-	virtual AABB getAABB() const {
-		return{};
-	};
+	virtual bool liesInPlane(const SplitPlane &p) const { return false; }
 };
 
 struct IntersectInfo {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SplitPlane.h"
 #include "Ray.h"
 #include "Utils.h"
 #include "Vec3.h"
@@ -42,6 +43,19 @@ public:
 	bool intersect(const Ray &ray) const {
 		real_t t;
 		return intersect(ray, t);
+	}
+
+	void splitBox(const SplitPlane &plane, AABB &left, AABB &right) const {
+		left = *this;
+		right = *this;
+		left.bounds[1][plane.axis] = plane.value;
+		right.bounds[0][plane.axis] = plane.value;
+	}
+
+	real_t halfSA() const {
+		real_t dist[3];
+		rep(i, 3) dist[i] = bounds[1][i] - bounds[0][i];
+		return dist[0] * dist[1] + dist[1] * dist[2] + dist[2] * dist[0];
 	}
 
 	void expand(const AABB &box) {

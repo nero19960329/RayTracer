@@ -28,7 +28,7 @@ offset  -1.0
 # Mesh texture file(>) center radius smooth( = false)
 Mesh
 texture PureTexture PLASTIC YELLOW
-file ../objs/dragon.obj
+file ../objs/teapot.obj
 center 0.0 3.0 -10.0
 radius 4.0
 #smooth false
