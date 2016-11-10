@@ -36,7 +36,7 @@ shared_ptr<KDNode> KDNode::build(vector<shared_ptr<Object>> &_objs, const AABB &
 
 	auto dupCnt = leftObjs.size() + rightObjs.size() - _objs.size();
 	real_t dupScale = dupCnt * 1.0 / _objs.size();
-	if (dupScale < 0.4) {
+	if (dupScale < DUPLICATE_RATIO) {
 		AABB leftAABB = aabb, rightAABB = aabb;
 		leftAABB.bounds[1][axis] = split;
 		rightAABB.bounds[0][axis] = split;
@@ -57,21 +57,16 @@ shared_ptr<Intersect> KDTree::getTrace(const Ray &ray, real_t dist) const {
 
 bool KDTreeIntersect::isIntersect(const shared_ptr<KDNode> &node, const Ray &ray) const {
 	if (node->left && node->right) {
-		real_t tmin[2], tmax[2];
-		bool leftHit = node->left->aabb.intersect(ray, tmin[0], tmax[0]);
-		bool rightHit = node->right->aabb.intersect(ray, tmin[1], tmax[1]);
+		real_t t[2];
+		bool leftHit = node->left->aabb.intersect(ray, t[0]);
+		bool rightHit = node->right->aabb.intersect(ray, t[1]);
 
 		if (!leftHit && !rightHit) return false;
 		else if (leftHit && !rightHit) return isIntersect(node->left, ray);
 		else if (!leftHit && rightHit) return isIntersect(node->right, ray);
 		else {
-			if (tmin[0] < tmin[1]) {
-				if (isIntersect(node->left, ray)) return true;
-				else return isIntersect(node->right, ray);
-			} else {
-				if (isIntersect(node->right, ray)) return true;
-				else return isIntersect(node->left, ray);
-			}
+			if (t[0] < t[1]) return isIntersect(node->left, ray) || isIntersect(node->right, ray);
+			else return isIntersect(node->right, ray) || isIntersect(node->left, ray);
 		}
 	} else {
 		bool flag = false;
@@ -91,11 +86,8 @@ bool KDTreeIntersect::isIntersect(const shared_ptr<KDNode> &node, const Ray &ray
 }
 
 bool KDTreeIntersect::isIntersect() const {
-	real_t tmin, tmax;
-	if (tree.root->aabb.intersect(ray, tmin, tmax)) return isIntersect(tree.root, ray);
-	else {
-		return false;
-	}
+	if (tree.root->aabb.intersect(ray)) return isIntersect(tree.root, ray);
+	else return false;
 }
 
 real_t KDTreeIntersect::getDistToInter() const {

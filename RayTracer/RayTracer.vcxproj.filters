@@ -161,5 +161,8 @@
     <ClInclude Include="KDTree.h">
       <Filter>头文件\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="ProgressPrinter.h">
+      <Filter>头文件\Lib</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -15,4 +15,5 @@ const real_t VACUUM_REFRACTION_INDEX = 1.0;
 const real_t WATER_REFRACTION_INDEX = 1.333;
 const real_t GLASS_REFRACTION_INDEX = 1.5;
 
-const int MIN_KDNODE_OBJS = 1000;
+const int MIN_KDNODE_OBJS = 10;
+const real_t DUPLICATE_RATIO = 0.4;

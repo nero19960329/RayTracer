@@ -23,9 +23,9 @@ public:
 
 	~AABB() {}
 
-	bool intersect(const Ray &ray, real_t &tmin, real_t &tmax) const {
-		tmin = -std::numeric_limits<real_t>::max();
-		tmax = std::numeric_limits<real_t>::max();
+	bool intersect(const Ray &ray, real_t &t) const {
+		real_t tmax = std::numeric_limits<real_t>::max();
+		real_t tmin = -tmax;
 		rep(i, 3) {
 			real_t invD = 1.0 / ray.dir[i];
 			real_t t0 = (bounds[0][i] - ray.orig[i]) * invD;
@@ -35,7 +35,13 @@ public:
 			tmax = std::min(tmax, t1);
 			if (tmax <= tmin) return false;
 		}
+		t = tmin;
 		return true;
+	}
+
+	bool intersect(const Ray &ray) const {
+		real_t t;
+		return intersect(ray, t);
 	}
 
 	void expand(const AABB &box) {

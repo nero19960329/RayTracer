@@ -1,5 +1,7 @@
 #include "Renderer.h"
 
+#include "ProgressPrinter.h"
+
 using namespace cv;
 using namespace std;
 
@@ -16,8 +18,9 @@ Mat Renderer::rawRender() const {
 
 	Mat res{ screen.height, screen.width, CV_64FC3 };
 	int i = 0, j, allPixels = screen.width * screen.height;
+	ProgressPrinter printer{ "Rendering => ", allPixels };
 	for (const auto &rayVec : rays) {
-		printProgress(i * screen.height * 1.0 / allPixels);
+		printer.display(screen.height);
 		j = 0;
 		for (const auto &ray : rayVec) {
 			Vec3 color = shader->color(ray);

@@ -168,6 +168,7 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjReader.h" />
     <ClInclude Include="Plane.h" />
+    <ClInclude Include="ProgressPrinter.h" />
     <ClInclude Include="PureSphere.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Renderer.h" />
