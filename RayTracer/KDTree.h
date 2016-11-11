@@ -6,9 +6,6 @@
 #include "Timer.h"
 
 #undef max
-#define LEFT_SIDE true
-#define RIGHT_SIDE false
-#define NONE_SIDE false
 
 #include <array>
 #include <memory>
@@ -26,24 +23,26 @@ protected:
 	std::shared_ptr<KDNode> left, right;
 	std::vector<std::shared_ptr<Object>> objs;
 
+	enum EventType { ENDING = 0, LYING, STARTING };
+	enum ObjSide { BOTH, LEFT_ONLY, RIGHT_ONLY };
+	struct Event {
+		real_t split;
+		EventType type;
+		int axis;
+		size_t objID;
+
+		Event(real_t _split, EventType _type, int _axis, size_t _objID) :
+			split(_split), type(_type), axis(_axis), objID(_objID) {}
+	};
+
 public:
 	KDNode() {}
 	~KDNode() {}
 
-	static std::shared_ptr<KDNode> build(std::vector<std::shared_ptr<Object>> &_objs, const AABB &aabb, const SplitPlane &lastPlane = {}, int depth = 0);
+	static std::shared_ptr<KDNode> build(const std::vector<std::shared_ptr<Object>> &_objs, const AABB &aabb, const std::vector<Event> &events, const SplitPlane &lastPlane = {}, int depth = 0);
 
 private:
-	enum EventType { ENDING = 0, LYING, STARTING };
-	struct Event {
-		real_t split;
-		EventType type;
-
-		Event(real_t _split, EventType _type) :
-			split(_split), type(_type) {}
-	};
-
-	static std::array<SplitPlane, 6> PerfectSplits(const std::shared_ptr<Object> &obj, const AABB &aabb);
-	static std::array<std::vector<std::shared_ptr<Object>>, 3> Classify(const std::vector<std::shared_ptr<Object>> &objs, const SplitPlane &plane);
+	static std::vector<ObjSide> ClassifyLeftRightBoth(size_t objSize, const std::vector<Event> &events, const SplitPlane &plane);
 
 	static inline real_t C(real_t leftRatio, real_t rightRatio, int leftCnt, int rightCnt) {
 		real_t res = KDTREE_SAH_KT + KDTREE_SAH_KI * (leftRatio * leftCnt + rightRatio * rightCnt);
@@ -51,8 +50,9 @@ private:
 		else return res;
 	};
 
-	static real_t SAH(const SplitPlane &plane, const AABB &aabb, std::array<int, 3> cnts, bool &side);
-	static SplitPlane FindPlane(const std::vector<std::shared_ptr<Object>> &objs, const AABB &aabb, bool &sideFlag, real_t &minCost);
+	static real_t SAH(SplitPlane &plane, const AABB &aabb, std::array<int, 3> cnts);
+	static SplitPlane FindPlane(int objSize, const AABB &aabb, const std::vector<Event> &events, real_t &minCost);
+	static std::vector<Event> GetEvents(const std::vector<std::shared_ptr<Object>> &objs, const AABB &aabb);
 };
 
 class KDTree : public Object {
@@ -62,14 +62,7 @@ public:
 	std::shared_ptr<KDNode> root;
 
 public:
-	explicit KDTree(std::vector<std::shared_ptr<Object>> &_objs) : Object(nullptr) {
-		AABB aabb;
-		for (const auto &obj : _objs) aabb.expand(obj->getAABB());
-		Timer timer;
-		timer.begin();
-		root = KDNode::build(_objs, aabb);
-		printf("Building duration: %.4lfs\n", timer.getDuration());
-	}
+	explicit KDTree(const std::vector<std::shared_ptr<Object>> &_objs);
 	~KDTree() {}
 
 	std::shared_ptr<Intersect> getTrace(const Ray &ray, real_t dist = std::numeric_limits<real_t>::max()) const override;

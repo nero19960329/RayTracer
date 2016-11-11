@@ -4,7 +4,7 @@
 
 using namespace std;
 
-real_t KDNode::SAH(const SplitPlane &plane, const AABB &aabb, array<int, 3> cnts, bool &side) {
+real_t KDNode::SAH(SplitPlane &plane, const AABB &aabb, array<int, 3> cnts) {
 	AABB leftBox, rightBox;
 	aabb.splitBox(plane, leftBox, rightBox);
 	real_t SA = aabb.halfSA(), invSA = 1.0 / SA;
@@ -13,139 +13,77 @@ real_t KDNode::SAH(const SplitPlane &plane, const AABB &aabb, array<int, 3> cnts
 	real_t costLeft = C(leftRatio, rightRatio, cnts[0] + cnts[2], cnts[1]);
 	real_t costRight = C(leftRatio, rightRatio, cnts[0], cnts[1] + cnts[2]);
 	if (costLeft < costRight) {
-		side = LEFT_SIDE;
+		plane.side = LEFT_SIDE;
 		return costLeft;
 	} else {
-		side = RIGHT_SIDE;
+		plane.side = RIGHT_SIDE;
 		return costRight;
 	}
 }
 
-array<SplitPlane, 6> KDNode::PerfectSplits(const shared_ptr<Object> &obj, const AABB &aabb) {
-	AABB B = obj->getAABB();
-	rep(i, 3) {
-		updateMax(B.bounds[0][i], aabb.bounds[0][i]);
-		updateMin(B.bounds[1][i], aabb.bounds[1][i]);
-	}
-	array<SplitPlane, 6> res;
-	rep(i, 3) {
-		res[i + i] = SplitPlane{ i, B.bounds[0][i] };
-		res[i + i + 1] = SplitPlane{ i, B.bounds[1][i] };
-	}
-	return res;
-}
-
-array<vector<shared_ptr<Object>>, 3> KDNode::Classify(const vector<shared_ptr<Object>> &objs, const SplitPlane &plane) {
-	array<vector<shared_ptr<Object>>, 3> res;
-	for (const auto &obj : objs) {
-		if (obj->liesInPlane(plane)) res[2].push_back(obj);
-		else {
-			AABB objAABB = obj->getAABB();
-			if (objAABB.bounds[0][plane.axis] < plane.value) res[0].push_back(obj);
-			if (objAABB.bounds[1][plane.axis] > plane.value) res[1].push_back(obj);
+vector<KDNode::ObjSide> KDNode::ClassifyLeftRightBoth(size_t objLen, const vector<Event> &events, const SplitPlane &plane) {
+	vector<ObjSide> res{ objLen, BOTH };
+	for (const auto &e : events) {
+		if (e.type == ENDING && e.axis == plane.axis && e.split <= plane.value) res[e.objID] = LEFT_ONLY;
+		else if (e.type == STARTING && e.axis == plane.axis && e.split >= plane.value) res[e.objID] = RIGHT_ONLY;
+		else if (e.type == LYING && e.axis == plane.axis) {
+			if (e.split < plane.value || (e.split == plane.value && plane.side == LEFT_SIDE)) res[e.objID] = LEFT_ONLY;
+			if (e.split > plane.value || (e.split == plane.value && plane.side == RIGHT_SIDE)) res[e.objID] = RIGHT_ONLY;
 		}
 	}
 	return res;
 }
 
-SplitPlane KDNode::FindPlane(const vector<shared_ptr<Object>> &objs, const AABB &aabb, bool &sideFlag, real_t &minCost) {
-	SplitPlane bestPlane{ -1, 0.0 };
-
-	if (objs.size() == 21) {
-		printf("");
-	}
-
+vector<KDNode::Event> KDNode::GetEvents(const vector<shared_ptr<Object>> &objs, const AABB &aabb) {
+	vector<Event> res;
 	rep(k, 3) {
-		vector<Event> eventVec;
-		for (const auto &obj : objs) {
-			AABB box = obj->clipToBox(aabb);
-			if (box.isPlanar(k)) eventVec.emplace_back(box.bounds[0][k], LYING);
+		rep(i, objs.size()) {
+			AABB box = objs[i]->clipToBox(aabb);
+			if (box.isPlanar(k)) res.emplace_back(box.bounds[0][k], LYING, k, i);
 			else {
-				eventVec.emplace_back(box.bounds[0][k], STARTING);
-				eventVec.emplace_back(box.bounds[1][k], ENDING);
+				res.emplace_back(box.bounds[0][k], STARTING, k, i);
+				res.emplace_back(box.bounds[1][k], ENDING, k, i);
+			}
+		}
+	}
+	return res;
+}
+
+SplitPlane KDNode::FindPlane(int objLen, const AABB &aabb, const vector<Event> &events, real_t &minCost) {
+	SplitPlane bestPlane{ -1, 0.0, NONE_SIDE };
+
+	array<array<int, 3>, 3> cnts;
+	rep(k, 3) {
+		cnts[k][0] = 0;				// left
+		cnts[k][1] = objLen;		// right
+		cnts[k][2] = 0;				// lying
+	}
+
+	auto eventLen = events.size();
+	for (auto i = 0; i < eventLen;) {
+		SplitPlane plane{ events[i].axis, events[i].split, NONE_SIDE };
+		array<int, 3> pCnts = { 0, 0, 0 };	// ending, lying, starting
+		rep(j, 3) {
+			while (i < eventLen && events[i].axis == plane.axis && events[i].split == plane.value && events[i].type == j) {
+				++pCnts[j];
+				++i;
 			}
 		}
 
-		auto eventCmp = [](const Event &a, const Event &b) {
-			return a.split < b.split || (a.split == b.split && a.type < b.type);
-		};
-		sort(eventVec.begin(), eventVec.end(), eventCmp);
-
-		array<int, 3> cnts = { 0, objs.size(), 0 };	// left, right, lying
-		auto eventLen = eventVec.size();
-		for (auto i = 0; i < eventLen;) {
-			SplitPlane plane{ k, eventVec[i].split };
-			array<int, 3> pCnts = { 0, 0, 0 };	// ending, lying, starting
-			rep(j, 3) {
-				while (i < eventLen && eventVec[i].split == plane.value && eventVec[i].type == j) {
-					++pCnts[j];
-					++i;
-				}
-			}
-
-			cnts[2] = pCnts[LYING];
-			cnts[1] -= pCnts[LYING];
-			cnts[1] -= pCnts[ENDING];
-
-			bool tmpSideFlag = NONE_SIDE;
-			real_t cost = SAH(plane, aabb, cnts, tmpSideFlag);
-			if (cost < minCost) {
-				minCost = cost;
-				bestPlane = plane;
-				sideFlag = tmpSideFlag;
-			}
-
-			cnts[0] += pCnts[STARTING];
-			cnts[0] += pCnts[LYING];
-			cnts[2] = 0;
-		}
+		array<int, 3> &nowCnts = cnts[plane.axis];
+		nowCnts[2] = pCnts[LYING];
+		nowCnts[1] -= pCnts[LYING];
+		nowCnts[1] -= pCnts[ENDING];
+		if (updateMin(minCost, SAH(plane, aabb, nowCnts))) bestPlane = plane;
+		nowCnts[0] += pCnts[STARTING];
+		nowCnts[0] += pCnts[LYING];
+		nowCnts[2] = 0;
 	}
 
 	return bestPlane;
 }
 
-shared_ptr<KDNode> KDNode::build(vector<shared_ptr<Object>> &_objs, const AABB &aabb, const SplitPlane &lastPlane, int depth) {
-	/*shared_ptr<KDNode> node = make_shared<KDNode>();
-	node->left = nullptr;
-	node->right = nullptr;
-	node->aabb = aabb;
-
-	if (_objs.size() < MIN_KDNODE_OBJS) {
-		for (const auto &obj : _objs) node->objs.push_back(obj);
-		return node;
-	}
-
-	int axis = node->aabb.getLongestAxis();
-	function<bool(const shared_ptr<Object> &, const shared_ptr<Object> &)> cmp = 
-		[=](const shared_ptr<Object> &elem, const shared_ptr<Object> &tmp) { return elem->getAABB().getMid()[axis] < tmp->getAABB().getMid()[axis]; };
-	auto median = findKthElement(_objs, _objs.size() / 2, cmp);
-
-	vector<shared_ptr<Object>> leftObjs, rightObjs;
-	real_t split = (*median)->getAABB().getMid()[axis];
-
-	repa(it, _objs.begin(), median) {
-		leftObjs.push_back(*it);
-		if ((*it)->getAABB().bounds[1][axis] > split) rightObjs.push_back(*it);
-	}
-	repa(it, median, _objs.end()) {
-		rightObjs.push_back(*it);
-		if ((*it)->getAABB().bounds[0][axis] < split) leftObjs.push_back(*it);
-	}
-
-	auto dupCnt = leftObjs.size() + rightObjs.size() - _objs.size();
-	real_t dupScale = dupCnt * 1.0 / _objs.size();
-	if (dupScale < DUPLICATE_RATIO && leftObjs.size() != _objs.size() && rightObjs.size() != _objs.size()) {
-		AABB leftAABB = aabb, rightAABB = aabb;
-		leftAABB.bounds[1][axis] = split;
-		rightAABB.bounds[0][axis] = split;
-		node->left = build(leftObjs, leftAABB, depth + 1);
-		node->right = build(rightObjs, rightAABB, depth + 1);
-	} else {
-		for (const auto &obj : _objs) node->objs.push_back(obj);
-	}
-
-	return node;*/
-
+shared_ptr<KDNode> KDNode::build(const vector<shared_ptr<Object>> &_objs, const AABB &aabb, const vector<Event> &events, const SplitPlane &lastPlane, int depth) {
 	shared_ptr<KDNode> node = make_shared<KDNode>();
 	node->left = nullptr;
 	node->right = nullptr;
@@ -156,52 +94,92 @@ shared_ptr<KDNode> KDNode::build(vector<shared_ptr<Object>> &_objs, const AABB &
 		return node;
 	}
 
-	/*real_t minCost = numeric_limits<real_t>::max();
-	bool sideFlag = NONE_SIDE;
-	SplitPlane bestPlane;
-	AABB leftBox, rightBox;
-
-	for (const auto &obj : _objs) {
-		array<SplitPlane, 6> splitPlanes = PerfectSplits(obj, aabb);
-		for (const auto &splitPlane : splitPlanes) {
-			array<vector<shared_ptr<Object>>, 3> splitObjs = Classify(_objs, splitPlane);
-			bool tmpSideFlag = NONE_SIDE;
-			array<int, 3> splitCnts = { splitObjs[0].size(), splitObjs[1].size(), splitObjs[2].size() };
-			real_t cost = SAH(splitPlane, aabb, splitCnts, tmpSideFlag);
-			if (cost < minCost) {
-				minCost = cost;
-				sideFlag = tmpSideFlag;
-				bestPlane = splitPlane;
-			}
-		}
-	}*/
-
 	real_t minCost = numeric_limits<real_t>::max();
-	bool sideFlag = NONE_SIDE;
-	SplitPlane bestPlane = FindPlane(_objs, aabb, sideFlag, minCost);
+	SplitPlane bestPlane = FindPlane(_objs.size(), aabb, events, minCost);
 
-	if (bestPlane.axis == -1 || (bestPlane.axis == lastPlane.axis && bestPlane.value == lastPlane.value)) {
+	if (minCost >= KDTREE_SAH_KI * _objs.size() || bestPlane.axis == -1 || bestPlane == lastPlane) {
 		for (const auto &obj : _objs) node->objs.push_back(obj);
 		return node;
 	}
 
-	array<vector<shared_ptr<Object>>, 3> splitObjs = Classify(_objs, bestPlane);
-
-	if (sideFlag == LEFT_SIDE) splitObjs[0].insert(splitObjs[0].end(), splitObjs[2].begin(), splitObjs[2].end());
-	else splitObjs[1].insert(splitObjs[1].end(), splitObjs[2].begin(), splitObjs[2].end());
-
-	//printf("minCost: %lf, KI*T: %lf\n", minCost, KDTREE_SAH_KI * _objs.size());
-	if (minCost < KDTREE_SAH_KI * _objs.size()) {
-		//printf("left: %d, right: %d, all: %d\n", splitObjs[0].size(), splitObjs[1].size(), _objs.size());
-		AABB leftBox, rightBox;
-		aabb.splitBox(bestPlane, leftBox, rightBox);
-		node->left = build(splitObjs[0], leftBox, bestPlane, depth + 1);
-		node->right = build(splitObjs[1], rightBox, bestPlane, depth + 1);
-	} else {
-		for (const auto &obj : _objs) node->objs.push_back(obj);
+	vector<ObjSide> objSides = ClassifyLeftRightBoth(_objs.size(), events, bestPlane);
+	vector<shared_ptr<Object>> leftObjs, rightObjs;
+	vector<size_t> leftMap(_objs.size(), numeric_limits<size_t>::max());
+	vector<size_t> rightMap(_objs.size(), numeric_limits<size_t>::max());
+	rep(i, _objs.size()) {
+		if (objSides[i] == LEFT_ONLY) {
+			leftMap[i] = leftObjs.size();
+			leftObjs.push_back(_objs[i]);
+		} else if (objSides[i] == RIGHT_ONLY) {
+			rightMap[i] = rightObjs.size();
+			rightObjs.push_back(_objs[i]);
+		} else {
+			leftMap[i] = leftObjs.size();
+			rightMap[i] = rightObjs.size();
+			leftObjs.push_back(_objs[i]);
+			rightObjs.push_back(_objs[i]);
+		}
 	}
 
+	vector<Event> leftOnlyEvents, rightOnlyEvents;
+	vector<Event> bothLeftEvents, bothRightEvents;
+	for (const auto &e : events) {
+		if (objSides[e.objID] == LEFT_ONLY) leftOnlyEvents.emplace_back(e.split, e.type, e.axis, leftMap[e.objID]);
+		else if (objSides[e.objID] == RIGHT_ONLY) rightOnlyEvents.emplace_back(e.split, e.type, e.axis, rightMap[e.objID]);
+		else {
+			if (e.axis == bestPlane.axis) {
+				if (e.type == STARTING) {
+					bothLeftEvents.emplace_back(e.split, e.type, e.axis, leftMap[e.objID]);
+					bothRightEvents.emplace_back(bestPlane.value, e.type, e.axis, rightMap[e.objID]);
+				} else if (e.type == ENDING) {
+					bothLeftEvents.emplace_back(bestPlane.value, e.type, e.axis, leftMap[e.objID]);
+					bothRightEvents.emplace_back(e.split, e.type, e.axis, rightMap[e.objID]);
+				} else {
+					assert(false);
+				}
+			} else {
+				// can modify!!!!
+				bothLeftEvents.emplace_back(e.split, e.type, e.axis, leftMap[e.objID]);
+				bothRightEvents.emplace_back(e.split, e.type, e.axis, rightMap[e.objID]);
+			}
+		}
+	}
+
+	auto eventCmp = [](const Event &a, const Event &b) {
+		return a.split < b.split || (a.split == b.split && a.type < b.type);
+	};
+	sort(bothLeftEvents.begin(), bothLeftEvents.end(), eventCmp);
+	sort(bothRightEvents.begin(), bothRightEvents.end(), eventCmp);
+
+	vector<Event> leftEvents, rightEvents;
+	merge(leftOnlyEvents.begin(), leftOnlyEvents.end(),
+		bothLeftEvents.begin(), bothLeftEvents.end(),
+		back_inserter(leftEvents), eventCmp);
+	merge(rightOnlyEvents.begin(), rightOnlyEvents.end(),
+		bothRightEvents.begin(), bothRightEvents.end(),
+		back_inserter(rightEvents), eventCmp);
+
+	AABB leftBox, rightBox;
+	aabb.splitBox(bestPlane, leftBox, rightBox);
+	node->left = build(leftObjs, leftBox, leftEvents, bestPlane, depth + 1);
+	node->right = build(rightObjs, rightBox, rightEvents, bestPlane, depth + 1);
+
 	return node;
+}
+
+KDTree::KDTree(const vector<shared_ptr<Object>> &_objs) :
+	Object(nullptr) {
+	Timer timer;
+	timer.begin();
+	AABB aabb;
+	for (const auto &obj : _objs) aabb.expand(obj->getAABB());
+	vector<KDNode::Event> eventVec = root->GetEvents(_objs, aabb);
+	auto eventCmp = [](const KDNode::Event &a, const KDNode::Event &b) {
+		return a.split < b.split || (a.split == b.split && a.type < b.type);
+	};
+	sort(eventVec.begin(), eventVec.end(), eventCmp);
+	root = KDNode::build(_objs, aabb, eventVec);
+	printf("Building duration: %.4lfs\n", timer.getDuration());
 }
 
 shared_ptr<Intersect> KDTree::getTrace(const Ray &ray, real_t dist) const {
