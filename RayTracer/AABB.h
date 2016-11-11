@@ -24,7 +24,7 @@ public:
 
 	~AABB() {}
 
-	bool intersect(const Ray &ray, real_t &t) const {
+	inline bool intersect(const Ray &ray, real_t &t) const {
 		real_t tmax = std::numeric_limits<real_t>::max();
 		real_t tmin = -tmax;
 		rep(i, 3) {
@@ -40,32 +40,32 @@ public:
 		return true;
 	}
 
-	bool intersect(const Ray &ray) const {
+	inline bool intersect(const Ray &ray) const {
 		real_t t;
 		return intersect(ray, t);
 	}
 
-	void splitBox(const SplitPlane &plane, AABB &left, AABB &right) const {
+	inline void splitBox(const SplitPlane &plane, AABB &left, AABB &right) const {
 		left = *this;
 		right = *this;
 		left.bounds[1][plane.axis] = plane.value;
 		right.bounds[0][plane.axis] = plane.value;
 	}
 
-	real_t halfSA() const {
+	inline real_t halfSA() const {
 		real_t dist[3];
 		rep(i, 3) dist[i] = bounds[1][i] - bounds[0][i];
 		return dist[0] * dist[1] + dist[1] * dist[2] + dist[2] * dist[0];
 	}
 
-	void expand(const AABB &box) {
+	inline void expand(const AABB &box) {
 		rep(i, 3) {
 			updateMin(bounds[0][i], box.bounds[0][i]);
 			updateMax(bounds[1][i], box.bounds[1][i]);
 		}
 	}
 
-	int getLongestAxis() const {
+	inline int getLongestAxis() const {
 		real_t dist[3];
 		rep(i, 3) dist[i] = bounds[1][i] - bounds[0][i];
 		if (dist[0] >= dist[1] && dist[0] >= dist[2]) return 0;
@@ -73,7 +73,11 @@ public:
 		else return 2;
 	}
 
-	Vec3 getMid() const {
+	inline Vec3 getMid() const {
 		return (bounds[0] + bounds[1]) * 0.5;
+	}
+
+	inline bool isPlanar(int axis) const {
+		return bounds[1][axis] - bounds[0][axis] < biggerEpsilon;
 	}
 };

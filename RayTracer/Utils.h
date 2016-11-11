@@ -1,9 +1,6 @@
 #pragma once
 
-#include <cassert>
 #include <cstdio>
-#include <string>
-#include <sstream>
 #include <iostream>
 
 #include <algorithm>
@@ -13,6 +10,7 @@
 using real_t = double;
 
 const real_t epsilon = 1e-6;
+const real_t biggerEpsilon = epsilon * 3;
 const real_t PI = 3.14159265359;
 
 #define rep(x, y) for (auto x = decltype(y){0}; x != y; ++x)
@@ -63,5 +61,5 @@ inline typename std::vector<T>::iterator findKthElement(std::vector<T> &vec, int
 
 __declspec(noreturn) inline void error_exit(const char *msg) {
 	printf("\n%s", msg);
-	abort();
+	exit(0);
 }

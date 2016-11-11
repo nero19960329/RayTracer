@@ -31,6 +31,14 @@ public:
 	virtual AABB getAABB() const { return{}; };
 
 	virtual bool liesInPlane(const SplitPlane &p) const { return false; }
+	virtual AABB clipToBox(const AABB &aabb) const {
+		AABB B = getAABB();
+		rep(i, 3) {
+			updateMax(B.bounds[0][i], aabb.bounds[0][i]);
+			updateMin(B.bounds[1][i], aabb.bounds[1][i]);
+		}
+		return B;
+	}
 };
 
 struct IntersectInfo {

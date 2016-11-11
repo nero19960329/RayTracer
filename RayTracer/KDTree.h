@@ -30,11 +30,20 @@ public:
 	KDNode() {}
 	~KDNode() {}
 
-	static std::shared_ptr<KDNode> build(std::vector<std::shared_ptr<Object>> &_objs, const AABB &aabb, int depth = 0);
+	static std::shared_ptr<KDNode> build(std::vector<std::shared_ptr<Object>> &_objs, const AABB &aabb, const SplitPlane &lastPlane = {}, int depth = 0);
 
 private:
+	enum EventType { ENDING = 0, LYING, STARTING };
+	struct Event {
+		real_t split;
+		EventType type;
+
+		Event(real_t _split, EventType _type) :
+			split(_split), type(_type) {}
+	};
+
 	static std::array<SplitPlane, 6> PerfectSplits(const std::shared_ptr<Object> &obj, const AABB &aabb);
-	static std::array<std::vector<std::shared_ptr<Object>>, 3> Classify(const std::vector<std::shared_ptr<Object>> &objs, const AABB &left, const AABB &right, const SplitPlane &plane);
+	static std::array<std::vector<std::shared_ptr<Object>>, 3> Classify(const std::vector<std::shared_ptr<Object>> &objs, const SplitPlane &plane);
 
 	static inline real_t C(real_t leftRatio, real_t rightRatio, int leftCnt, int rightCnt) {
 		real_t res = KDTREE_SAH_KT + KDTREE_SAH_KI * (leftRatio * leftCnt + rightRatio * rightCnt);
@@ -43,6 +52,7 @@ private:
 	};
 
 	static real_t SAH(const SplitPlane &plane, const AABB &aabb, std::array<int, 3> cnts, bool &side);
+	static SplitPlane FindPlane(const std::vector<std::shared_ptr<Object>> &objs, const AABB &aabb, bool &sideFlag, real_t &minCost);
 };
 
 class KDTree : public Object {
