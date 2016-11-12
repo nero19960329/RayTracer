@@ -8,4 +8,5 @@
 8. 可以渲染三角形，准备渲染网格模型。光线与三角形求交：Moller-Trumbore方法(Journal of Graphic Tools, 1997)，Ref: http://pkuwwt.github.io/scholarship/2014-04-03-ray-triangle-intersection-tests-for-dummies/
 9. 可以渲染网格模型。gourd.obj -> 渲染时间：23s，dragon.obj实验数据见小本子
 10. 增加双线性法向插值，注意插值后的法向量首先要归一化，然后不能根据光线来的方向来确定正反，只能根据顶点法向量经过一次计算而成。
-11. 实现了以中位数切分的KD树。查阅论文On building fast kd-Trees for Ray Tracing, and on doing that in O(N log N)，初步实现了基于表面积启发式的KD树的暴力版本（O(N^2)），遍历速度有所提升。
+*. 实现了以中位数切分的KD树。查阅论文On building fast kd-Trees for Ray Tracing, and on doing that in O(N log N)，初步实现了基于表面积启发式的KD树的暴力版本（O(N^2)），遍历速度有所提升。
+11&12. 通过抖动采样实现抗锯齿，这两张图是每像素采样50条光线而形成。另外，实现了KD树的建立以及遍历并行化，使用openmp。
