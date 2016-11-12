@@ -39,7 +39,7 @@ public:
 	KDNode() {}
 	~KDNode() {}
 
-	static std::shared_ptr<KDNode> build(const std::vector<std::shared_ptr<Object>> &_objs, const AABB &aabb, const std::vector<Event> &events, const SplitPlane &lastPlane = {}, int depth = 0);
+	static std::shared_ptr<KDNode> build(const std::vector<std::shared_ptr<Object>> &_objs, const AABB &aabb, const std::vector<Event> &events, int threads = 1, const SplitPlane &lastPlane = {}, int depth = 0);
 
 private:
 	static std::vector<ObjSide> ClassifyLeftRightBoth(size_t objSize, const std::vector<Event> &events, const SplitPlane &plane);
@@ -100,4 +100,6 @@ private:
 	}
 
 	bool isIntersect(const std::shared_ptr<KDNode> &node, const Ray &ray) const;
+
+	bool leafIntersect(const std::vector<std::shared_ptr<Object>> &objs) const;
 };

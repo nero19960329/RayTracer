@@ -28,7 +28,7 @@ public:
 	}
 	~Viewer() {}
 
-	std::vector<std::vector<Ray>> getRayVector() const;
+	std::vector<std::vector<std::vector<Ray>>> getRayVector(int sample) const;
 	Geometry getScreen() const {
 		return screen;
 	}

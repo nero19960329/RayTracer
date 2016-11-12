@@ -17,6 +17,7 @@ const real_t GLASS_REFRACTION_INDEX = 1.5;
 
 const int MIN_KDNODE_OBJS = 10;
 const real_t DUPLICATE_RATIO = 0.5;
+const int MAX_KDTREE_DEPTH = 100;
 
 const real_t KDTREE_SAH_KT = 0.75;
 const real_t KDTREE_SAH_KI = 1.0;

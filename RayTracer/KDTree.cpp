@@ -1,6 +1,8 @@
 #include "KDTree.h"
 
 #include <functional>
+#include <omp.h>
+#include <stack>
 
 using namespace std;
 
@@ -83,13 +85,13 @@ SplitPlane KDNode::FindPlane(int objLen, const AABB &aabb, const vector<Event> &
 	return bestPlane;
 }
 
-shared_ptr<KDNode> KDNode::build(const vector<shared_ptr<Object>> &_objs, const AABB &aabb, const vector<Event> &events, const SplitPlane &lastPlane, int depth) {
+shared_ptr<KDNode> KDNode::build(const vector<shared_ptr<Object>> &_objs, const AABB &aabb, const vector<Event> &events, int threads, const SplitPlane &lastPlane, int depth) {
 	shared_ptr<KDNode> node = make_shared<KDNode>();
 	node->left = nullptr;
 	node->right = nullptr;
 	node->aabb = aabb;
 
-	if (_objs.size() < MIN_KDNODE_OBJS) {
+	if (_objs.size() < MIN_KDNODE_OBJS || depth >= MAX_KDTREE_DEPTH) {
 		for (const auto &obj : _objs) node->objs.push_back(obj);
 		return node;
 	}
@@ -161,8 +163,23 @@ shared_ptr<KDNode> KDNode::build(const vector<shared_ptr<Object>> &_objs, const 
 
 	AABB leftBox, rightBox;
 	aabb.splitBox(bestPlane, leftBox, rightBox);
-	node->left = build(leftObjs, leftBox, leftEvents, bestPlane, depth + 1);
-	node->right = build(rightObjs, rightBox, rightEvents, bestPlane, depth + 1);
+
+	if (threads > 1) {
+		#pragma omp parallel sections
+		{
+			#pragma omp section
+			{
+				node->left = build(leftObjs, leftBox, leftEvents, threads / 2, bestPlane, depth + 1);
+			}
+			#pragma omp section
+			{
+				node->right = build(rightObjs, rightBox, rightEvents, threads - threads / 2, bestPlane, depth + 1);
+			}
+		}
+	} else {
+		node->left = build(leftObjs, leftBox, leftEvents, 1, bestPlane, depth + 1);
+		node->right = build(rightObjs, rightBox, rightEvents, 1, bestPlane, depth + 1);
+	}
 
 	return node;
 }
@@ -178,7 +195,7 @@ KDTree::KDTree(const vector<shared_ptr<Object>> &_objs) :
 		return a.split < b.split || (a.split == b.split && a.type < b.type);
 	};
 	sort(eventVec.begin(), eventVec.end(), eventCmp);
-	root = KDNode::build(_objs, aabb, eventVec);
+	root = KDNode::build(_objs, aabb, eventVec, omp_get_num_procs());
 	printf("Building duration: %.4lfs\n", timer.getDuration());
 }
 
@@ -194,32 +211,72 @@ bool KDTreeIntersect::isIntersect(const shared_ptr<KDNode> &node, const Ray &ray
 		bool leftHit = node->left->aabb.intersect(ray, t[0]);
 		bool rightHit = node->right->aabb.intersect(ray, t[1]);
 
-		if (!leftHit && !rightHit) return false;
-		else if (leftHit && !rightHit) return isIntersect(node->left, ray);
+		if (leftHit && !rightHit) return isIntersect(node->left, ray);
 		else if (!leftHit && rightHit) return isIntersect(node->right, ray);
-		else {
+		else if (leftHit && rightHit) {
 			if (t[0] < t[1]) return isIntersect(node->left, ray) || isIntersect(node->right, ray);
 			else return isIntersect(node->right, ray) || isIntersect(node->left, ray);
 		}
 	} else {
-		bool flag = false;
-		for (const auto &obj : node->objs) {
-			auto intersect = obj->getTrace(ray);
-			if (intersect) {
-				if (updateMin(distToInter, intersect->getDistToInter())) {
-					normal = intersect->getNormal();
-					surface = intersect->getSurface();
-				}
-				flag = true;
-			}
-		}
-		return flag;
+		return leafIntersect(node->objs);
 	}
+	/*enum NextType { LEFT, RIGHT };
+	shared_ptr<KDNode> nowPtr = node;
+	stack<pair<shared_ptr<KDNode>, NextType>> stack;
+	
+	while (nowPtr) {
+		if (nowPtr->left && nowPtr->right) {
+			real_t t[2];
+			bool leftHit = nowPtr->left->aabb.intersect(ray, t[0]);
+			bool rightHit = nowPtr->right->aabb.intersect(ray, t[1]);
+
+			if (leftHit && !rightHit) {
+				nowPtr = nowPtr->left;
+			} else if (!leftHit && rightHit) {
+				nowPtr = nowPtr->right;
+			} else if (leftHit && rightHit) {
+				if (t[0] < t[1]) {
+					stack.emplace(nowPtr, RIGHT);
+					nowPtr = nowPtr->left;
+				} else {
+					stack.emplace(nowPtr, LEFT);
+					nowPtr = nowPtr->right;
+				}
+			}
+		} else {
+			if (leafIntersect(nowPtr->objs)) return true;
+			if (stack.empty()) return false;
+			auto pairElem = stack.top();
+			stack.pop();
+			if (pairElem.second == LEFT) nowPtr = pairElem.first->left;
+			else nowPtr = pairElem.first->right;
+		}
+	}
+
+	return false;*/
 }
 
 bool KDTreeIntersect::isIntersect() const {
 	if (tree.root->aabb.intersect(ray)) return isIntersect(tree.root, ray);
 	else return false;
+}
+
+bool KDTreeIntersect::leafIntersect(const vector<shared_ptr<Object>> &objs) const {
+	if (objs.size()) {
+		printf("");
+	}
+	bool flag = false;
+	for (const auto &obj : objs) {
+		auto intersect = obj->getTrace(ray);
+		if (intersect) {
+			if (updateMin(distToInter, intersect->getDistToInter())) {
+				normal = intersect->getNormal();
+				surface = intersect->getSurface();
+			}
+			flag = true;
+		}
+	}
+	return flag;
 }
 
 real_t KDTreeIntersect::getDistToInter() const {

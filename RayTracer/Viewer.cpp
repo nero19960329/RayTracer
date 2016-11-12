@@ -1,9 +1,12 @@
 #include "Viewer.h"
+
+#include <cstdlib>
+#include <ctime>
 #include <iostream>
 
 using namespace std;
 
-vector<vector<Ray>> Viewer::getRayVector() const {
+vector<vector<vector<Ray>>> Viewer::getRayVector(int sample) const {
 	real_t w, h;
 	h = 2 * tan(fovy * PI / 360);
 	w = h * screen.getRatio();
@@ -23,17 +26,37 @@ vector<vector<Ray>> Viewer::getRayVector() const {
 	deltaW = (halfW + halfW) / screen.width;
 	deltaH = (halfH + halfH) / screen.height;
 
-	vector<vector<Ray>> res;
+	vector<vector<vector<Ray>>> res;
 	Vec3 tmpLeft = LT - deltaH;
-	rep(i, screen.width) {
-		vector<Ray> row;
-		Vec3 tmpVec = tmpLeft;
-		rep(j, screen.height) {
-			row.push_back({ center, (tmpVec - center).getNormalized() });
-			tmpVec -= deltaH;
+	if (sample > 1) {
+		srand(unsigned(time(0)));
+		rep(i, screen.width) {
+			vector<vector<Ray>> row;
+			Vec3 tmpVec = tmpLeft;
+			rep(j, screen.height) {
+				vector<Ray> col;
+				rep(k, sample) {
+					col.emplace_back(center, (tmpVec - rand() * deltaH / RAND_MAX + rand() * deltaW / RAND_MAX - center).getNormalized());
+				}
+				row.emplace_back(col);
+				tmpVec -= deltaH;
+			}
+			tmpLeft += deltaW;
+			res.emplace_back(row);
 		}
-		tmpLeft += deltaW;
-		res.push_back(row);
+	} else {
+		rep(i, screen.width) {
+			vector<vector<Ray>> row;
+			Vec3 tmpVec = tmpLeft;
+			rep(j, screen.height) {
+				vector<Ray> col;
+				col.emplace_back(center, (tmpVec - center).getNormalized());
+				row.emplace_back(col);
+				tmpVec -= deltaH;
+			}
+			tmpLeft += deltaW;
+			res.emplace_back(row);
+		}
 	}
 
 	return res;

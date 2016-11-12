@@ -2,39 +2,69 @@
 
 #include "ProgressPrinter.h"
 
+#include <omp.h>
+
 using namespace cv;
 using namespace std;
 
-Mat Renderer::render() const {
-	Mat img = rawRender();
+Mat Renderer::render(int sample, bool showBar) const {
+	Mat img = rawRender(sample, showBar);
 	normalize(img);
 	return float2uchar(img);
 }
 
-Mat Renderer::rawRender() const {
+Mat Renderer::rawRender(int sample, bool showBar) const {
 	auto shader = scene.getShader(type);
-	auto rays = viewer.getRayVector();
+	auto rays = viewer.getRayVector(sample);
 	Geometry screen = viewer.getScreen();
 
-	Mat res{ screen.height, screen.width, CV_64FC3 };
-	int i = 0, j, allPixels = screen.width * screen.height;
-	ProgressPrinter printer{ "Rendering => ", allPixels };
-	for (const auto &rayVec : rays) {
-		printer.display(screen.height);
-		j = 0;
-		for (const auto &ray : rayVec) {
-			Vec3 color = shader->color(ray);
-			res.at<Vec3d>(j, i)[0] = color[2];
-			res.at<Vec3d>(j, i)[1] = color[1];
-			res.at<Vec3d>(j, i)[2] = color[0];
-			++j;
+	Mat res = Mat::zeros(screen.height, screen.width, CV_64FC3);
+	int allRays = screen.width * screen.height * sample;
+
+	vector<int> widthVec, heightVec;
+	rep(i, screen.width) widthVec.emplace_back(i);
+	rep(j, screen.height) heightVec.emplace_back(j);
+	random_shuffle(widthVec.begin(), widthVec.end());
+	random_shuffle(heightVec.begin(), heightVec.end());
+
+	if (showBar) {
+		omp_lock_t lock;
+		omp_init_lock(&lock);
+
+		ProgressPrinter printer{ "Rendering => ", allRays };
+		printer.display(0);
+		#pragma omp parallel for
+		for (int k = 0; k < allRays; ++k) {
+			int i = widthVec[(k / sample) / screen.height], j = heightVec[(k / sample) % screen.height];
+			Vec3 color = shader->color(rays[i][j][k % sample]);
+			res.at<Vec3d>(j, i)[0] += color[2];
+			res.at<Vec3d>(j, i)[1] += color[1];
+			res.at<Vec3d>(j, i)[2] += color[0];
+
+			omp_set_lock(&lock);
+			printer.display(1);
+			omp_unset_lock(&lock);
 		}
-		++i;
+		printer.finish();
+		omp_destroy_lock(&lock);
+	} else {
+		#pragma omp parallel for
+		for (int k = 0; k < allRays; ++k) {
+			int i = widthVec[(k / sample) / screen.height], j = heightVec[(k / sample) % screen.height];
+			Vec3 color = shader->color(rays[i][j][k % sample]);
+			res.at<Vec3d>(j, i)[0] += color[2];
+			res.at<Vec3d>(j, i)[1] += color[1];
+			res.at<Vec3d>(j, i)[2] += color[0];
+		}
 	}
-	printer.display(screen.height);
-	printf("\n");
+
+	rep(i, res.rows) rep(j, res.cols) res.at<Vec3d>(i, j) /= sample;
 
 	return res;
+}
+
+Mat Renderer::renderWithBar(int allRays, const vector<int> &widthVec, const vector<int> &heightVec) const {
+
 }
 
 void Renderer::normalize(Mat &img) const {

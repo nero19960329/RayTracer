@@ -13,6 +13,7 @@ int main() {
 
 	Timer timer;
 	timer.begin();
+	printf("Rendering . . .\n");
 	Mat img = renderer.render();
 	printf("Rendering duration: %.4lfs\n", timer.getDuration());
 

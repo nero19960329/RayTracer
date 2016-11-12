@@ -8,16 +8,16 @@
 class ProgressPrinter {
 private:
 	int nowCnt;
-	real_t divAllCnt;
+	int allCnt;
 	std::string prefix;
 
 	size_t progressLen;
-	int boxCnt;
+	size_t boxCnt;
 	std::wstring progressBar;
 
 public:
 	ProgressPrinter(const std::string &_prefix, int _allCnt) :
-		nowCnt(0), divAllCnt(1.0 / _allCnt), prefix(_prefix), boxCnt(0) {
+		nowCnt(0), allCnt(_allCnt), prefix(_prefix), boxCnt(0) {
 		progressLen = (getConsoleWidth() - prefix.size() - 2) / 2;
 
 		progressBar.push_back('[');
@@ -29,7 +29,7 @@ public:
 	void display(int delta) {
 		nowCnt += delta;
 
-		int nowBoxCnt = (int) (nowCnt * progressLen * divAllCnt);
+		size_t nowBoxCnt = (size_t) (nowCnt * progressLen * 1.0 / allCnt);
 		if (nowBoxCnt - boxCnt < 1) return;
 
 		repa(i, boxCnt, nowBoxCnt) progressBar[i + 1] = 0x25A0;	// add boxes
@@ -38,6 +38,13 @@ public:
 		std::cout << "\r" << prefix;
 		std::wcout.imbue(std::locale("chs"));
 		std::wcout << progressBar;
+	}
+
+	void finish() {
+		repa(i, boxCnt, progressLen) progressBar[i + 1] = 0x25A0;
+		std::cout << "\r" << prefix;
+		std::wcout.imbue(std::locale("chs"));
+		std::wcout << progressBar << std::endl;
 	}
 
 private:
