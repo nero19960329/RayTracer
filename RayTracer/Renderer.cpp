@@ -1,24 +1,23 @@
-#include "Renderer.h"
-
 #include "ProgressPrinter.h"
+#include "Renderer.h"
 
 #include <omp.h>
 
 using namespace cv;
 using namespace std;
 
-Mat Renderer::render(int sample, bool showBar) const {
-	Mat img = rawRender(sample, showBar);
+Mat Renderer::render( bool showBar) const {
+	Mat img = rawRender(showBar);
 	normalize(img);
-	return float2uchar(img);
+	return double2uchar(img);
 }
 
-Mat Renderer::rawRender(int sample, bool showBar) const {
+Mat Renderer::rawRender(bool showBar) const {
 	auto shader = scene.getShader(type);
-	auto rays = viewer.getRayVector(sample);
 	Geometry screen = viewer.getScreen();
 
 	Mat res = Mat::zeros(screen.height, screen.width, CV_64FC3);
+	int sample = viewer.dopSample * viewer.antiSample;
 	int allRays = screen.width * screen.height * sample;
 
 	vector<int> widthVec, heightVec;
@@ -36,7 +35,7 @@ Mat Renderer::rawRender(int sample, bool showBar) const {
 		#pragma omp parallel for
 		for (int k = 0; k < allRays; ++k) {
 			int i = widthVec[(k / sample) / screen.height], j = heightVec[(k / sample) % screen.height];
-			Vec3 color = shader->color(rays[i][j][k % sample]);
+			Vec3 color = shader->color(viewer.getRay(i, j));
 			res.at<Vec3d>(j, i)[0] += color[2];
 			res.at<Vec3d>(j, i)[1] += color[1];
 			res.at<Vec3d>(j, i)[2] += color[0];
@@ -51,7 +50,7 @@ Mat Renderer::rawRender(int sample, bool showBar) const {
 		#pragma omp parallel for
 		for (int k = 0; k < allRays; ++k) {
 			int i = widthVec[(k / sample) / screen.height], j = heightVec[(k / sample) % screen.height];
-			Vec3 color = shader->color(rays[i][j][k % sample]);
+			Vec3 color = shader->color(viewer.getRay(i, j));
 			res.at<Vec3d>(j, i)[0] += color[2];
 			res.at<Vec3d>(j, i)[1] += color[1];
 			res.at<Vec3d>(j, i)[2] += color[0];
@@ -61,10 +60,6 @@ Mat Renderer::rawRender(int sample, bool showBar) const {
 	rep(i, res.rows) rep(j, res.cols) res.at<Vec3d>(i, j) /= sample;
 
 	return res;
-}
-
-Mat Renderer::renderWithBar(int allRays, const vector<int> &widthVec, const vector<int> &heightVec) const {
-
 }
 
 void Renderer::normalize(Mat &img) const {
@@ -81,7 +76,7 @@ void Renderer::normalize(Mat &img) const {
 	}
 }
 
-Mat Renderer::float2uchar(const Mat &img) const {
+Mat Renderer::double2uchar(const Mat &img) const {
 	Mat res{ img.rows, img.cols, CV_8UC3 };
 	img.convertTo(res, CV_8UC3, 255, 0.5);
 	return res;

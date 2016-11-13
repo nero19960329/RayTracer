@@ -8,13 +8,13 @@ using namespace cv;
 using namespace std;
 
 int main() {
-	SceneReader sceneReader("../scene/9&10.scene");
+	SceneReader sceneReader("../scene/13.scene");
 	Renderer renderer{ sceneReader.getViewer(), sceneReader.getScene() };
 
 	Timer timer;
 	timer.begin();
 	printf("Rendering . . .\n");
-	Mat img = renderer.render();
+	Mat img = renderer.render(true);
 	printf("Rendering duration: %.4lfs\n", timer.getDuration());
 
 	imshow("Ray Tracing", img);

@@ -30,8 +30,8 @@ texture ImageTexture PLASTIC ../texture/stone.jpg
 center 	3.0 1.0 -10.0
 radius 	2.0
 
-# Tri texture a b c
-Tri
+# Face texture a b c
+Face
 texture PureTexture PLASTIC MAGENTA
 a 		-2 -0.8 -8.0
 b 		2 -0.8 -8.0

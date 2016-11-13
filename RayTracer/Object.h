@@ -25,7 +25,9 @@ public:
 
 	virtual std::shared_ptr<Intersect> getTrace(const Ray &ray, real_t dist = std::numeric_limits<real_t>::max()) const = 0;
 
-	const std::shared_ptr<Texture> &getTexture() const { return texture; }
+	const std::shared_ptr<Texture> &getTexture() const {
+		return texture;
+	}
 	virtual void setTexture(const std::shared_ptr<Texture> &_texture) { texture = _texture; }
 
 	virtual AABB getAABB() const { return{}; };
@@ -76,7 +78,7 @@ public:
 
 	virtual IntersectInfo getIntersectInfo() {
 		auto obj = getObj();
-		assert(obj->getTexture());
+		//assert(obj->getTexture());
 		return IntersectInfo{ getIntersection(), getNormal(), getSurface(), getNextRefractionIndex() };
 	}
 
@@ -87,8 +89,6 @@ public:
 		if (surface) return surface;
 		return getInterPointSurfaceProperty();
 	};
-
-private:
 
 	virtual real_t getNextRefractionIndex() const {
 		return ray.refrIdx;

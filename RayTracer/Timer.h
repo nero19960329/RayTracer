@@ -4,6 +4,9 @@
 
 #include "Utils.h"
 
+#undef max
+#undef min
+
 class Timer {
 private:
 	long long freq;

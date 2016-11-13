@@ -77,6 +77,7 @@ private:
 	const KDTree &tree;
 
 	mutable Vec3 normal;
+	mutable real_t refrIdx;
 	mutable std::shared_ptr<Surface> surface;
 
 	virtual std::shared_ptr<Surface> getInterPointSurfaceProperty() const override;
@@ -94,7 +95,6 @@ public:
 	Vec3 getNormal() const override;
 
 private:
-
 	std::shared_ptr<Surface> getSurface() const override {
 		return surface;
 	}
@@ -102,4 +102,8 @@ private:
 	bool isIntersect(const std::shared_ptr<KDNode> &node, const Ray &ray) const;
 
 	bool leafIntersect(const std::vector<std::shared_ptr<Object>> &objs) const;
+
+	real_t getNextRefractionIndex() const override {
+		return refrIdx;
+	}
 };

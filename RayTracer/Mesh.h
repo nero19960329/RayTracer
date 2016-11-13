@@ -39,6 +39,10 @@ public:
 	~Mesh() {}
 
 	std::shared_ptr<Intersect> getTrace(const Ray &ray, real_t dist = std::numeric_limits<real_t>::max()) const override;
+
+	AABB getAABB() const {
+		return tree->getAABB();
+	}
 };
 
 class MeshIntersect : public Intersect {

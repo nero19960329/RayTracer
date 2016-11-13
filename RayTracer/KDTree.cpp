@@ -186,17 +186,19 @@ shared_ptr<KDNode> KDNode::build(const vector<shared_ptr<Object>> &_objs, const 
 
 KDTree::KDTree(const vector<shared_ptr<Object>> &_objs) :
 	Object(nullptr) {
-	Timer timer;
-	timer.begin();
+	//Timer timer;
+	//timer.begin();
 	AABB aabb;
-	for (const auto &obj : _objs) aabb.expand(obj->getAABB());
+	for (const auto &obj : _objs) {
+		aabb.expand(obj->getAABB());
+	}
 	vector<KDNode::Event> eventVec = root->GetEvents(_objs, aabb);
 	auto eventCmp = [](const KDNode::Event &a, const KDNode::Event &b) {
 		return a.split < b.split || (a.split == b.split && a.type < b.type);
 	};
 	sort(eventVec.begin(), eventVec.end(), eventCmp);
 	root = KDNode::build(_objs, aabb, eventVec, omp_get_num_procs());
-	printf("Building duration: %.4lfs\n", timer.getDuration());
+	//printf("Building duration: %.4lfs\n", timer.getDuration());
 }
 
 shared_ptr<Intersect> KDTree::getTrace(const Ray &ray, real_t dist) const {
@@ -262,9 +264,6 @@ bool KDTreeIntersect::isIntersect() const {
 }
 
 bool KDTreeIntersect::leafIntersect(const vector<shared_ptr<Object>> &objs) const {
-	if (objs.size()) {
-		printf("");
-	}
 	bool flag = false;
 	for (const auto &obj : objs) {
 		auto intersect = obj->getTrace(ray);
@@ -272,6 +271,7 @@ bool KDTreeIntersect::leafIntersect(const vector<shared_ptr<Object>> &objs) cons
 			if (updateMin(distToInter, intersect->getDistToInter())) {
 				normal = intersect->getNormal();
 				surface = intersect->getSurface();
+				refrIdx = intersect->getNextRefractionIndex();
 			}
 			flag = true;
 		}

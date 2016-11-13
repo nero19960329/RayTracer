@@ -10,6 +10,7 @@ public:
 	real_t refrIdx;
 
 public:
+	Ray() {}
 	Ray(const Vec3 &_orig, const Vec3 &_dir, real_t _refrIdx = VACUUM_REFRACTION_INDEX) :
 		orig(_orig), dir(_dir), refrIdx(_refrIdx) {}
 	virtual ~Ray() {}

@@ -1,0 +1,110 @@
+# Scene File
+
+# Viewer geometry center target up fovy
+Viewer
+geo     512 512
+center  0.0 0.0 0.0
+target  0.0 0.0 -10.0
+up      0.0 1.0 0.0
+fovy    60
+
+# Light origin color intensity
+Light
+origin      0.0 0.0 0.0
+color       WHITE
+intensity   0.25
+
+Light
+origin      0.0 4.6 -10.0
+color       WHITE
+intensity   1.0
+
+# Mesh texture file(>) center radius smooth( = false)
+#Mesh
+#texture PureTexture PLASTIC YELLOW
+#file ../objs/teapot.obj
+#center 0.0 -1.0 -10.0
+#radius 4.0
+#smooth false
+#smooth true
+
+Sphere
+texture PureTexture PLASTIC MAGENTA
+#texture PureTexture TRANSPARENT_MATERIAL BLACK
+center  2.0 -3.0 -10.0
+radius  2.0
+#refraction_index GLASS_REFRACTION_INDEX
+
+Sphere
+texture PureTexture PLASTIC CYAN
+#texture PureTexture A_BIT_MIRROR BLACK
+center  -3.0 -3.0 -13.0
+radius  2.0
+
+# Face texture a b c
+
+
+# left red wall
+Face
+texture PureTexture FLOOR RED
+a       -5.0 5.0 -5.0
+b       -5.0 -5.0 -5.0
+c       -5.0 -5.0 -15.0
+
+Face
+texture PureTexture FLOOR RED
+a       -5.0 5.0 -5.0
+b       -5.0 5.0 -15.0
+c       -5.0 -5.0 -15.0
+
+# right green wall
+Face
+texture PureTexture FLOOR GREEN
+a       5.0 5.0 -5.0
+b       5.0 -5.0 -5.0
+c       5.0 -5.0 -15.0
+
+Face
+texture PureTexture FLOOR GREEN
+a       5.0 5.0 -5.0
+b       5.0 5.0 -15.0
+c       5.0 -5.0 -15.0
+
+# back white wall
+Face
+texture PureTexture FLOOR WHITE
+a       -5.0 5.0 -15.0
+b       -5.0 -5.0 -15.0
+c       5.0 -5.0 -15.0
+
+Face
+texture PureTexture FLOOR WHITE
+a       -5.0 5.0 -15.0
+b       5.0 5.0 -15.0
+c       5.0 -5.0 -15.0
+
+# top white wall
+Face
+texture PureTexture FLOOR WHITE
+a       -5.0 5.0 -15.0
+b       -5.0 5.0 -5.0
+c       5.0 5.0 -5.0
+
+Face
+texture PureTexture FLOOR WHITE
+a       -5.0 5.0 -15.0
+b       5.0 5.0 -15.0
+c       5.0 5.0 -5.0
+
+# bottom white wall
+Face
+texture PureTexture FLOOR WHITE
+a       -5.0 -5.0 -15.0
+b       -5.0 -5.0 -5.0
+c       5.0 -5.0 -5.0
+
+Face
+texture PureTexture FLOOR WHITE
+a       -5.0 -5.0 -15.0
+b       5.0 -5.0 -15.0
+c       5.0 -5.0 -5.0

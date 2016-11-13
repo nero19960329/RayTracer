@@ -27,12 +27,12 @@ SceneReader::SceneReader(const string &sceneFileName) {
 			backTrack = readLight(fin, nowLight);
 		} else if (line.find("Sphere") == 0) {
 			shared_ptr<PureSphere> nowPureSphere = make_shared<PureSphere>();
-			real_t refrIdx;
+			real_t refrIdx = 1.0;
 			backTrack = readSphere(fin, nowPureSphere, refrIdx, texture);
 		} else if (line.find("Plane") == 0) {
 			shared_ptr<InfPlane> nowInfPlane = make_shared<InfPlane>();
 			backTrack = readPlane(fin, nowInfPlane, texture);
-		} else if (line.find("Tri") == 0) {
+		} else if (line.find("Face") == 0) {
 			shared_ptr<Tri> nowTri = make_shared<Tri>();
 			backTrack = readFace(fin, nowTri, texture);
 		} else if (line.find("Mesh") == 0) {
@@ -42,6 +42,11 @@ SceneReader::SceneReader(const string &sceneFileName) {
 
 		if (backTrack <= 0) fin.seekg(backTrack, ios::cur);
 		else break;
+	}
+
+	if (tmpObjVec.size()) {
+		shared_ptr<KDTree> tree = make_shared<KDTree>(tmpObjVec);
+		scene.addObject(tree);
 	}
 }
 
@@ -102,8 +107,10 @@ shared_ptr<Texture> SceneReader::readTexture(const string &str) const {
 		return make_shared<GridTexture>(readMaterial(materialStr), grid);
 	} else if (catagory == "ImageTexture") {
 		string fileName;
+		int length;
 		iss >> fileName;
-		return make_shared<ImageTexture>(readMaterial(materialStr), fileName);
+		if (!(iss >> length)) return make_shared<ImageTexture>(readMaterial(materialStr), fileName);
+		else return make_shared<ImageTexture>(readMaterial(materialStr), fileName, length);
 	} else {
 		error_exit("No such texture!\n");
 	}
@@ -146,27 +153,35 @@ int SceneReader::readViewer(ifstream &fin) {
 			iss >> w >> h;
 			viewerInitializer.screen = Geometry(w, h);
 		} else if (line.find("center") == 0) {
-			Vec3 center;
-			iss >> center[0] >> center[1] >> center[2];
-			viewerInitializer.center = center;
+			iss >> viewerInitializer.center[0] >> viewerInitializer.center[1] >> viewerInitializer.center[2];
 		} else if (line.find("target") == 0) {
-			Vec3 target;
-			iss >> target[0] >> target[1] >> target[2];
-			viewerInitializer.target = target;
+			iss >> viewerInitializer.target[0] >> viewerInitializer.target[1] >> viewerInitializer.target[2];
 		} else if (line.find("up") == 0) {
-			Vec3 up;
-			iss >> up[0] >> up[1] >> up[2];
-			viewerInitializer.up = up;
+			iss >> viewerInitializer.up[0] >> viewerInitializer.up[1] >> viewerInitializer.up[2];
 		} else if (line.find("fovy") == 0) {
-			real_t fovy;
-			iss >> fovy;
-			viewerInitializer.fovy = fovy;
+			iss >> viewerInitializer.fovy;
+		} else if (line.find("dop") == 0) {
+			viewerInitializer.dopFlag = true;
+			iss >> viewerInitializer.apertureSize >> viewerInitializer.focusOffset >> viewerInitializer.dopSample;
+		} else if (line.find("anti") == 0) {
+			viewerInitializer.antiFlag = true;
+			iss >> viewerInitializer.antiSample;
 		} else {
 			return false;
 		}
 		return true;
 	}, [&]() {
 		viewer = Viewer{ viewerInitializer.screen, viewerInitializer.center, viewerInitializer.target, viewerInitializer.up, viewerInitializer.fovy };
+		if (viewerInitializer.dopFlag) {
+			viewer.dopFlag = true;
+			viewer.apertureSize = viewerInitializer.apertureSize;
+			viewer.focusOffset = viewerInitializer.focusOffset;
+			viewer.dopSample = viewerInitializer.dopSample;
+		}
+		if (viewerInitializer.antiFlag) {
+			viewer.antialiasingFlag = true;
+			viewer.antiSample = viewerInitializer.antiSample;
+		}
 	});
 }
 
@@ -187,6 +202,8 @@ int SceneReader::readLight(ifstream &fin, shared_ptr<Light> nowLight) {
 		}
 		return true;
 	}, [&]() {
+		nowLight->setRadius(0.1);
+		nowLight->setTexture(make_shared<PureTexture>(Material{ 0.0, 0.0, 0.0, 0.0, 0.0, nowLight->color }, nowLight->color));
 		scene.addLight(nowLight);
 	});
 }
@@ -210,7 +227,8 @@ int SceneReader::readSphere(ifstream &fin, shared_ptr<PureSphere> nowPureSphere,
 		}
 		return true;
 	}, [&]() {
-		scene.addObject(make_shared<Sphere>(texture, *nowPureSphere, refrIdx));
+		tmpObjVec.push_back(make_shared<Sphere>(texture, *nowPureSphere, refrIdx));
+		//scene.addObject(make_shared<Sphere>(texture, *nowPureSphere, refrIdx));
 	});
 }
 
@@ -235,7 +253,8 @@ int SceneReader::readFace(ifstream &fin, shared_ptr<Tri> nowTri, shared_ptr<Text
 		else return false;
 		return true;
 	}, [&]() {
-		scene.addObject(make_shared<Face>(texture, *nowTri));
+		tmpObjVec.push_back(make_shared<Face>(texture, *nowTri));
+		//scene.addObject(make_shared<Face>(texture, *nowTri));
 	});
 }
 
@@ -269,6 +288,7 @@ int SceneReader::readMesh(ifstream &fin, shared_ptr<ObjReader> nowReader, shared
 	}, [&]() {
 		shared_ptr<Mesh> mesh = nowReader->getMesh();
 		mesh->setTexture(texture);
-		scene.addObject(mesh);
+		tmpObjVec.push_back(mesh);
+		//scene.addObject(mesh);
 	});
 }

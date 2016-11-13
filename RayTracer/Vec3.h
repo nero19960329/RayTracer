@@ -6,6 +6,9 @@
 #include <fstream>
 #include <limits>
 
+#undef max
+#undef min
+
 class Vec3 {
 public:
 	union {

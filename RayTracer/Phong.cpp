@@ -17,6 +17,7 @@ Vec3 Phong::getColor(DistRay &ray, int depth) const {
 	if (intersect) {
 		IntersectInfo info = intersect->getIntersectInfo();
 
+		Vec3 emission = info.surface->emission;
 		Vec3 ambient = AMBIENT_INTENSITY * info.surface->ambient;
 		Vec3 local = getPhongLocal(info, ray);
 		ray.dist += intersect->getDistToInter();
@@ -25,7 +26,7 @@ Vec3 Phong::getColor(DistRay &ray, int depth) const {
 		Vec3 refl = getReflection(info, ray, depth);
 		Vec3 refr = getRefraction(info, ray, depth);
 
-		return ambient + local + refl + refr;
+		return emission + ambient + local + refl + refr;
 	} else {
 		return Vec3::BLACK;
 	}

@@ -22,6 +22,8 @@ private:
 	Scene scene;
 	Viewer viewer;
 
+	std::vector<std::shared_ptr<Object>> tmpObjVec;
+
 	std::unordered_map<std::string, Vec3> colorMap;
 	std::unordered_map<std::string, Material> materialMap;
 	std::unordered_map<std::string, real_t> refrIdxMap;
@@ -30,6 +32,10 @@ private:
 		Geometry screen{ 0, 0 };
 		Vec3 center, target, up;
 		real_t fovy;
+
+		bool dopFlag = false, antiFlag = false;
+		real_t apertureSize = 0.1, focusOffset = 0.0;
+		int dopSample = 1, antiSample = 1;
 	} viewerInitializer;
 
 public:

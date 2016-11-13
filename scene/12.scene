@@ -1,0 +1,56 @@
+# Scene File
+
+# Viewer geometry center target up fovy
+Viewer
+geo     512 512
+center  -8.0 4.0 4.0
+target  1.0 2.0 -10.0
+up      0.0 1.0 0.0
+fovy    60
+
+# Light origin color intensity
+Light
+origin      0.0 4.0 1.0
+color       WHITE
+intensity   0.25
+
+Light
+origin      -1.0 10.0 -10.0
+color       WHITE
+intensity   1.0
+
+# Plane texture normal offset
+Plane
+texture ImageTexture FLOOR ../texture/brick.jpg 32
+normal  0.0 1.0 0.0
+offset  -1.0
+
+Plane
+texture GridTexture A_BIT_MIRROR 2
+normal  -1.0 0.0 0.0
+offset  -4.0
+
+# Mesh texture file(>) center radius smooth( = false)
+Mesh
+texture PureTexture PLASTIC YELLOW
+file ../objs/teapot.obj
+center -1.0 3.0 -10.0
+radius 4.0
+#smooth false
+smooth true
+
+#Sphere
+#texture PureTexture TRANSPARENT_MATERIAL BLACK
+#center  1.0 1.0 -4.0
+#radius  2.0
+#refraction_index GLASS_REFRACTION_INDEX
+
+Sphere
+texture PureTexture A_BIT_MIRROR CYAN
+center 1.0 1.0 -4.0
+radius 2.0
+
+#Sphere
+#texture PureTexture A_BIT_MIRROR BLACK
+#center  -2.0 1.0 -6.0
+#radius  2.0

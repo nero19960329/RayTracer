@@ -67,10 +67,11 @@ public:
 class ImageTexture : public Texture {
 private:
 	cv::Mat rgbMat;
+	int dim;
 
 public:
-	explicit ImageTexture(const Material &_material, const std::string &_inputFileName) :
-		Texture(_material) {
+	explicit ImageTexture(const Material &_material, const std::string &_inputFileName, int _dim = 4) :
+		Texture(_material), dim(_dim) {
 		cv::Mat image = cv::imread(_inputFileName);
 
 		if (!image.rows) {
@@ -87,6 +88,8 @@ public:
 	~ImageTexture() {}
 
 	std::shared_ptr<Surface> getSurfaceProperty(real_t x, real_t y) const override {
+		x /= dim;
+		y /= dim;
 		real_t tmpX = x - floor(x), tmpY = y - floor(y);
 		int row = (int) (tmpX * rgbMat.rows);
 		int col = (int) (tmpY * rgbMat.cols);

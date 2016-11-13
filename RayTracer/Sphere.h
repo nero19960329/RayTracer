@@ -27,7 +27,7 @@ public:
 	std::shared_ptr<Intersect> getTrace(const Ray &ray, real_t dist = std::numeric_limits<real_t>::max()) const override;
 
 	AABB getAABB() const override {
-		if (aabb.bounds[1] != Vec3::max()) return aabb;
+		if (aabb.bounds[1] != -Vec3::max()) return aabb;
 		Vec3 radiusVec{ pureSphere.radius, pureSphere.radius, pureSphere.radius };
 		aabb = AABB{ pureSphere.center - radiusVec, pureSphere.center + radiusVec };
 		return aabb;

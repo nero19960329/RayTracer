@@ -38,6 +38,9 @@ shared_ptr<Surface> PlaneIntersect::getInterPointSurfaceProperty() const {
 	if (x.isZero()) {
 		x = { -plane.infPlane.normal.z, 0, plane.infPlane.normal.x };
 	}
+	if (y.isZero()) {
+		y = { -plane.infPlane.normal.z, 0, plane.infPlane.normal.x };
+	}
 
 	return plane.getTexture()->getSurfaceProperty(interPoint.dot(x), interPoint.dot(y));
 }
