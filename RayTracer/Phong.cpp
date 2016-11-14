@@ -21,7 +21,7 @@ Vec3 Phong::getColor(DistRay &ray, int depth) const {
 		Vec3 ambient = AMBIENT_INTENSITY * info.surface->ambient;
 		Vec3 local = getPhongLocal(info, ray);
 		ray.dist += intersect->getDistToInter();
-		local *= exp(-ray.dist * AIR_BEER_DENSITY);
+		local *= exp(-ray.dist * DEFAULT_ATTENUATION_COEFFICIENT);
 
 		Vec3 refl = getReflection(info, ray, depth);
 		Vec3 refr = getRefraction(info, ray, depth);
@@ -45,7 +45,7 @@ Vec3 Phong::getPhongLocal(const IntersectInfo &info, const DistRay &ray, int dep
 	
 		Vec3 toLight = light->getCenter() - info.interPoint;
 		Vec3 L = toLight.getNormalized();
-		Vec3 I = light->color * light->intensity * exp(-toLight.norm() * AIR_BEER_DENSITY);
+		Vec3 I = light->color * light->intensity * exp(-toLight.norm() * DEFAULT_ATTENUATION_COEFFICIENT);
 		real_t tmp = L.dot(N);
 		if (tmp > 0) diffuse += I.mul(info.surface->diffuse) * tmp;
 
