@@ -28,9 +28,6 @@
     <Filter Include="源文件\Objects">
       <UniqueIdentifier>{95ea4324-c12f-49d0-ad99-f222cb84cd62}</UniqueIdentifier>
     </Filter>
-    <Filter Include="头文件\Shading">
-      <UniqueIdentifier>{2f9ff7ef-3783-4f76-a1f0-e5426ce1e102}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件\Shading">
       <UniqueIdentifier>{b43c6f54-adee-483a-9c98-06ae275daf32}</UniqueIdentifier>
     </Filter>
@@ -112,9 +109,6 @@
     </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Phong.h">
-      <Filter>头文件\Shading</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
       <Filter>头文件</Filter>

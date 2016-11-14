@@ -8,7 +8,6 @@
 using namespace cv;
 using namespace std;
 
-
 int main(int argc, char *argv[]) {
 	string sceneName;
 	bool travelFlag = false;
@@ -18,7 +17,7 @@ int main(int argc, char *argv[]) {
 	} else if (argc == 3) {
 		sceneName = argv[1];
 		if (!strcmp(argv[2], "-travel")) travelFlag = true;
-		else if (strcmp(argv[2], "-render")) travelFlag = false;
+		else if (!strcmp(argv[2], "-render")) travelFlag = false;
 		else error_exit("Error at argument 2!\n");
 	} else {
 		error_exit("Input arguments are wrong!\n");

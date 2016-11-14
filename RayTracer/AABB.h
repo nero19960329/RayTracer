@@ -65,18 +65,6 @@ public:
 		}
 	}
 
-	inline int getLongestAxis() const {
-		real_t dist[3];
-		rep(i, 3) dist[i] = bounds[1][i] - bounds[0][i];
-		if (dist[0] >= dist[1] && dist[0] >= dist[2]) return 0;
-		else if (dist[1] >= dist[2]) return 1;
-		else return 2;
-	}
-
-	inline Vec3 getMid() const {
-		return (bounds[0] + bounds[1]) * 0.5;
-	}
-
 	inline bool isPlanar(int axis) const {
 		return bounds[1][axis] - bounds[0][axis] < biggerEpsilon;
 	}

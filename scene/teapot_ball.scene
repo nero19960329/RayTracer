@@ -2,7 +2,7 @@
 
 # Viewer geometry center target up fovy
 Viewer
-geo     512 512
+geo     1280 720
 center  -8.0 4.0 4.0
 target  1.0 2.0 -10.0
 up      0.0 1.0 0.0

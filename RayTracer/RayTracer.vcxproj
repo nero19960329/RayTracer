@@ -174,7 +174,6 @@
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="Phong.h" />
     <ClInclude Include="SceneReader.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="SplitPlane.h" />

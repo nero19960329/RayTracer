@@ -17,22 +17,20 @@ class Mesh : public Object {
 	friend class SceneReader;
 
 protected:
-	std::vector<Tri> tris;
-
 	std::shared_ptr<KDTree> tree;
 	std::vector<std::shared_ptr<Object>> faces;
 
 public:
 	Mesh() : Object(nullptr) {}
 	Mesh(const std::shared_ptr<Texture> &_texture, const std::vector<Tri> &_tris, const std::vector<std::array<int, 3>> &_triIndices, const std::vector<Vec3> &_normals) :
-		Object(_texture), tris(_tris) {
+		Object(_texture) {
 		if (_normals.size()) {
-			rep(i, tris.size()) {
+			rep(i, _tris.size()) {
 				std::array<Vec3, 3> vertexNormals = { _normals[_triIndices[i][0]], _normals[_triIndices[i][1]], _normals[_triIndices[i][2]] };
-				faces.push_back(std::make_shared<Face>(nullptr, tris[i], true, vertexNormals));
+				faces.push_back(std::make_shared<Face>(nullptr, _tris[i], true, vertexNormals));
 			}
 		} else {
-			for (const auto &tri : tris) faces.push_back(std::make_shared<Face>(nullptr, tri));
+			for (const auto &tri : _tris) faces.push_back(std::make_shared<Face>(nullptr, tri));
 		}
 		tree = std::make_shared<KDTree>(faces);
 	}
