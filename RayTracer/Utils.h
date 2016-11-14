@@ -60,6 +60,6 @@ inline typename std::vector<T>::iterator findKthElement(std::vector<T> &vec, int
 }
 
 __declspec(noreturn) inline void error_exit(const char *msg) {
-	printf("\n%s", msg);
+	printf("%s", msg);
 	exit(0);
 }

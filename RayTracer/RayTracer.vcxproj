@@ -154,6 +154,7 @@
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="StaticConstants.cpp" />
     <ClCompile Include="Face.cpp" />
+    <ClCompile Include="TravelManager.cpp" />
     <ClCompile Include="Viewer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +182,7 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Face.h" />
+    <ClInclude Include="TravelManager.h" />
     <ClInclude Include="Tri.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Vec3.h" />

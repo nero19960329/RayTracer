@@ -36,21 +36,8 @@ public:
 		screen(_screen), center(_center), dir(_target - _center), up(_up), fovy(_fovy) {
 		dir.normalize();
 		up.normalize();
-		up = dir.cross(up).cross(dir);
-
-		real_t w2, h2;
-		h2 = tan(fovy * PI / 360);
-		w2 = h2 * screen.getRatio();
-		x = dir.cross(up);
-		y = up;
-		Vec3 halfW, halfH;
-		halfW = w2 * x;
-		halfH = h2 * y;
-		LT = center + dir - halfW + halfH;
-		deltaW = (halfW + halfW) / screen.width;
-		deltaH = (halfH + halfH) / screen.height;
-
-		srand((unsigned) time(0));
+		computeVariables();
+		setRandomSeed();
 	}
 	~Viewer() {}
 
@@ -58,4 +45,13 @@ public:
 	Geometry getScreen() const {
 		return screen;
 	}
+
+	void setRandomSeed() const { srand((unsigned) time(0)); }
+
+	void moveForward(real_t delta);
+	void moveSide(real_t delta);
+	void rotateUp(real_t delta);
+	void rotateSide(real_t delta);
+
+	void computeVariables();
 };

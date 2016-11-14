@@ -7,7 +7,7 @@
 
 class Renderer {
 private:
-	const Viewer &viewer;
+	Viewer viewer;
 	const Scene &scene;
 	ShaderType type;
 
@@ -16,6 +16,7 @@ public:
 	~Renderer() {}
 
 	cv::Mat render(bool showBar = false) const;
+	Viewer &getViewer() { return viewer; }
 
 private:
 	cv::Mat rawRender(bool showBar) const;

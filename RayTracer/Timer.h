@@ -17,6 +17,8 @@ public:
 		LARGE_INTEGER tmp;
 		QueryPerformanceFrequency(&tmp);
 		freq = tmp.QuadPart;
+
+		begin();
 	}
 	~Timer() {}
 
