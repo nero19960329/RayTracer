@@ -31,7 +31,7 @@ Mat Renderer::rawRender(bool showBar) const {
 		omp_init_lock(&lock);
 
 		ProgressPrinter printer{ "Rendering => ", allRays };
-		printer.display(0);
+		printer.start();
 		#pragma omp parallel for
 		for (int k = 0; k < allRays; ++k) {
 			int i = widthVec[(k / sample) / screen.height], j = heightVec[(k / sample) % screen.height];

@@ -40,5 +40,4 @@ void TravelManager::travel(Renderer &renderer) const {
 			renderFlag = false; break;
 		}
 	}
-	imwrite("../img/test.png", img);
 }

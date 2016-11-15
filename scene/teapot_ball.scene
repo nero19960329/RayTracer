@@ -3,10 +3,12 @@
 # Viewer geometry center target up fovy
 Viewer
 geo     1280 720
-center  -8.0 4.0 4.0
+center  -8.0 4.0 9.0
 target  1.0 2.0 -10.0
 up      0.0 1.0 0.0
-fovy    60
+fovy    45
+#anti    10
+dop     0.1 16 10
 
 # Light origin color intensity
 Light
@@ -15,7 +17,7 @@ color       WHITE
 intensity   0.25
 
 Light
-origin      -1.0 10.0 -10.0
+origin      -8.0 10.0 -10.0
 color       WHITE
 intensity   1.0
 
@@ -34,7 +36,7 @@ offset  -4.0
 Mesh
 texture PureTexture PLASTIC YELLOW
 file ../objs/teapot.obj
-center -1.0 3.0 -10.0
+center -4.0 3.0 -20.0
 radius 4.0
 #smooth false
 smooth true
@@ -46,7 +48,7 @@ smooth true
 #refraction_index GLASS_REFRACTION_INDEX
 
 Sphere
-texture PureTexture A_BIT_MIRROR CYAN
+texture ImageTexture A_BIT_MIRROR ../texture/floor.jpg 1
 center 1.0 1.0 -4.0
 radius 2.0
 

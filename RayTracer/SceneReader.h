@@ -54,11 +54,11 @@ private:
 	int readSth(std::ifstream &fin, std::function<bool(std::istringstream &, const std::string &)> readFunc, std::function<void()> modifyFunc);
 
 	int readViewer(std::ifstream &fin);
-	int readLight(std::ifstream &fin, std::shared_ptr<Light>);
-	int readSphere(std::ifstream &fin, std::shared_ptr<PureSphere>, real_t, std::shared_ptr<Texture>);
-	int readPlane(std::ifstream &fin, std::shared_ptr<InfPlane>, std::shared_ptr<Texture>);
-	int readFace(std::ifstream &fin, std::shared_ptr<Tri>, std::shared_ptr<Texture>);
-	int readMesh(std::ifstream &fin, std::shared_ptr<ObjReader>, std::shared_ptr<Texture>);
+	int readLight(std::ifstream &fin);
+	int readSphere(std::ifstream &fin);
+	int readPlane(std::ifstream &fin);
+	int readFace(std::ifstream &fin);
+	int readMesh(std::ifstream &fin);
 
 	void fillMap();
 

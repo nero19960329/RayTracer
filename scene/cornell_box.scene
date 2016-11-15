@@ -6,17 +6,18 @@ geo     512 512
 center  0.0 0.0 0.0
 target  0.0 0.0 -10.0
 up      0.0 1.0 0.0
-fovy    60
-#anti	1
+fovy    45
+#anti	10
 
-# Light origin color intensity
+# Light area* origin color intensity
 Light
 origin      0.0 0.0 0.0
 color       WHITE
 intensity   0.25
 
 Light
-origin      0.0 4.6 -10.0
+#area        7 0.3
+origin      0.0 4.6 -15.0
 color       WHITE
 intensity   1.0
 
@@ -32,14 +33,14 @@ intensity   1.0
 Sphere
 texture PureTexture PLASTIC MAGENTA
 #texture PureTexture TRANSPARENT_MATERIAL BLACK
-center  2.0 -3.0 -10.0
+center  2.0 -3.0 -15.0
 radius  2.0
 #refraction_index GLASS_REFRACTION_INDEX
 
 Sphere
 texture PureTexture PLASTIC CYAN
 #texture PureTexture A_BIT_MIRROR BLACK
-center  -3.0 -3.0 -13.0
+center  -3.0 -3.0 -18.0
 radius  2.0
 
 # Face texture a b c
@@ -47,64 +48,64 @@ radius  2.0
 # left red wall
 Face
 texture PureTexture FLOOR RED
-a       -5.0 5.0 -5.0
-b       -5.0 -5.0 -5.0
-c       -5.0 -5.0 -15.0
+a       -5.0 5.0 -10.0
+b       -5.0 -5.0 -10.0
+c       -5.0 -5.0 -20.0
 
 Face
 texture PureTexture FLOOR RED
-a       -5.0 5.0 -5.0
-b       -5.0 5.0 -15.0
-c       -5.0 -5.0 -15.0
+a       -5.0 5.0 -10.0
+b       -5.0 5.0 -20.0
+c       -5.0 -5.0 -20.0
 
 # right green wall
 Face
 texture PureTexture FLOOR GREEN
-a       5.0 5.0 -5.0
-b       5.0 -5.0 -5.0
-c       5.0 -5.0 -15.0
+a       5.0 5.0 -10.0
+b       5.0 -5.0 -10.0
+c       5.0 -5.0 -20.0
 
 Face
 texture PureTexture FLOOR GREEN
-a       5.0 5.0 -5.0
-b       5.0 5.0 -15.0
-c       5.0 -5.0 -15.0
+a       5.0 5.0 -10.0
+b       5.0 5.0 -20.0
+c       5.0 -5.0 -20.0
 
 # back white wall
 Face
 texture PureTexture FLOOR WHITE
-a       -5.0 5.0 -15.0
-b       -5.0 -5.0 -15.0
-c       5.0 -5.0 -15.0
+a       -5.0 5.0 -20.0
+b       -5.0 -5.0 -20.0
+c       5.0 -5.0 -20.0
 
 Face
 texture PureTexture FLOOR WHITE
-a       -5.0 5.0 -15.0
-b       5.0 5.0 -15.0
-c       5.0 -5.0 -15.0
+a       -5.0 5.0 -20.0
+b       5.0 5.0 -20.0
+c       5.0 -5.0 -20.0
 
 # top white wall
 Face
 texture PureTexture FLOOR WHITE
-a       -5.0 5.0 -15.0
-b       -5.0 5.0 -5.0
-c       5.0 5.0 -5.0
+a       -5.0 5.0 -20.0
+b       -5.0 5.0 -10.0
+c       5.0 5.0 -10.0
 
 Face
 texture PureTexture FLOOR WHITE
-a       -5.0 5.0 -15.0
-b       5.0 5.0 -15.0
-c       5.0 5.0 -5.0
+a       -5.0 5.0 -20.0
+b       5.0 5.0 -20.0
+c       5.0 5.0 -10.0
 
 # bottom white wall
 Face
 texture PureTexture FLOOR WHITE
-a       -5.0 -5.0 -15.0
-b       -5.0 -5.0 -5.0
-c       5.0 -5.0 -5.0
+a       -5.0 -5.0 -20.0
+b       -5.0 -5.0 -10.0
+c       5.0 -5.0 -10.0
 
 Face
 texture PureTexture FLOOR WHITE
-a       -5.0 -5.0 -15.0
-b       5.0 -5.0 -15.0
-c       5.0 -5.0 -5.0
+a       -5.0 -5.0 -20.0
+b       5.0 -5.0 -20.0
+c       5.0 -5.0 -10.0

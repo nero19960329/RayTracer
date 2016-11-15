@@ -10,15 +10,19 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 	string sceneName;
+	string saveName;
 	bool travelFlag = false;
 
 	if (argc == 2) {
 		sceneName = argv[1];
-	} else if (argc == 3) {
+	} else if (argc == 3 || argc == 4) {
 		sceneName = argv[1];
 		if (!strcmp(argv[2], "-travel")) travelFlag = true;
 		else if (!strcmp(argv[2], "-render")) travelFlag = false;
 		else error_exit("Error at argument 2!\n");
+
+		if (argc == 4) saveName = argv[3];
+		else saveName = "../img/test.png";
 	} else {
 		error_exit("Input arguments are wrong!\n");
 	}
@@ -35,7 +39,8 @@ int main(int argc, char *argv[]) {
 		printf("Render duration: %.4lfs\n", timer.getDuration());
 
 		imshow("Ray Tracing", img);
-		imwrite("../img/test.png", img);
+		imwrite(saveName, img);
+		cout << "Image is saved at " << saveName << endl;
 		waitKey(0);
 	}
 

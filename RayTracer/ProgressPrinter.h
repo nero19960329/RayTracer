@@ -1,15 +1,20 @@
 #pragma once
 
 #include "Utils.h"
+#include "Timer.h"
 
+#include <iomanip>
 #include <string>
+#include <sstream>
 #include <Windows.h>
 
 class ProgressPrinter {
 private:
+	Timer timer;
+
 	int nowCnt;
 	int allCnt;
-	std::string prefix;
+	std::string prefix, suffix;
 
 	size_t progressLen;
 	size_t boxCnt;
@@ -18,13 +23,23 @@ private:
 public:
 	ProgressPrinter(const std::string &_prefix, int _allCnt) :
 		nowCnt(0), allCnt(_allCnt), prefix(_prefix), boxCnt(0) {
-		progressLen = (getConsoleWidth() - prefix.size() - 2) / 2;
+		suffix = "Remaining: ";
+		progressLen = (getConsoleWidth() - prefix.size() - suffix.size() - 12) / 2;
 
 		progressBar.push_back('[');
 		rep(i, progressLen) progressBar.push_back(0x3000);	// add spaces
 		progressBar.push_back(']');
+
+		timer.begin();
 	}
 	~ProgressPrinter() {}
+
+	void start() {
+		std::cout << "\r" << prefix;
+		std::wcout.imbue(std::locale("chs"));
+		std::wcout << progressBar;
+		std::cout << suffix;
+	}
 
 	void display(int delta) {
 		nowCnt += delta;
@@ -34,10 +49,27 @@ public:
 
 		repa(i, boxCnt, nowBoxCnt) progressBar[i + 1] = 0x25A0;	// add boxes
 		boxCnt = nowBoxCnt;
+
+		real_t nowDuration = timer.getDuration();
+		int remainDuration = (int) (nowDuration * (allCnt - nowCnt) / nowCnt);
 		
 		std::cout << "\r" << prefix;
 		std::wcout.imbue(std::locale("chs"));
 		std::wcout << progressBar;
+		std::cout << suffix;
+
+		std::ostringstream oss;
+		if (remainDuration >= 3600) {
+			int hours = remainDuration / 3600;
+			remainDuration -= hours * 3600;
+			oss << hours << "h" << remainDuration / 60 << "m" << remainDuration % 60 << "s";
+		} else if (remainDuration >= 60) {
+			oss << remainDuration / 60 << "m" << remainDuration % 60 << "s";
+		} else {
+			oss << remainDuration << "s";
+		}
+		rep(i, 9 - oss.str().size()) std::cout << " ";
+		std::cout << oss.str();
 	}
 
 	void finish() {

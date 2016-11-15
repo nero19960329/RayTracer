@@ -3,12 +3,12 @@
 # Viewer geometry center target up fovy
 Viewer
 geo 	1280 720
-center 	0.0 2.0 0.0
+center 	0.0 2.0 5.0
 target 	0.0 1.0 -10.0
 up 		0.0 1.0 0.0
-fovy 	60
-dop		0.1 6 20
-anti	20
+fovy 	45
+#dop		0.1 6 20
+#anti	20
 
 # Light origin color intensity
 Light

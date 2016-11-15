@@ -3,12 +3,12 @@
 # Viewer geometry center target up fovy
 Viewer
 geo     1280 720
-center  -1.0 4.0 0.0
+center  -1.0 4.0 5.0
 target  0.0 2.0 -10.0
 up      0.0 1.0 0.0
-fovy    60
-dop     0.2 10 20
-anti	20
+fovy    45
+dop     0.2 15 10
+anti	10
 
 # Light origin color intensity
 Light
@@ -17,6 +17,7 @@ color       WHITE
 intensity   0.25
 
 Light
+area        7 0.5
 origin      -1.0 10.0 -10.0
 color       WHITE
 intensity   1.0
