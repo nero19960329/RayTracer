@@ -2,15 +2,15 @@
 
 # Viewer geometry center target up fovy anti* dop*
 Viewer
-geo     1280 720
+geo     512 512
 center  0.0 3.2 0.0
 target  0.0 3.2 -10.0
 up      0.0 1.0 0.0
-fovy    60
+fovy    45
 # dop aperture_size focus_offset sample_count
-#dop     0.2 10 20
+#dop     0.1 10 20
 # anti sample_count
-anti    100
+anti    20
 
 # Light origin color intensity
 Light
@@ -19,6 +19,7 @@ color       WHITE
 intensity   0.25
 
 Light
+#area		7 0.5
 origin      -5.0 15.0 -10.0
 color       WHITE
 intensity   1.0

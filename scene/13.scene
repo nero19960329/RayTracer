@@ -6,9 +6,9 @@ geo     512 512
 center  0.0 2.0 0.0
 target  0.0 2.0 -10.0
 up      0.0 1.0 0.0
-fovy    60
+fovy    45
 # dop aperture_size focus_offset sample_count
-dop     0.2 10 10
+#dop     0.2 10 30
 # anti sample_count
 anti    10
 

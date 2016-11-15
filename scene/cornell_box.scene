@@ -16,8 +16,8 @@ color       WHITE
 intensity   0.25
 
 Light
-#area        7 0.3
-origin      0.0 4.6 -15.0
+#area        10 0.5
+origin      0.0 4.4 -15.0
 color       WHITE
 intensity   1.0
 

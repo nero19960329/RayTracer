@@ -38,10 +38,10 @@ int main(int argc, char *argv[]) {
 		Mat img = renderer.render(true);
 		printf("Render duration: %.4lfs\n", timer.getDuration());
 
-		imshow("Ray Tracing", img);
+		//imshow("Ray Tracing", img);
 		imwrite(saveName, img);
 		cout << "Image is saved at " << saveName << endl;
-		waitKey(0);
+		//waitKey(0);
 	}
 
 	return 0;

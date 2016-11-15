@@ -7,6 +7,7 @@ center  -1.0 4.0 0.0
 target  0.0 2.0 -10.0
 up      0.0 1.0 0.0
 fovy    60
+#anti	10
 
 # Light origin color intensity
 Light
@@ -20,10 +21,10 @@ color       WHITE
 intensity   1.0
 
 # Plane texture normal offset
-Plane
-texture GridTexture FLOOR 2
-normal  0.0 1.0 0.0
-offset  -1.0
+#Plane
+#texture GridTexture FLOOR 2
+#normal  0.0 1.0 0.0
+#offset  -1.0
 
 # Mesh texture file(>) center radius smooth( = false)
 Mesh
