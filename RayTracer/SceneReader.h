@@ -29,7 +29,7 @@ private:
 	std::unordered_map<std::string, real_t> refrIdxMap;
 
 	struct ViewerInitializer {
-		Geometry screen{ 0, 0 };
+		Geometry screen{ 0, 0 }, viewport{ 0, 0 };
 		Vec3 center, target, up;
 		real_t fovy;
 

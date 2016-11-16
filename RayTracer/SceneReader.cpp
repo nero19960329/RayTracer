@@ -140,6 +140,10 @@ int SceneReader::readViewer(ifstream &fin) {
 			int w, h;
 			iss >> w >> h;
 			viewerInitializer.screen = Geometry(w, h);
+		} else if (line.find("view") == 0) {
+			int w, h;
+			iss >> w >> h;
+			viewerInitializer.viewport = Geometry(w, h);
 		} else if (line.find("center") == 0) {
 			iss >> viewerInitializer.center[0] >> viewerInitializer.center[1] >> viewerInitializer.center[2];
 		} else if (line.find("target") == 0) {
@@ -159,7 +163,7 @@ int SceneReader::readViewer(ifstream &fin) {
 		}
 		return true;
 	}, [&]() {
-		viewer = Viewer{ viewerInitializer.screen, viewerInitializer.center, viewerInitializer.target, viewerInitializer.up, viewerInitializer.fovy };
+		viewer = Viewer{ viewerInitializer.screen, viewerInitializer.center, viewerInitializer.target, viewerInitializer.up, viewerInitializer.fovy, viewerInitializer.viewport };
 		if (viewerInitializer.dopFlag) {
 			viewer.dopFlag = true;
 			viewer.apertureSize = viewerInitializer.apertureSize;

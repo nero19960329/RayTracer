@@ -5,29 +5,42 @@
 
 using namespace std;
 
+const real_t invRANDMAX = 1.0 / RAND_MAX;
+
 Ray Viewer::getRay(int i, int j) const {
 	Vec3 tmpVec = LT - deltaH * (j + 0.5) + deltaW * (i + 0.5);
+	Vec3 rayCenter, rayDir;
+
 	if (!dopFlag && !antialiasingFlag) {
-		return{ center, (tmpVec - center).getNormalized() };
+		rayCenter = center;
+		rayDir = tmpVec - rayCenter;
 	} else if (!dopFlag && antialiasingFlag) {
-		tmpVec -= (rand() - 0.5) * deltaH / RAND_MAX;
-		tmpVec += (rand() - 0.5) * deltaW / RAND_MAX;
-		return{ center, (tmpVec - center).getNormalized() };
+		rayCenter = center;
+		tmpVec -= (rand() - 0.5) * deltaH * invRANDMAX;
+		tmpVec += (rand() - 0.5) * deltaW * invRANDMAX;
+		rayDir = tmpVec - rayCenter;
 	} else if (dopFlag && !antialiasingFlag) {
 		Vec3 focusPoint = center + (tmpVec - center).getNormalized() * focusOffset;
-		real_t tmpRadius = rand() * apertureSize / RAND_MAX;
-		real_t tmpTheta = rand() * 360.0 / RAND_MAX;
-		Vec3 tmpCenter = center + tmpRadius * (cos(tmpTheta) * x + sin(tmpTheta) * y);
-		return { tmpCenter, (focusPoint - tmpCenter).getNormalized() };
+		real_t tmpRadius = rand() * apertureSize * invRANDMAX;
+		real_t tmpTheta = rand() * 360.0 * invRANDMAX;
+		rayCenter = center + tmpRadius * (cos(tmpTheta) * x + sin(tmpTheta) * y);
+		rayDir = focusPoint - rayCenter;
 	} else {
-		tmpVec -= (rand() - 0.5) * deltaH / RAND_MAX;
-		tmpVec += (rand() - 0.5) * deltaW / RAND_MAX;
+		tmpVec -= (rand() - 0.5) * deltaH * invRANDMAX;
+		tmpVec += (rand() - 0.5) * deltaW * invRANDMAX;
 		Vec3 focusPoint = center + (tmpVec - center).getNormalized() * focusOffset;
-		real_t tmpRadius = rand() * apertureSize / RAND_MAX;
-		real_t tmpTheta = rand() * 360.0 / RAND_MAX;
-		Vec3 tmpCenter = center + tmpRadius * (cos(tmpTheta) * x + sin(tmpTheta) * y);
-		return { tmpCenter, (focusPoint - tmpCenter).getNormalized() };
+		real_t tmpRadius = rand() * apertureSize * invRANDMAX;
+		real_t tmpTheta = rand() * 360.0 * invRANDMAX;
+		rayCenter = center + tmpRadius * (cos(tmpTheta) * x + sin(tmpTheta) * y);
+		rayDir = focusPoint - rayCenter;
 	}
+
+	if (projFlag == ORTHO) {
+		rayCenter = tmpVec;
+		rayDir = dir;
+	}
+
+	return{ rayCenter, rayDir.getNormalized() };
 }
 
 void Viewer::moveForward(real_t delta) {
@@ -52,12 +65,26 @@ void Viewer::rotateSide(real_t theta) {
 	computeVariables();
 }
 
+void Viewer::changeProjectionType() {
+	if (projFlag == PERSPECTIVE) projFlag = ORTHO;
+	else {
+		if (viewport.width && viewport.height) projFlag = PERSPECTIVE;
+		else return;
+	}
+	computeVariables();
+}
+
 void Viewer::computeVariables() {
 	up = dir.cross(up).cross(dir).getNormalized();
 
 	real_t w2, h2;
-	h2 = tan(fovy * PI / 360);
-	w2 = h2 * screen.getRatio();
+	if (projFlag == PERSPECTIVE) {
+		h2 = tan(fovy * PI / 360);
+		w2 = h2 * screen.getRatio();
+	} else {
+		w2 = viewport.width * 0.5;
+		h2 = viewport.height * 0.5;
+	}
 	x = dir.cross(up);
 	y = up;
 	Vec3 halfW, halfH;

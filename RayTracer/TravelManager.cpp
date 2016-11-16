@@ -34,6 +34,8 @@ void TravelManager::travel(Renderer &renderer) const {
 			renderer.getViewer().rotateUp(thetaStep); break;
 		case M_KEY_DOWN:		// DOWN
 			renderer.getViewer().rotateUp(-thetaStep); break;
+		case 't':
+			renderer.getViewer().changeProjectionType(); break;
 		case 'q':
 			exitFlag = true; break;
 		default:

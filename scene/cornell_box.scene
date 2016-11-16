@@ -1,8 +1,9 @@
 # Scene File
 
-# Viewer geometry center target up fovy
+# Viewer geometry viewport* center target up fovy
 Viewer
 geo     512 512
+#view    12 12
 center  0.0 0.0 0.0
 target  0.0 0.0 -10.0
 up      0.0 1.0 0.0
