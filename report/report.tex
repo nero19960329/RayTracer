@@ -1,8 +1,9 @@
-\documentclass[11pt,a4paper]{ctexart}
+\documentclass[11pt,a4paper,UTF8]{ctexart}
 
 \usepackage{latexsym}
 \usepackage{amssymb}
 \usepackage{CJK}
+\usepackage{CJKutf8}
 \usepackage{graphicx}
 \usepackage{geometry}
 \usepackage{fourier}
@@ -11,19 +12,24 @@
 \usepackage{subcaption}
 \usepackage{enumitem}
 \usepackage{dirtree}
-\usepackage[hyperfootnotes=false,colorlinks,linkcolor=blue,anchorcolor=blue,citecolor=blue]{hyperref}
-
-%\author{软件32班\quad{}王昭\\学号: 2013013330}
-%\title{光线追踪渲染器实验报告}
+\usepackage[
+    unicode=true,
+    hyperfootnotes=false,
+    CJKbookmarks=false,
+    colorlinks,
+    linkcolor=blue,
+    anchorcolor=blue,
+    citecolor=blue
+    ]{hyperref}
+    
 \begin{document}
-\hypersetup{CJKbookmarks=true}
-\begin{CJK*}{GBK}{kai}
+\begin{CJK*}{UTF8}{kai}
 \makeatletter
 \CTEXsetup[format=\Large\bfseries]{section}
 \makeatother
-%\maketitle
+
 \newgeometry{top=10cm}
-\input{./title.tex}
+\input{title}
 \restoregeometry
 \tableofcontents
 \clearpage
