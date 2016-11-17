@@ -22,6 +22,8 @@ Some example scene files can be found in "scene/".
 + Reflection & refraction.
 + Orthographic projection & perspective projection.
 + Soft shadow.
++ Anti aliasing by jitter sampling.
++ Depth of field by super sampling.
 + Texture including pure color, grid texture and image texture.
 + Implemented <a href="http://www.eng.utah.edu/~cs6965/papers/kdtree.pdf">SAH-based</a> KD-Tree.
 + Smooth shading.
