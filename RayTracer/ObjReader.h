@@ -17,10 +17,10 @@ private:
 
 	Vec3 center;
 	real_t radius;
-	bool smoothShadingFlag = false;
+	bool smoothShadingFlag;
 
 public:
-	explicit ObjReader(const std::string &objFileName, const Vec3 &_center = Vec3::zeros(), real_t _radius = 1.0);
+	explicit ObjReader(const std::string &objFileName, const Vec3 &_center = Vec3::zeros(), real_t _radius = 1.0, bool _smooth = false);
 	~ObjReader() {}
 
 	std::shared_ptr<Mesh> getMesh();

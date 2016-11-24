@@ -3,16 +3,11 @@
 #include "Timer.h"
 #include "TravelManager.h"
 
-#include "rapidxml.hpp"
-#include "rapidxml_utils.hpp"
-#include "rapidxml_print.hpp"
-
 #include <opencv2/opencv.hpp>
 #include <fstream>
 
 using namespace cv;
 using namespace std;
-using namespace rapidxml;
 
 int main(int argc, char *argv[]) {
 	string sceneName;
@@ -33,20 +28,7 @@ int main(int argc, char *argv[]) {
 		error_exit("Input arguments are wrong!\n");
 	}
 
-	file<> fdoc(sceneName.c_str());
-	xml_document<> doc;
-	doc.parse<0>(fdoc.data());
-
-	xml_node<> *scene = doc.first_node("scene");
-	cout << scene->name() << endl;
-	xml_node<> *viewer = scene->first_node("viewer");
-	cout << viewer->name() << endl;
-	xml_node<> *test = viewer->first_node();
-	cout << test->name() << endl;
-	cout << test->first_attribute("type")->value() << endl;
-	cout << test->first_attribute("value")->value() << endl;
-
-	/*SceneReader sceneReader(sceneName);
+	SceneReader sceneReader(sceneName);
 	Renderer renderer{ sceneReader.getViewer(), sceneReader.getScene() };
 
 	if (travelFlag) {
@@ -61,7 +43,7 @@ int main(int argc, char *argv[]) {
 		imwrite(saveName, img);
 		cout << "Image is saved at " << saveName << endl;
 		//waitKey(0);
-	}*/
+	}
 
 	return 0;
 }

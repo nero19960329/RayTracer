@@ -75,11 +75,11 @@
     <ClCompile Include="TravelManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="RayTracing.cpp">
-      <Filter>源文件\Shading</Filter>
-    </ClCompile>
     <ClCompile Include="Utils.cpp">
       <Filter>源文件\Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="RayTracing.cpp">
+      <Filter>源文件\Shading</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -7,6 +7,7 @@ public:
 	int width, height;
 
 public:
+	explicit Geometry(std::pair<int, int> size) : width(size.first), height(size.second) {}
 	Geometry(int _width, int _height) : width(_width), height(_height) {}
 	~Geometry() {}
 

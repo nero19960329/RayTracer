@@ -13,9 +13,14 @@
 #include "Utils.h"
 #include "Viewer.h"
 
+#include "rapidxml.hpp"
+#include "rapidxml_utils.hpp"
+#include "rapidxml_print.hpp"
+
 #include <functional>
 #include <memory>
 #include <unordered_map>
+#include <vector>
 
 class SceneReader {
 private:
@@ -51,14 +56,58 @@ public:
 	}
 
 private:
-	int readSth(std::ifstream &fin, std::function<bool(std::istringstream &, const std::string &)> readFunc, std::function<void()> modifyFunc);
+	std::vector<rapidxml::xml_node<> *> getChildNodes(rapidxml::xml_node<> *parent, const std::vector<std::string> &strVec) const;
 
-	int readViewer(std::ifstream &fin);
-	int readLight(std::ifstream &fin);
-	int readSphere(std::ifstream &fin);
-	int readPlane(std::ifstream &fin);
-	int readFace(std::ifstream &fin);
-	int readMesh(std::ifstream &fin);
+	std::string getValue(rapidxml::xml_node<> *node) const { return node->first_attribute("value")->value(); }
+
+	std::pair<int, int> readPair(rapidxml::xml_node<> *node) const {
+		std::string str = getValue(node);
+		std::istringstream iss(str);
+		std::pair<int, int> res;
+		iss >> res.first >> res.second;
+		return res;
+	}
+
+	Vec3 readVec3(rapidxml::xml_node<> *node) const {
+		std::string str = getValue(node);
+		std::istringstream iss(str);
+		Vec3 res;
+		iss >> res.x >> res.y >> res.z;
+		return res;
+	}
+
+	real_t readReal(rapidxml::xml_node<> *node) const {
+		std::string str = getValue(node);
+		std::istringstream iss(str);
+		real_t res;
+		iss >> res;
+		return res;
+	}
+
+	bool readBool(rapidxml::xml_node<> *node) const {
+		std::string str = getValue(node);
+		std::istringstream iss(str);
+		std::string tmp;
+		iss >> tmp;
+		if (tmp == "true" || tmp == "1") return true;
+		else return false;
+	}
+
+	int readInt(rapidxml::xml_node<> *node) const {
+		std::string str = getValue(node);
+		std::istringstream iss(str);
+		int res;
+		iss >> res;
+		return res;
+	}
+
+	void readViewer(rapidxml::xml_node<> *node);
+	void readLight(rapidxml::xml_node<> *node);
+	void readObject(rapidxml::xml_node<> *node);
+	void readSphere(rapidxml::xml_node<> *node);
+	void readPlane(rapidxml::xml_node<> *node);
+	void readFace(rapidxml::xml_node<> *node);
+	void readMesh(rapidxml::xml_node<> *node);
 
 	void fillMap();
 
@@ -66,5 +115,5 @@ private:
 	Material readMaterial(const std::string &str) const;
 	real_t readRefrIdx(const std::string &str) const;
 
-	std::shared_ptr<Texture> readTexture(const std::string &str) const;
+	std::shared_ptr<Texture> readTexture(rapidxml::xml_node<> *node) const;
 };

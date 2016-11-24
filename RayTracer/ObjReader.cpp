@@ -3,8 +3,8 @@
 
 using namespace std;
 
-ObjReader::ObjReader(const string &objFileName, const Vec3 &_center, real_t _radius) :
-	center(_center), radius(_radius) {
+ObjReader::ObjReader(const string &objFileName, const Vec3 &_center, real_t _radius, bool _smooth) :
+	center(_center), radius(_radius), smoothShadingFlag(_smooth) {
 	ifstream fin(objFileName);
 	if (!fin) error_exit("Obj file not found!\n");
 
