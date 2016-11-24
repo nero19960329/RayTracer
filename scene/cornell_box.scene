@@ -8,7 +8,8 @@ center  0.0 0.0 0.0
 target  0.0 0.0 -10.0
 up      0.0 1.0 0.0
 fovy    45
-#anti	10
+#anti	4
+#dop     0.3 15 5
 
 # Light area* origin color intensity
 Light

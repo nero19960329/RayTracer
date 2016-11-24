@@ -6,9 +6,9 @@
 #include <list>
 #include <vector>
 
-enum ShaderType { PHONG };
+enum TraceType { RAY_TRACING };
 
-class Shader;
+class TraceBase;
 
 class Scene {
 public:
@@ -19,7 +19,7 @@ public:
 	Scene() {}
 	virtual ~Scene() {}
 
-	std::shared_ptr<Shader> getShader(ShaderType type) const;
+	std::shared_ptr<TraceBase> getTracingType(TraceType type) const;
 
 	void addLight(const std::shared_ptr<Light> &light);
 	void addObject(const std::shared_ptr<Object> &object);
@@ -28,24 +28,24 @@ public:
 	std::shared_ptr<Intersect> getIntersect(const Ray &ray) const;
 };
 
-class Shader {
+class TraceBase {
 protected:
 	const Scene &scene;
 
 public:
-	Shader(const Scene &_scene) : scene(_scene) {}
-	virtual ~Shader() {}
+	TraceBase(const Scene &_scene) : scene(_scene) {}
+	virtual ~TraceBase() {}
 
 	virtual Vec3 color(const Ray &ray) const = 0;
 };
 
-class Phong : public Shader {
+class RayTracing : public TraceBase {
 private:
 	int maxDepth;
 
 public:
-	explicit Phong(const Scene &_scene, int _maxDepth = MAX_TRACING_DEPTH) : Shader(_scene), maxDepth(_maxDepth) {}
-	~Phong() {}
+	explicit RayTracing(const Scene &_scene, int _maxDepth = MAX_TRACING_DEPTH) : TraceBase(_scene), maxDepth(_maxDepth) {}
+	~RayTracing() {}
 
 	Vec3 color(const Ray &ray) const override;
 

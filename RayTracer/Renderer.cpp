@@ -13,11 +13,12 @@ Mat Renderer::render( bool showBar) const {
 }
 
 Mat Renderer::rawRender(bool showBar) const {
-	auto shader = scene.getShader(type);
+	auto shader = scene.getTracingType(type);
 	Geometry screen = viewer.getScreen();
 
 	Mat res = Mat::zeros(screen.height, screen.width, CV_64FC3);
-	int sample = viewer.dopSample * viewer.antiSample;
+	int antiSample2 = sqr(viewer.antiSample);
+	int sample = viewer.dopSample * antiSample2;
 	int allRays = screen.width * screen.height * sample;
 
 	vector<int> widthVec, heightVec;
@@ -35,7 +36,8 @@ Mat Renderer::rawRender(bool showBar) const {
 		#pragma omp parallel for
 		for (int k = 0; k < allRays; ++k) {
 			int i = widthVec[(k / sample) / screen.height], j = heightVec[(k / sample) % screen.height];
-			Vec3 color = shader->color(viewer.getRay(i, j));
+			int p = ((k / viewer.dopSample) % antiSample2) / viewer.antiSample, q = ((k / viewer.dopSample) % antiSample2) % viewer.antiSample;
+			Vec3 color = shader->color(viewer.getRay(i, j, p, q));
 			res.at<Vec3d>(j, i)[0] += color[2];
 			res.at<Vec3d>(j, i)[1] += color[1];
 			res.at<Vec3d>(j, i)[2] += color[0];
@@ -50,7 +52,8 @@ Mat Renderer::rawRender(bool showBar) const {
 		#pragma omp parallel for
 		for (int k = 0; k < allRays; ++k) {
 			int i = widthVec[(k / sample) / screen.height], j = heightVec[(k / sample) % screen.height];
-			Vec3 color = shader->color(viewer.getRay(i, j));
+			int p = ((k / viewer.dopSample) % antiSample2) / viewer.antiSample, q = ((k / viewer.dopSample) % antiSample2) % viewer.antiSample;
+			Vec3 color = shader->color(viewer.getRay(i, j, p, q));
 			res.at<Vec3d>(j, i)[0] += color[2];
 			res.at<Vec3d>(j, i)[1] += color[1];
 			res.at<Vec3d>(j, i)[2] += color[0];

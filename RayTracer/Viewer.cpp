@@ -1,36 +1,25 @@
 #include "Viewer.h"
 
 #include <iostream>
-#include "Timer.h"
 
 using namespace std;
 
-const real_t invRANDMAX = 1.0 / RAND_MAX;
-
-Ray Viewer::getRay(int i, int j) const {
-	Vec3 tmpVec = LT - deltaH * (j + 0.5) + deltaW * (i + 0.5);
+Ray Viewer::getRay(int i, int j, int p, int q) const {
+	Vec3 tmpVec = LT - deltaH * j + deltaW * i - deltaH * q / antiSample + deltaW * p / antiSample;
 	Vec3 rayCenter, rayDir;
 
-	if (!dopFlag && !antialiasingFlag) {
+	if (antialiasingFlag) {
+		tmpVec -= erand48() * deltaH / antiSample;
+		tmpVec += erand48() * deltaW / antiSample;
+	}
+
+	if (!dopFlag) {
 		rayCenter = center;
 		rayDir = tmpVec - rayCenter;
-	} else if (!dopFlag && antialiasingFlag) {
-		rayCenter = center;
-		tmpVec -= (rand() - 0.5) * deltaH * invRANDMAX;
-		tmpVec += (rand() - 0.5) * deltaW * invRANDMAX;
-		rayDir = tmpVec - rayCenter;
-	} else if (dopFlag && !antialiasingFlag) {
+	}  else {
 		Vec3 focusPoint = center + (tmpVec - center).getNormalized() * focusOffset;
-		real_t tmpRadius = rand() * apertureSize * invRANDMAX;
-		real_t tmpTheta = rand() * 360.0 * invRANDMAX;
-		rayCenter = center + tmpRadius * (cos(tmpTheta) * x + sin(tmpTheta) * y);
-		rayDir = focusPoint - rayCenter;
-	} else {
-		tmpVec -= (rand() - 0.5) * deltaH * invRANDMAX;
-		tmpVec += (rand() - 0.5) * deltaW * invRANDMAX;
-		Vec3 focusPoint = center + (tmpVec - center).getNormalized() * focusOffset;
-		real_t tmpRadius = rand() * apertureSize * invRANDMAX;
-		real_t tmpTheta = rand() * 360.0 * invRANDMAX;
+		real_t tmpRadius = erand48() * apertureSize;
+		real_t tmpTheta = erand48() * 360.0;
 		rayCenter = center + tmpRadius * (cos(tmpTheta) * x + sin(tmpTheta) * y);
 		rayDir = focusPoint - rayCenter;
 	}

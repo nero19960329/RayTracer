@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<scene>
+    <viewer>
+        <geo type="pair" value="512 512"/>
+        <center name="vec3" value="0 0 0"/>
+        <target name="vec3" value="0 0 -10"/>
+        <up name="vec3" value="0 1 0"/>
+        <fovy name="real" value="45"/>
+    </viewer>
+</scene>

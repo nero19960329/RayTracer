@@ -9,10 +9,10 @@ class Renderer {
 private:
 	Viewer viewer;
 	const Scene &scene;
-	ShaderType type;
+	TraceType type;
 
 public:
-	Renderer(const Viewer &_viewer, const Scene &_scene, ShaderType _type = PHONG) : viewer(_viewer), scene(_scene), type(_type) {}
+	Renderer(const Viewer &_viewer, const Scene &_scene, TraceType _type = RAY_TRACING) : viewer(_viewer), scene(_scene), type(_type) {}
 	~Renderer() {}
 
 	cv::Mat render(bool showBar = false) const;

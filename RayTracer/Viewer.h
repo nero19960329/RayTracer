@@ -44,16 +44,13 @@ public:
 		else projFlag = PERSPECTIVE;
 
 		computeVariables();
-		setRandomSeed();
 	}
 	~Viewer() {}
 
-	Ray getRay(int i, int j) const;
+	Ray getRay(int i, int j, int p, int q) const;
 	Geometry getScreen() const {
 		return screen;
 	}
-
-	void setRandomSeed() const { srand((unsigned) time(0)); }
 
 	void moveForward(real_t delta);
 	void moveSide(real_t delta);

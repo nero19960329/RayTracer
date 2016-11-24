@@ -45,9 +45,6 @@
     <ClCompile Include="Scene.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Phong.cpp">
-      <Filter>源文件\Shading</Filter>
-    </ClCompile>
     <ClCompile Include="Viewer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -77,6 +74,12 @@
     </ClCompile>
     <ClCompile Include="TravelManager.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RayTracing.cpp">
+      <Filter>源文件\Shading</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>源文件\Lib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -163,6 +166,18 @@
     </ClInclude>
     <ClInclude Include="TravelManager.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="rapidxml.hpp">
+      <Filter>头文件\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="rapidxml_iterators.hpp">
+      <Filter>头文件\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="rapidxml_print.hpp">
+      <Filter>头文件\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="rapidxml_utils.hpp">
+      <Filter>头文件\Lib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

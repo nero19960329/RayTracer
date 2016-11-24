@@ -219,43 +219,7 @@ bool KDTreeIntersect::isIntersect(const shared_ptr<KDNode> &node, const Ray &ray
 			if (t[0] < t[1]) return isIntersect(node->left, ray) || isIntersect(node->right, ray);
 			else return isIntersect(node->right, ray) || isIntersect(node->left, ray);
 		}
-	} else {
-		return leafIntersect(node->objs);
-	}
-	/*enum NextType { LEFT, RIGHT };
-	shared_ptr<KDNode> nowPtr = node;
-	stack<pair<shared_ptr<KDNode>, NextType>> stack;
-	
-	while (nowPtr) {
-		if (nowPtr->left && nowPtr->right) {
-			real_t t[2];
-			bool leftHit = nowPtr->left->aabb.intersect(ray, t[0]);
-			bool rightHit = nowPtr->right->aabb.intersect(ray, t[1]);
-
-			if (leftHit && !rightHit) {
-				nowPtr = nowPtr->left;
-			} else if (!leftHit && rightHit) {
-				nowPtr = nowPtr->right;
-			} else if (leftHit && rightHit) {
-				if (t[0] < t[1]) {
-					stack.emplace(nowPtr, RIGHT);
-					nowPtr = nowPtr->left;
-				} else {
-					stack.emplace(nowPtr, LEFT);
-					nowPtr = nowPtr->right;
-				}
-			}
-		} else {
-			if (leafIntersect(nowPtr->objs)) return true;
-			if (stack.empty()) return false;
-			auto pairElem = stack.top();
-			stack.pop();
-			if (pairElem.second == LEFT) nowPtr = pairElem.first->left;
-			else nowPtr = pairElem.first->right;
-		}
-	}
-
-	return false;*/
+	} else return leafIntersect(node->objs);
 }
 
 bool KDTreeIntersect::isIntersect() const {

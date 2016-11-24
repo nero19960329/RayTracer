@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <random>
 #include <vector>
 
 using real_t = double;
@@ -13,9 +14,13 @@ const real_t epsilon = 1e-6;
 const real_t biggerEpsilon = epsilon * 3;
 const real_t PI = 3.14159265359;
 
+extern std::default_random_engine generator;
+extern std::uniform_real_distribution<double> distr;
+
 #define rep(x, y) for (auto x = decltype(y){0}; x != y; ++x)
 #define repa(x, y, z) for (auto x = decltype(z){y}; x != z; ++x)
 #define repd(x, y, z) for (auto x = decltype(z){y}; x != z; --x)
+#define erand48() distr(generator)
 
 // left-closed and right-open
 template <typename T>

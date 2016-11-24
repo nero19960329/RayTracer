@@ -2,9 +2,9 @@
 
 using namespace std;
 
-shared_ptr<Shader> Scene::getShader(ShaderType type) const {
-	if (type == PHONG) {
-		return make_shared<Phong>(*this);
+shared_ptr<TraceBase> Scene::getTracingType(TraceType type) const {
+	if (type == RAY_TRACING) {
+		return make_shared<RayTracing>(*this);
 	}
 	return nullptr;
 }

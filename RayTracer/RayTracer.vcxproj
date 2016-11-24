@@ -133,6 +133,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <OpenMPSupport>true</OpenMPSupport>
+      <DisableSpecificWarnings>4819</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -149,12 +150,13 @@
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Phong.cpp" />
+    <ClCompile Include="RayTracing.cpp" />
     <ClCompile Include="SceneReader.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="StaticConstants.cpp" />
     <ClCompile Include="Face.cpp" />
     <ClCompile Include="TravelManager.cpp" />
+    <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Viewer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +173,10 @@
     <ClInclude Include="Plane.h" />
     <ClInclude Include="ProgressPrinter.h" />
     <ClInclude Include="PureSphere.h" />
+    <ClInclude Include="rapidxml.hpp" />
+    <ClInclude Include="rapidxml_iterators.hpp" />
+    <ClInclude Include="rapidxml_print.hpp" />
+    <ClInclude Include="rapidxml_utils.hpp" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
