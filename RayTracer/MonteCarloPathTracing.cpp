@@ -22,7 +22,8 @@ Vec3 MonteCarloPathTracing::getColor(DistRay &ray, int depth) const {
 
 	Vec3 inDir = (ray.orig - info.interPoint).getNormalized();
 	Vec3 outDir;
-	LambertianBRDF brdf(info.surface);
+	//LambertianBRDF brdf(info.surface);
+	PhongBRDF brdf(info.surface);
 	brdf.brdfSample(inDir, outDir, info.normal);
 
 	DistRay newRay(Ray{ info.interPoint + outDir * epsilon, outDir }, ray.dist);

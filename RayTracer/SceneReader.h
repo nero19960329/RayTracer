@@ -1,5 +1,6 @@
 #pragma once
 
+#include "BRDF.h"
 #include "Face.h"
 #include "InfPlane.h"
 #include "Light.h"
@@ -33,15 +34,7 @@ private:
 	std::unordered_map<std::string, Material> materialMap;
 	std::unordered_map<std::string, real_t> refrIdxMap;
 
-	struct ViewerInitializer {
-		Geometry screen{ 0, 0 }, viewport{ 0, 0 };
-		Vec3 center, target, up;
-		real_t fovy;
-
-		bool dopFlag = false, antiFlag = false;
-		real_t apertureSize = 0.1, focusOffset = 0.0;
-		int dopSample = 1, antiSample = 1;
-	} viewerInitializer;
+	BRDFType brdfType;
 
 public:
 	explicit SceneReader(const std::string &sceneFileName);

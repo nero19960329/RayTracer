@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<scene>
+<scene type="phong">
     <viewer>
         <geo value="1024 768"/>
         <center value="0.0 0.0 -1.0"/>
@@ -7,7 +7,7 @@
         <up value="0.0 1.0 0.0"/>
         <fovy value="45.0"/>
         <anti value="true">
-        	<sample value="7"/>
+        	<sample value="10"/>
         </anti>
         <dop value="false">
         	<aperture value="0.3"/>

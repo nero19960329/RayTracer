@@ -20,6 +20,13 @@ SceneReader::SceneReader(const string &sceneFileName) {
 	xml_node<> *root = doc.first_node("scene");
 	if (!root) error_exit("Scene xml file format error!\n");
 
+	brdfType = LAMBERTIAN;
+	if (root->first_attribute("type")) {
+		const char *brdf_type = root->first_attribute("type")->value();
+		if (!strcmp(brdf_type, "lambertian")) brdfType = LAMBERTIAN;
+		else if (!strcmp(brdf_type, "phong")) brdfType = PHONG;
+	}
+
 	for (auto node = root->first_node(); node; node = node->next_sibling()) {
 		if (!strcmp(node->name(), "viewer")) readViewer(node);
 		else if (!strcmp(node->name(), "light")) readLight(node);
@@ -43,6 +50,7 @@ void SceneReader::fillMap() {
 	colorMap["magenta"] = Vec3::MAGENTA;
 
 	materialMap["plastic"] = Material::PLASTIC;
+	materialMap["mcpt_frosted_mirror"] = Material::MCPT_FROSTED_MIRROR;
 	materialMap["mirror"] = Material::MIRROR;
 	materialMap["a_bit_mirror"] = Material::A_BIT_MIRROR;
 	materialMap["transparent_material"] = Material::TRANSPARENT_MATERIAL;
@@ -94,7 +102,8 @@ shared_ptr<Texture> SceneReader::readTexture(xml_node<> *node) const {
 		});
 		return make_shared<PureTexture>(
 			readMaterial(getValue(textureNodes[0])), 
-			readColor(getValue(textureNodes[1]))
+			readColor(getValue(textureNodes[1])),
+			brdfType
 			);
 	} else if (!strcmp(type, "grid")) {
 		auto textureNodes = getChildNodes(node, {

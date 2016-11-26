@@ -16,5 +16,5 @@ public:
 		Material(_material), diffuse(_diffuse) {}
 	~Surface() {}
 
-	static const Surface BLACK, WHITE, RED, GREEN, BLUE, YELLOW, CYAN, MAGENTA;
+	//static const Surface BLACK, WHITE, RED, GREEN, BLUE, YELLOW, CYAN, MAGENTA;
 };

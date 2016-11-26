@@ -1,5 +1,6 @@
 #pragma once
 
+#include "BRDF.h"
 #include "Constants.h"
 #include "Surface.h"
 
@@ -28,9 +29,13 @@ private:
 	std::shared_ptr<Surface> surface;
 
 public:
-	explicit PureTexture(const Material &_material, const Vec3 &_color) :
-		Texture(_material) {
-		surface = std::make_shared<Surface>(_material, _color);
+	explicit PureTexture(const Material &_material, const Vec3 &_color, BRDFType brdfType = LAMBERTIAN) :
+		Texture(_material), color(_color) {
+		if (brdfType == PHONG) {
+			real_t maxDiffuse = std::max(color[0], std::max(color[1], color[2]));
+			if (maxDiffuse + material.specular > 1.0) color *= (1.0 - material.specular);
+		}
+		surface = std::make_shared<Surface>(_material, color);
 	}
 	~PureTexture() {}
 

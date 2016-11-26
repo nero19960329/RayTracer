@@ -15,5 +15,5 @@ public:
 		ambient(_ambient), specular(_specular), shininess(_shininess), refl(_refl), refr(_refr), emission(_emission) {}
 	virtual ~Material() {}
 	
-	static const Material FLOOR, A_BIT_MIRROR, MIRROR, TRANSPARENT_MATERIAL, PLASTIC;
+	static const Material FLOOR, A_BIT_MIRROR, MIRROR, MCPT_FROSTED_MIRROR, TRANSPARENT_MATERIAL, PLASTIC;
 };

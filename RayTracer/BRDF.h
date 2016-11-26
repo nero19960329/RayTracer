@@ -8,6 +8,8 @@
 
 using namespace std;
 
+enum BRDFType { LAMBERTIAN, PHONG };
+
 class BRDF {
 public:
 	BRDF() {}
@@ -71,14 +73,6 @@ public:
 		real_t u = erand48();
 		real_t k_d = std::max(surface->diffuse[0], std::max(surface->diffuse[1], surface->diffuse[2]));
 		real_t k_s = surface->specular;
-		
-		if (k_d + k_s > 1.0) {
-			real_t tmp = k_d + k_s;
-			surface->diffuse *= tmp;
-			k_d *= tmp;
-			surface->specular *= tmp;
-			k_s *= tmp;
-		}
 
 		if (u < k_d) {
 			diff_spec = false;
