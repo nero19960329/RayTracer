@@ -87,7 +87,7 @@ public:
 		return *this * (1.0 / k);
 	}
 
-	Vec3 operator /= (real_t k) {
+	Vec3 &operator /= (real_t k) {
 		real_t t = 1.0 / k;
 		x *= t;
 		y *= t;
@@ -196,5 +196,5 @@ public:
 	}
 
 	// static constants
-	static const Vec3 BLACK, WHITE, RED, GREEN, BLUE, YELLOW, CYAN, MAGENTA;
+	static const Vec3 NONE, BLACK, WHITE, RED, GREEN, BLUE, YELLOW, CYAN, MAGENTA;
 };

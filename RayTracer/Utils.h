@@ -5,7 +5,6 @@
 
 #include <algorithm>
 #include <functional>
-#include <random>
 #include <vector>
 
 using real_t = double;
@@ -13,25 +12,18 @@ using real_t = double;
 const real_t epsilon = 1e-6;
 const real_t biggerEpsilon = epsilon * 3;
 const real_t PI = 3.14159265359;
-
-extern std::default_random_engine generator;
-extern std::uniform_real_distribution<double> distr;
+const real_t INV_PI = 1.0 / PI;
+const real_t INV_RAND_MAX = 1.0 / RAND_MAX;
 
 #define rep(x, y) for (auto x = decltype(y){0}; x != y; ++x)
 #define repa(x, y, z) for (auto x = decltype(z){y}; x != z; ++x)
 #define repd(x, y, z) for (auto x = decltype(z){y}; x != z; --x)
-#define erand48() distr(generator)
+#define erand48() (rand() * INV_RAND_MAX)
 
 // left-closed and right-open
-template <typename T>
-inline bool betw(const T &x, const T &y, const T &z) {
-	return x >= y && x < z;
-}
+template <typename T> inline bool betw(const T &x, const T &y, const T &z) { return x >= y && x < z }
 
-template <typename T>
-inline T sqr(const T &x) {
-	return x * x;
-}
+template <typename T> inline T sqr(const T &x) { return x * x; }
 
 template <typename T>
 inline bool updateMin(T &value, const T &min) {
@@ -49,6 +41,13 @@ inline bool updateMax(T &value, const T &max) {
 		return true;
 	}
 	return false;
+}
+
+template <typename T>
+inline T cut(const T &value, const T &min = 0.0, const T &max = 1.0) {
+	if (value < min) return min;
+	if (value > max) return max;
+	return value;
 }
 
 template <typename T> 

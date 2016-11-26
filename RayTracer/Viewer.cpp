@@ -16,7 +16,7 @@ Ray Viewer::getRay(int i, int j, int p, int q) const {
 	if (!dopFlag) {
 		rayCenter = center;
 		rayDir = tmpVec - rayCenter;
-	}  else {
+	} else {
 		Vec3 focusPoint = center + (tmpVec - center).getNormalized() * focusOffset;
 		real_t tmpRadius = erand48() * apertureSize;
 		real_t tmpTheta = erand48() * 360.0;

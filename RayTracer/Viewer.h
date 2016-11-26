@@ -24,7 +24,7 @@ public:
 	bool dopFlag, antialiasingFlag;
 
 	real_t apertureSize, focusOffset;
-	int dopSample, antiSample;
+	int dopSample = 1, antiSample = 1;
 
 private:
 	Vec3 LT, deltaW, deltaH;

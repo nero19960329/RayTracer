@@ -12,8 +12,8 @@ class ProgressPrinter {
 private:
 	Timer timer;
 
-	int nowCnt;
-	int allCnt;
+	long long nowCnt;
+	long long allCnt;
 	std::string prefix, suffix;
 
 	size_t progressLen;
@@ -21,7 +21,7 @@ private:
 	std::wstring progressBar;
 
 public:
-	ProgressPrinter(const std::string &_prefix, int _allCnt) :
+	ProgressPrinter(const std::string &_prefix, long long _allCnt) :
 		nowCnt(0), allCnt(_allCnt), prefix(_prefix), boxCnt(0) {
 		suffix = "Remaining: ";
 		progressLen = (getConsoleWidth() - prefix.size() - suffix.size() - 12) / 2;

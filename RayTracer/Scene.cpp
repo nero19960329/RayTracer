@@ -1,11 +1,12 @@
+#include "MonteCarloPathTracing.h"
 #include "Scene.h"
+#include "RayTracing.h"
 
 using namespace std;
 
 shared_ptr<TraceBase> Scene::getTracingType(TraceType type) const {
-	if (type == RAY_TRACING) {
-		return make_shared<RayTracing>(*this);
-	}
+	if (type == RAY_TRACING) return make_shared<RayTracing>(*this);
+	else if (type == PATH_TRACING) return make_shared<MonteCarloPathTracing>(*this);
 	return nullptr;
 }
 
@@ -33,9 +34,15 @@ shared_ptr<Intersect> Scene::getIntersect(const Ray &ray) const {
 		auto intersect = obj->getTrace(ray);
 		if (intersect) {
 			real_t dis = intersect->getDistToInter();
-			if (updateMin(minDist, dis)) {
-				res = intersect;
-			}
+			if (updateMin(minDist, dis)) res = intersect;
+		}
+	}
+
+	for (const auto &light : lights) {
+		auto intersect = light->getTrace(ray);
+		if (intersect) {
+			real_t dis = intersect->getDistToInter();
+			if (updateMin(minDist, dis)) res = intersect;
 		}
 	}
 

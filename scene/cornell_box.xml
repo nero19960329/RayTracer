@@ -6,13 +6,13 @@
         <target value="0.0 0.0 -10.0"/>
         <up value="0.0 1.0 0.0"/>
         <fovy value="45.0"/>
-        <anti value="false">
-        	<sample value="4"/>
+        <anti value="true">
+        	<sample value="7"/>
         </anti>
         <dop value="false">
         	<aperture value="0.3"/>
         	<offset value="15"/>
-        	<sample value="5"/>
+        	<sample value="7"/>
         </dop>
         <view value="false">
         	<size value="12 12"/>
@@ -27,12 +27,13 @@
     </light>
 	-->
     <light>
-    	<origin value="0 4.4 -15.0"/>
+     	<origin value="0 10.8 -15.0"/>
     	<color value="white"/>
-    	<intensity value="1.0"/>
+    	<intensity value="8.0"/>
+    	<radius value="6.0"/>
     	<area value="false">
     		<sample value="10"/>
-    		<radius value="0.5"/>
+    		<radius value="1.0"/>
     	</area>
     </light>
     

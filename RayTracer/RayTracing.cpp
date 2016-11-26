@@ -1,5 +1,5 @@
 #include "Constants.h"
-#include "Scene.h"
+#include "RayTracing.h"
 
 using namespace std;
 
@@ -10,7 +10,7 @@ Vec3 RayTracing::color(const Ray &ray) const {
 
 Vec3 RayTracing::getColor(DistRay &ray, int depth) const {
 	if (depth > maxDepth) {
-		return Vec3::BLACK;
+		return Vec3::NONE;
 	}
 
 	auto intersect = scene.getIntersect(ray);
@@ -28,7 +28,7 @@ Vec3 RayTracing::getColor(DistRay &ray, int depth) const {
 
 		return emission + ambient + local + refl + refr;
 	} else {
-		return Vec3::BLACK;
+		return Vec3::NONE;
 	}
 }
 
@@ -60,9 +60,7 @@ Vec3 RayTracing::getPhongLocal(const IntersectInfo &info, const DistRay &ray, in
 }
 
 Vec3 RayTracing::getReflection(const IntersectInfo &info, const DistRay &ray, int depth) const {
-	if (info.surface->refl < epsilon) {
-		return Vec3::BLACK;
-	}
+	if (info.surface->refl < epsilon) return Vec3::NONE;
 
 	Vec3 N = info.normal;
 	Vec3 V = (ray.orig - info.interPoint).getNormalized();
@@ -74,9 +72,7 @@ Vec3 RayTracing::getReflection(const IntersectInfo &info, const DistRay &ray, in
 }
 
 Vec3 RayTracing::getRefraction(const IntersectInfo &info, const DistRay &ray, int depth) const {
-	if (info.surface->refr < epsilon) {
-		return Vec3::BLACK;
-	}
+	if (info.surface->refr < epsilon) return Vec3::NONE;
 
 	Vec3 N = info.normal;
 	Vec3 V = (ray.orig - info.interPoint).getNormalized();

@@ -1,5 +1,6 @@
 #include "ProgressPrinter.h"
 #include "Renderer.h"
+#include "TraceBase.h"
 
 #include <omp.h>
 
@@ -19,7 +20,7 @@ Mat Renderer::rawRender(bool showBar) const {
 	Mat res = Mat::zeros(screen.height, screen.width, CV_64FC3);
 	int antiSample2 = sqr(viewer.antiSample);
 	int sample = viewer.dopSample * antiSample2;
-	int allRays = screen.width * screen.height * sample;
+	long long allRays = (long long) screen.width * (long long) screen.height * (long long) sample;
 
 	vector<int> widthVec, heightVec;
 	rep(i, screen.width) widthVec.emplace_back(i);
@@ -34,7 +35,7 @@ Mat Renderer::rawRender(bool showBar) const {
 		ProgressPrinter printer{ "Rendering => ", allRays };
 		printer.start();
 		#pragma omp parallel for
-		for (int k = 0; k < allRays; ++k) {
+		for (long long k = 0; k < allRays; ++k) {
 			int i = widthVec[(k / sample) / screen.height], j = heightVec[(k / sample) % screen.height];
 			int p = ((k / viewer.dopSample) % antiSample2) / viewer.antiSample, q = ((k / viewer.dopSample) % antiSample2) % viewer.antiSample;
 			Vec3 color = shader->color(viewer.getRay(i, j, p, q));
@@ -50,7 +51,7 @@ Mat Renderer::rawRender(bool showBar) const {
 		omp_destroy_lock(&lock);
 	} else {
 		#pragma omp parallel for
-		for (int k = 0; k < allRays; ++k) {
+		for (long long k = 0; k < allRays; ++k) {
 			int i = widthVec[(k / sample) / screen.height], j = heightVec[(k / sample) % screen.height];
 			int p = ((k / viewer.dopSample) % antiSample2) / viewer.antiSample, q = ((k / viewer.dopSample) % antiSample2) % viewer.antiSample;
 			Vec3 color = shader->color(viewer.getRay(i, j, p, q));
@@ -66,17 +67,18 @@ Mat Renderer::rawRender(bool showBar) const {
 }
 
 void Renderer::normalize(Mat &img) const {
-	double maxValue;
+	//double maxValue;
+
 	rep(i, img.rows) rep(j, img.cols) {
-		Vec3d rgb = img.at<Vec3d>(i, j);
-		rep(k, 3) updateMax(maxValue, rgb[k]);
+		Vec3d &rgb = img.at<Vec3d>(i, j);
+		rgb = Vec3d{ cut(rgb[0]), cut(rgb[1]), cut(rgb[2]) };
 	}
 
-	if (maxValue > 1.0f) {
+	/*if (maxValue > 1.0f) {
 		rep(i, img.rows) rep(j, img.cols) {
 			img.at<Vec3d>(i, j) /= maxValue;
 		}
-	}
+	}*/
 }
 
 Mat Renderer::double2uchar(const Mat &img) const {

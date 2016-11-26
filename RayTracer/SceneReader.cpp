@@ -149,20 +149,21 @@ void SceneReader::readViewer(xml_node<> *node) {
 
 void SceneReader::readLight(xml_node<> *node) {
 	auto lightNodes = getChildNodes(node, {
-		"origin", "color", "intensity", "area"
+		"origin", "color", "intensity", "radius", "area"
 	});
 
 	shared_ptr<Light> light = make_shared<Light>(Light(
 		readVec3(lightNodes[0]),
 		readColor(getValue(lightNodes[1])),
-		readReal(lightNodes[2])
+		readReal(lightNodes[2]),
+		readReal(lightNodes[3])
 		));
 
-	bool areaFlag = readBool(lightNodes[3]);
+	bool areaFlag = readBool(lightNodes[4]);
 	if (!areaFlag) {
 		scene.addLight(light);
 	} else {
-		auto areaNodes = getChildNodes(lightNodes[3], {
+		auto areaNodes = getChildNodes(lightNodes[4], {
 			"sample", "radius"
 		});
 		int sample = readInt(areaNodes[0]);

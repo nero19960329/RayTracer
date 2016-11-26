@@ -28,11 +28,14 @@
     <Filter Include="源文件\Objects">
       <UniqueIdentifier>{95ea4324-c12f-49d0-ad99-f222cb84cd62}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\Shading">
-      <UniqueIdentifier>{b43c6f54-adee-483a-9c98-06ae275daf32}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件\Lib">
       <UniqueIdentifier>{2434db58-1a53-443c-a594-55381707017f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Trace">
+      <UniqueIdentifier>{66a5ed7c-ecd8-4484-bd57-4f6986fb4369}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Trace">
+      <UniqueIdentifier>{b43c6f54-adee-483a-9c98-06ae275daf32}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -79,7 +82,10 @@
       <Filter>源文件\Lib</Filter>
     </ClCompile>
     <ClCompile Include="RayTracing.cpp">
-      <Filter>源文件\Shading</Filter>
+      <Filter>源文件\Trace</Filter>
+    </ClCompile>
+    <ClCompile Include="MonteCarloPathTracing.cpp">
+      <Filter>源文件\Trace</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -178,6 +184,18 @@
     </ClInclude>
     <ClInclude Include="rapidxml_utils.hpp">
       <Filter>头文件\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="TraceBase.h">
+      <Filter>头文件\Trace</Filter>
+    </ClInclude>
+    <ClInclude Include="RayTracing.h">
+      <Filter>头文件\Trace</Filter>
+    </ClInclude>
+    <ClInclude Include="MonteCarloPathTracing.h">
+      <Filter>头文件\Trace</Filter>
+    </ClInclude>
+    <ClInclude Include="BRDF.h">
+      <Filter>头文件\Material</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
