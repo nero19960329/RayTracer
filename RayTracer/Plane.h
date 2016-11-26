@@ -5,11 +5,9 @@
 #include "Vec3.h"
 
 class PlaneIntersect;
-class SceneReader;
 
 class Plane : public Object {
 	friend class PlaneIntersect;
-	friend class SceneReader;
 
 protected:
 	InfPlane infPlane;

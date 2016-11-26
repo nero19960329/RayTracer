@@ -1,4 +1,5 @@
 #include "SceneReader.h"
+#include "Sphere.h"
 #include "Texture.h"
 #include "Utils.h"
 #include "Vec3.h"
@@ -20,9 +21,16 @@ SceneReader::SceneReader(const string &sceneFileName) {
 	xml_node<> *root = doc.first_node("scene");
 	if (!root) error_exit("Scene xml file format error!\n");
 
-	brdfType = LAMBERTIAN;
-	if (root->first_attribute("type")) {
-		const char *brdf_type = root->first_attribute("type")->value();
+	xml_attribute<> *traceNode = root->first_attribute("type");
+	if (traceNode) {
+		const char *trace_type = traceNode->value();
+		if (!strcmp(trace_type, "rt")) traceType = RT;
+		else if (!strcmp(trace_type, "mcpt")) traceType = MCPT;
+	}
+
+	xml_node<> *brdfNode = root->first_node("brdf");
+	if (brdfNode) {
+		const char *brdf_type = brdfNode->first_attribute("type")->value();
 		if (!strcmp(brdf_type, "lambertian")) brdfType = LAMBERTIAN;
 		else if (!strcmp(brdf_type, "phong")) brdfType = PHONG;
 	}
@@ -65,8 +73,12 @@ vector<rapidxml::xml_node<> *> SceneReader::getChildNodes(xml_node<> *parent, co
 	vector<rapidxml::xml_node<> *> res;
 
 	for (const auto &str : strVec) {
-		xml_node<> *tmpNode = parent->first_node(str.c_str());
-		if (!tmpNode) error_exit("Lack of some essential attribute!\n");
+		xml_node<> *tmpNode;
+		if (*str.rbegin() == '*') tmpNode = parent->first_node(str.substr(0, str.size() - 1).c_str());
+		else {
+			tmpNode = parent->first_node(str.c_str());
+			if (!tmpNode) error_exit("Lack of some essential attribute!\n");
+		}
 		res.push_back(tmpNode);
 	}
 
@@ -127,7 +139,7 @@ shared_ptr<Texture> SceneReader::readTexture(xml_node<> *node) const {
 
 void SceneReader::readViewer(xml_node<> *node) {
 	auto viewerNodes = getChildNodes(node, {
-		"geo", "center", "target", "up", "fovy", "anti", "dop", "view"
+		"geo", "center", "target", "up", "fovy", "anti*", "dop*", "view*", "mcpt_sample*"
 	});
 
 	viewer = Viewer{
@@ -138,33 +150,34 @@ void SceneReader::readViewer(xml_node<> *node) {
 		readReal(viewerNodes[4]),
 	};
 
-	bool antiFlag = readBool(viewerNodes[5]);
-	bool dopFlag = readBool(viewerNodes[6]);
-	bool viewFlag = readBool(viewerNodes[7]);
-
-	if (antiFlag) {
+	if (viewerNodes[5]) {
 		auto antiNodes = getChildNodes(viewerNodes[5], { "sample" });
 		viewer.setAntiThings(readInt(antiNodes[0]));
 	}
-	if (dopFlag) {
+	if (viewerNodes[6]) {
 		auto dopNodes = getChildNodes(viewerNodes[6], { "aperture", "offset", "sample" });
 		viewer.setDopThings(readReal(dopNodes[0]), readReal(dopNodes[1]), readInt(dopNodes[2]));
 	}
-	if (viewFlag) {
+	if (viewerNodes[7]) {
 		auto viewNodes = getChildNodes(viewerNodes[7], { "size" });
 		viewer.setViewPort(Geometry{ readPair(viewNodes[0]) });
+	}
+	if (viewerNodes[8]) {
+		viewer.setMCPTSample(readInt(viewerNodes[8]));
 	}
 }
 
 void SceneReader::readLight(xml_node<> *node) {
 	auto lightNodes = getChildNodes(node, {
-		"origin", "color", "intensity", "radius", "area"
+		"origin", "color", "intensity", "radius", "area*", "x", "y"
 	});
 
 	shared_ptr<Light> light = make_shared<Light>(Light(
 		readVec3(lightNodes[0]),
 		readColor(getValue(lightNodes[1])),
 		readReal(lightNodes[2]),
+		readVec3(lightNodes[5]),
+		readVec3(lightNodes[6]),
 		readReal(lightNodes[3])
 		));
 
@@ -203,7 +216,7 @@ void SceneReader::readObject(xml_node<> *node) {
 
 void SceneReader::readSphere(xml_node<> *node) {
 	auto sphereNodes = getChildNodes(node, {
-		"texture", "center", "radius", "transparency"
+		"texture", "center", "radius", "transparency*"
 	});
 
 	bool transFlag = readBool(sphereNodes[3]);

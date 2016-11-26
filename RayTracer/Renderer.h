@@ -9,10 +9,10 @@ class Renderer {
 private:
 	Viewer viewer;
 	const Scene &scene;
-	TraceType type;
+	TraceType traceType;
 
 public:
-	Renderer(const Viewer &_viewer, const Scene &_scene, TraceType _type = PATH_TRACING) : viewer(_viewer), scene(_scene), type(_type) {}
+	Renderer(const Viewer &_viewer, const Scene &_scene, TraceType _type) : viewer(_viewer), scene(_scene), traceType(_type) {}
 	~Renderer() {}
 
 	cv::Mat render(bool showBar = false) const;

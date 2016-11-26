@@ -6,11 +6,9 @@
 #include "Vec3.h"
 
 class SphereIntersect;
-class SceneReader;
 
 class Sphere : public Object {
 	friend class SphereIntersect;
-	friend class SceneReader;
 
 protected:
 	PureSphere pureSphere;

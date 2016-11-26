@@ -14,4 +14,7 @@ public:
 
 private:
 	Vec3 getColor(DistRay &ray, int depth = 0) const;
+	Vec3 getReflectedRadiance(DistRay &ray, const IntersectInfo &info, int depth = 0) const;
+	Vec3 getDirectRadiance(DistRay &ray) const;
+	Vec3 getIndirectRadiance(DistRay &ray) const;
 };

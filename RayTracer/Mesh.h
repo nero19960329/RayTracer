@@ -10,11 +10,9 @@
 #include <vector>
 
 class MeshIntersect;
-class SceneReader;
 
 class Mesh : public Object {
 	friend class MeshIntersect;
-	friend class SceneReader;
 
 protected:
 	std::shared_ptr<KDTree> tree;
@@ -53,9 +51,7 @@ private:
 
 	virtual std::shared_ptr<Surface> getInterPointSurfaceProperty() const override;
 
-	const Object *getObj() const override {
-		return &mesh;
-	}
+	const Object *getObj() const override { return &mesh; }
 
 public:
 	MeshIntersect(const Mesh &_mesh, const Ray &_ray) : Intersect(_ray), mesh(_mesh) {

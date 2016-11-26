@@ -24,7 +24,7 @@ public:
 	bool dopFlag, antialiasingFlag;
 
 	real_t apertureSize, focusOffset;
-	int dopSample = 1, antiSample = 1;
+	int dopSample = 1, antiSample = 1, mcptSample = 8;
 
 private:
 	Vec3 LT, deltaW, deltaH;
@@ -53,8 +53,10 @@ public:
 	void setAntiThings(int _antiSample) { antialiasingFlag = true; antiSample = _antiSample; }
 	void setDopThings(real_t _aperture, real_t _offset, int _dopSample) { dopFlag = true; apertureSize = _aperture; focusOffset = _offset; dopSample = _dopSample; }
 	void setViewPort(Geometry _viewport = Geometry{ 0, 0 }) { viewport = _viewport; }
+	void setMCPTSample(int _mcptSample) { mcptSample = _mcptSample; }
 
-	Ray getRay(int i, int j, int p, int q) const;
+	Ray getRay_RT(int i, int j, int p, int q) const;
+	Ray getRay_MCPT(int i, int j, int p, int q) const;
 	Geometry getScreen() const {
 		return screen;
 	}

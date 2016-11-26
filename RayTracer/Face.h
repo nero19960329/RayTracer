@@ -7,11 +7,9 @@
 #include <array>
 
 class FaceIntersect;
-class SceneReader;
 
 class Face : public Object {
 	friend class FaceIntersect;
-	friend class SceneReader;
 
 protected:
 	Tri tri;
@@ -41,10 +39,9 @@ public:
 	}
 
 	bool liesInPlane(const SplitPlane &p) const override {
-		if (fabs(tri.a[p.axis] - p.value) < epsilon &&
+		return (fabs(tri.a[p.axis] - p.value) < epsilon &&
 			fabs(tri.b[p.axis] - p.value) < epsilon &&
-			fabs(tri.c[p.axis] - p.value) < epsilon) return true;
-		else return false;
+			fabs(tri.c[p.axis] - p.value) < epsilon);
 	}
 };
 

@@ -34,19 +34,18 @@ private:
 	std::unordered_map<std::string, Material> materialMap;
 	std::unordered_map<std::string, real_t> refrIdxMap;
 
-	BRDFType brdfType;
+	BRDFType brdfType = LAMBERTIAN;
+	TraceType traceType = RT;
 
 public:
 	explicit SceneReader(const std::string &sceneFileName);
 	~SceneReader() {}
 
-	const Scene &getScene() const {
-		return scene;
-	}
+	const Scene &getScene() const { return scene; }
 
-	const Viewer &getViewer() const {
-		return viewer;
-	}
+	const Viewer &getViewer() const { return viewer; }
+
+	const TraceType &getTraceType() const { return traceType; }
 
 private:
 	std::vector<rapidxml::xml_node<> *> getChildNodes(rapidxml::xml_node<> *parent, const std::vector<std::string> &strVec) const;

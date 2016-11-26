@@ -5,8 +5,8 @@
 using namespace std;
 
 shared_ptr<TraceBase> Scene::getTracingType(TraceType type) const {
-	if (type == RAY_TRACING) return make_shared<RayTracing>(*this);
-	else if (type == PATH_TRACING) return make_shared<MonteCarloPathTracing>(*this);
+	if (type == RT) return make_shared<RayTracing>(*this);
+	else if (type == MCPT) return make_shared<MonteCarloPathTracing>(*this);
 	return nullptr;
 }
 

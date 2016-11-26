@@ -6,7 +6,7 @@
 #include <list>
 #include <vector>
 
-enum TraceType { RAY_TRACING, PATH_TRACING };
+enum TraceType { RT, MCPT };
 
 class TraceBase;
 

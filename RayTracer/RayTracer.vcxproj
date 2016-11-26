@@ -151,6 +151,7 @@
     <ClCompile Include="ObjReader.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="RayTracing.cpp" />
+    <ClCompile Include="Rect.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneReader.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="rapidxml_utils.hpp" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="RayTracing.h" />
+    <ClInclude Include="Rect.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneReader.h" />

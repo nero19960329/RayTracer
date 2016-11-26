@@ -4,7 +4,7 @@
 
 using namespace std;
 
-Ray Viewer::getRay(int i, int j, int p, int q) const {
+Ray Viewer::getRay_RT(int i, int j, int p, int q) const {
 	Vec3 tmpVec = LT - deltaH * j + deltaW * i - deltaH * q / antiSample + deltaW * p / antiSample;
 	Vec3 rayCenter, rayDir;
 
@@ -30,6 +30,14 @@ Ray Viewer::getRay(int i, int j, int p, int q) const {
 	}
 
 	return{ rayCenter, rayDir.getNormalized() };
+}
+
+Ray Viewer::getRay_MCPT(int i, int j, int p, int q) const {
+	Vec3 tmpVec = LT - deltaH * j + deltaW * i - deltaH * q * 0.5 + deltaW * p * 0.5;
+	tmpVec -= erand48() * deltaH;
+	tmpVec += erand48() * deltaW;
+
+	return{ center, (tmpVec - center).getNormalized() };
 }
 
 void Viewer::moveForward(real_t delta) {
