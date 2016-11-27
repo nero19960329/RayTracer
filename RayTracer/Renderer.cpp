@@ -15,7 +15,7 @@ Mat Renderer::render(bool showBar) const {
 }
 
 Mat Renderer::rawRender(bool showBar) const {
-	auto shader = scene.getTracingType(traceType);
+	auto shader = scene.getTracer(traceType, brdfType);
 	Geometry screen = viewer.getScreen();
 
 	Mat res = Mat::zeros(screen.height, screen.width, CV_64FC3);

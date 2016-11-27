@@ -23,8 +23,12 @@
 #include <unordered_map>
 #include <vector>
 
+class Renderer;
+
 class SceneReader {
-private:
+	friend class Renderer;
+
+protected:
 	Scene scene;
 	Viewer viewer;
 
@@ -46,6 +50,8 @@ public:
 	const Viewer &getViewer() const { return viewer; }
 
 	const TraceType &getTraceType() const { return traceType; }
+
+	const BRDFType &getBRDFType() const { return brdfType; }
 
 private:
 	std::vector<rapidxml::xml_node<> *> getChildNodes(rapidxml::xml_node<> *parent, const std::vector<std::string> &strVec) const;

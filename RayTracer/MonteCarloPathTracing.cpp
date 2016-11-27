@@ -1,4 +1,3 @@
-#include "BRDF.h"
 #include "MonteCarloPathTracing.h"
 
 Vec3 MonteCarloPathTracing::color(const Ray &ray) const {
@@ -24,14 +23,12 @@ Vec3 MonteCarloPathTracing::getReflectedRadiance(DistRay &ray, const IntersectIn
 
 	Vec3 inDir = (ray.orig - info.interPoint).getNormalized();
 	Vec3 outDir;
-	//LambertianBRDF brdf(info.surface);
-	PhongBRDF brdf(info.surface);
-	brdf.brdfSample(inDir, outDir, info.normal);
+	ReflRayType reflType = brdf->brdfSample(inDir, outDir, info.normal, info.surface);
 
 	DistRay newRay(Ray{ info.interPoint + outDir * epsilon, outDir }, ray.dist);
 
 	real_t cos_alpha = std::max(0.0, outDir.dot(info.normal));
-	real_t pdf = brdf.pdf(inDir, outDir, info.normal);
-	if (pdf > epsilon) return brdf.eval(inDir, outDir, info.normal).mul(getColor(newRay, depth + 1)) * cos_alpha / (p * pdf);
+	real_t pdf = brdf->pdf(inDir, outDir, info.normal, info.surface, reflType);
+	if (pdf > epsilon) return brdf->eval(inDir, outDir, info.normal, info.surface, reflType).mul(getColor(newRay, depth + 1)) * cos_alpha / (p * pdf);
 	return Vec3::NONE;
 }

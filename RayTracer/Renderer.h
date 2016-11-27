@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Scene.h"
+#include "SceneReader.h"
 #include "Viewer.h"
 
 #include <opencv2/opencv.hpp>
@@ -10,9 +11,14 @@ private:
 	Viewer viewer;
 	const Scene &scene;
 	TraceType traceType;
+	BRDFType brdfType;
 
 public:
-	Renderer(const Viewer &_viewer, const Scene &_scene, TraceType _type) : viewer(_viewer), scene(_scene), traceType(_type) {}
+	explicit Renderer(const SceneReader &reader) :
+		viewer(reader.viewer), scene(reader.scene), traceType(reader.traceType), brdfType(reader.brdfType) {}
+
+	Renderer(const Viewer &_viewer, const Scene &_scene, TraceType _traceType, BRDFType _brdfType) : 
+		viewer(_viewer), scene(_scene), traceType(_traceType), brdfType(_brdfType) {}
 	~Renderer() {}
 
 	cv::Mat render(bool showBar = false) const;

@@ -19,7 +19,7 @@ public:
 	Scene() {}
 	virtual ~Scene() {}
 
-	std::shared_ptr<TraceBase> getTracingType(TraceType type) const;
+	std::shared_ptr<TraceBase> getTracer(TraceType traceType, BRDFType brdfType) const;
 
 	void addLight(const std::shared_ptr<Light> &light);
 	void addObject(const std::shared_ptr<Object> &object);

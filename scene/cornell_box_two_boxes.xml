@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <scene type="mcpt">
-    <brdf type="phong"/>
+    <brdf type="lambertian"/>
     <viewer>
         <geo value="512 512"/>
         <center value="278 273 -800"/>
@@ -8,10 +8,10 @@
         <up value="0.0 1.0 0.0"/>
         <fovy value="37.5"/>
 
-        <mcpt_sample value="200"/>
+        <mcpt_sample value="4"/>
 
         <anti value="false">
-            <sample value="3"/>
+            <sample value="5"/>
         </anti>
     </viewer>
 
@@ -26,18 +26,6 @@
         <color value="white"/>
         <intensity value="12.0"/>
     </light>
-
-    <!--<light>
-        <geo>
-            <center value="278.0 273 -801"/>
-            <x value="1 0 0"/>
-            <y value="0 0 1"/>
-            <length_x value="0.0"/>
-            <length_y value="0.5"/>
-        </geo>
-        <color value="white"/>
-        <intensity value="0.25"/>
-    </light>-->
 
     <!-- ceiling -->
     <object type="quad">

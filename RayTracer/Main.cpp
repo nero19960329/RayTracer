@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	SceneReader sceneReader(sceneName);
-	Renderer renderer{ sceneReader.getViewer(), sceneReader.getScene(), sceneReader.getTraceType() };
+	Renderer renderer{ sceneReader };
 
 	if (travelFlag) {
 		TravelManager manager;

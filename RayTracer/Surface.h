@@ -15,6 +15,4 @@ public:
 	Surface(const Material &_material, const Vec3 &_diffuse) :
 		Material(_material), diffuse(_diffuse) {}
 	~Surface() {}
-
-	//static const Surface BLACK, WHITE, RED, GREEN, BLUE, YELLOW, CYAN, MAGENTA;
 };
