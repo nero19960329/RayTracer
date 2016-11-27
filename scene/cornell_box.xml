@@ -8,7 +8,7 @@
         <up value="0.0 1.0 0.0"/>
         <fovy value="45.0"/>
 
-        <mcpt_sample value="16000"/>
+        <mcpt_sample value="8"/>
 
         <!--<anti value="false">
         	<sample value="3"/>
@@ -67,107 +67,63 @@
     </object>
 
     <!-- left red wall -->
-    <object type="face">
-    	<texture type="pure">
-    		<material value="floor"/>
-    		<color value="red"/>
-    	</texture>
-    	<a value="-5.0 5.0 -10.0"/>
-    	<b value="-5.0 -5.0 -10.0"/>
-    	<c value="-5.0 -5.0 -20.0"/>
-    </object>
-
-    <object type="face">
-    	<texture type="pure">
-    		<material value="floor"/>
-    		<color value="red"/>
-    	</texture>
-    	<a value="-5.0 5.0 -10.0"/>
-    	<b value="-5.0 5.0 -20.0"/>
-    	<c value="-5.0 -5.0 -20.0"/>
+    <object type="rect">
+        <texture type="pure">
+            <material value="floor"/>
+            <color value="red"/>
+        </texture>
+        <center value="-5.0 0.0 -15.0"/>
+        <x value="0.0 0.0 -1.0"/>
+        <y value="0.0 1.0 0.0"/>
+        <radius value="5.0"/>
     </object>
 
     <!-- right green wall -->
-    <object type="face">
-    	<texture type="pure">
-    		<material value="floor"/>
-    		<color value="green"/>
-    	</texture>
-    	<a value="5.0 5.0 -10.0"/>
-    	<b value="5.0 -5.0 -10.0"/>
-    	<c value="5.0 -5.0 -20.0"/>
-    </object>
-
-    <object type="face">
-    	<texture type="pure">
-    		<material value="floor"/>
-    		<color value="green"/>
-    	</texture>
-    	<a value="5.0 5.0 -10.0"/>
-    	<b value="5.0 5.0 -20.0"/>
-    	<c value="5.0 -5.0 -20.0"/>
+    <object type="rect">
+        <texture type="pure">
+            <material value="floor"/>
+            <color value="green"/>
+        </texture>
+        <center value="5.0 0.0 -15.0"/>
+        <x value="0.0 0.0 -1.0"/>
+        <y value="0.0 1.0 0.0"/>
+        <radius value="5.0"/>
     </object>
 
     <!-- back white wall -->
-    <object type="face">
-    	<texture type="pure">
-    		<material value="floor"/>
-    		<color value="white"/>
-    	</texture>
-    	<a value="-5.0 5.0 -20.0"/>
-    	<b value="-5.0 -5.0 -20.0"/>
-    	<c value="5.0 -5.0 -20.0"/>
-    </object>
-
-    <object type="face">
-    	<texture type="pure">
-    		<material value="floor"/>
-    		<color value="white"/>
-    	</texture>
-    	<a value="-5.0 5.0 -20.0"/>
-    	<b value="5.0 5.0 -20.0"/>
-    	<c value="5.0 -5.0 -20.0"/>
+    <object type="rect">
+        <texture type="pure">
+            <material value="floor"/>
+            <color value="white"/>
+        </texture>
+        <center value="0.0 0.0 -20.0"/>
+        <x value="1.0 0.0 0.0"/>
+        <y value="0.0 1.0 0.0"/>
+        <radius value="5.0"/>
     </object>
 
     <!-- top white wall -->
-    <object type="face">
-    	<texture type="pure">
-    		<material value="floor"/>
-    		<color value="white"/>
-    	</texture>
-    	<a value="-5.0 5.0 -20.0"/>
-    	<b value="-5.0 5.0 -10.0"/>
-    	<c value="5.0 5.0 -10.0"/>
-    </object>
-
-    <object type="face">
-    	<texture type="pure">
-    		<material value="floor"/>
-    		<color value="white"/>
-    	</texture>
-    	<a value="-5.0 5.0 -20.0"/>
-    	<b value="5.0 5.0 -20.0"/>
-    	<c value="5.0 5.0 -10.0"/>
+    <object type="rect">
+        <texture type="pure">
+            <material value="floor"/>
+            <color value="white"/>
+        </texture>
+        <center value="0.0 5.0 -15.0"/>
+        <x value="1.0 0.0 0.0"/>
+        <y value="0.0 0.0 1.0"/>
+        <radius value="5.0"/>
     </object>
 
     <!-- bottom white wall -->
-    <object type="face">
-    	<texture type="pure">
-    		<material value="floor"/>
-    		<color value="white"/>
-    	</texture>
-    	<a value="-5.0 -5.0 -20.0"/>
-    	<b value="-5.0 -5.0 -10.0"/>
-    	<c value="5.0 -5.0 -10.0"/>
+    <object type="rect">
+        <texture type="pure">
+            <material value="floor"/>
+            <color value="white"/>
+        </texture>
+        <center value="0.0 -5.0 -15.0"/>
+        <x value="1.0 0.0 0.0"/>
+        <y value="0.0 0.0 1.0"/>
+        <radius value="5.0"/>
     </object>
 
-    <object type="face">
-    	<texture type="pure">
-    		<material value="floor"/>
-    		<color value="white"/>
-    	</texture>
-    	<a value="-5.0 -5.0 -20.0"/>
-    	<b value="5.0 -5.0 -20.0"/>
-    	<c value="5.0 -5.0 -10.0"/>
-    </object>
 </scene>

@@ -10,15 +10,11 @@ shared_ptr<Intersect> Plane::getTrace(const Ray &ray, real_t dist) const {
 
 bool PlaneIntersect::isIntersect() const {
 	projDir = ray.dir.dot(plane.infPlane.normal);
-	if (fabs(projDir) < epsilon) {	// parallel to plane
-		return false;
-	} else {
+	if (fabs(projDir) < epsilon) return false;
+	else {
 		projOrigToInter = ray.orig.dot(plane.infPlane.normal) - plane.infPlane.offset;
-		if ((projOrigToInter > 0) ^ (projDir > 0)) {
-			return true;
-		} else {
-			return false;
-		}
+		if ((projOrigToInter > 0) ^ (projDir > 0)) return true;
+		else return false;
 	}
 }
 
@@ -35,12 +31,8 @@ Vec3 PlaneIntersect::getNormal() const {
 shared_ptr<Surface> PlaneIntersect::getInterPointSurfaceProperty() const {
 	Vec3 x{ -plane.infPlane.normal.y, plane.infPlane.normal.x, 0 };
 	Vec3 y{ 0, -plane.infPlane.normal.z, plane.infPlane.normal.y };
-	if (x.isZero()) {
-		x = { -plane.infPlane.normal.z, 0, plane.infPlane.normal.x };
-	}
-	if (y.isZero()) {
-		y = { -plane.infPlane.normal.z, 0, plane.infPlane.normal.x };
-	}
+	if (x.isZero()) x = { -plane.infPlane.normal.z, 0, plane.infPlane.normal.x };
+	if (y.isZero()) y = { -plane.infPlane.normal.z, 0, plane.infPlane.normal.x };
 
 	return plane.getTexture()->getSurfaceProperty(interPoint.dot(x), interPoint.dot(y));
 }

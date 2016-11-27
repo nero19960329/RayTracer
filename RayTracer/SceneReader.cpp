@@ -211,6 +211,7 @@ void SceneReader::readObject(xml_node<> *node) {
 	else if (!strcmp(type, "plane")) readPlane(node);
 	else if (!strcmp(type, "face")) readFace(node);
 	else if (!strcmp(type, "mesh")) readMesh(node);
+	else if (!strcmp(type, "rect")) readRect(node);
 	else error_exit("No such Object!\n");
 }
 
@@ -274,4 +275,17 @@ void SceneReader::readMesh(xml_node<> *node) {
 	shared_ptr<Mesh> mesh = reader->getMesh();
 	mesh->setTexture(readTexture(meshNodes[0]));
 	tmpObjVec.push_back(mesh);
+}
+
+void SceneReader::readRect(xml_node<> *node) {
+	auto rectNodes = getChildNodes(node, {
+		"texture", "center", "x", "y", "radius"
+	});
+	tmpObjVec.push_back(make_shared<RectObj>(
+		readTexture(rectNodes[0]),
+		readVec3(rectNodes[1]),
+		readVec3(rectNodes[2]),
+		readVec3(rectNodes[3]),
+		readReal(rectNodes[4])
+		));
 }

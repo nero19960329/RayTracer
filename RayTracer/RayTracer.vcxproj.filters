@@ -87,7 +87,7 @@
     <ClCompile Include="MonteCarloPathTracing.cpp">
       <Filter>源文件\Trace</Filter>
     </ClCompile>
-    <ClCompile Include="Rect.cpp">
+    <ClCompile Include="RectObj.cpp">
       <Filter>源文件\Objects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -200,8 +200,11 @@
     <ClInclude Include="BRDF.h">
       <Filter>头文件\Material</Filter>
     </ClInclude>
-    <ClInclude Include="Rect.h">
+    <ClInclude Include="RectObj.h">
       <Filter>头文件\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="RectGeo.h">
+      <Filter>头文件\Geometry</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

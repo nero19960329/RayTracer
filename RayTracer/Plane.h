@@ -26,10 +26,16 @@ public:
 		infPlane.offset = _point.dot(infPlane.normal);
 	}
 
-	Plane(const std::shared_ptr<Texture> &_texture, const Vec3 &a, const Vec3 &b, const Vec3 &c) :
+	/*Plane(const std::shared_ptr<Texture> &_texture, const Vec3 &a, const Vec3 &b, const Vec3 &c) :
 		Object(_texture) {
 		infPlane.normal = (b - a).cross(c - b).getNormalized();
 		infPlane.offset = a.dot(infPlane.normal);
+	}*/
+
+	Plane(const std::shared_ptr<Texture> &_texture, const Vec3 &center, const Vec3 &x, const Vec3 &y) :
+		Object(_texture) {
+		infPlane.normal = x.cross(y).getNormalized();
+		infPlane.offset = center.dot(infPlane.normal);
 	}
 
 	Plane(const std::shared_ptr<Texture> &_texture, real_t a, real_t b, real_t c, real_t w) :
@@ -48,7 +54,7 @@ public:
 };
 
 class PlaneIntersect : public Intersect {
-private:
+protected:
 	const Plane &plane;
 
 	mutable real_t projOrigToInter, projDir;
@@ -66,6 +72,6 @@ public:
 	real_t getDistToInter() const override;
 	bool isIntersect() const override;
 
-private:
+protected:
 	Vec3 getNormal() const override;
 };
