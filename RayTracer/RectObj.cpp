@@ -13,8 +13,8 @@ bool RectIntersect::isIntersect() const {
 	
 	distToInter = -projOrigToInter / projDir;
 	Vec3 interCoor = ray.getDistPoint(distToInter) - rectObj.rectangle.center;
-	if (fabs(interCoor.dot(rectObj.rectangle.x)) <= rectObj.rectangle.radius &&
-		fabs(interCoor.dot(rectObj.rectangle.y)) <= rectObj.rectangle.radius) return true;
+	if (fabs(interCoor.dot(rectObj.rectangle.x)) <= rectObj.rectangle.length_x &&
+		fabs(interCoor.dot(rectObj.rectangle.y)) <= rectObj.rectangle.length_y) return true;
 	else return false;
 }
 

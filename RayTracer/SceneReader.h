@@ -101,6 +101,7 @@ private:
 	void readFace(rapidxml::xml_node<> *node);
 	void readMesh(rapidxml::xml_node<> *node);
 	void readRect(rapidxml::xml_node<> *node);
+	void readQuad(rapidxml::xml_node<> *node);
 
 	void fillMap();
 

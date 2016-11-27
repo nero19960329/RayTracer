@@ -25,6 +25,8 @@ template <typename T> inline bool betw(const T &x, const T &y, const T &z) { ret
 
 template <typename T> inline T sqr(const T &x) { return x * x; }
 
+template <typename T> inline int sgn(const T &x) { return x > 0 ? 1 : -1; }
+
 template <typename T>
 inline bool updateMin(T &value, const T &min) {
 	if (value > min) {

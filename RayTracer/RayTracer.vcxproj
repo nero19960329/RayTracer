@@ -150,6 +150,7 @@
     <ClCompile Include="MonteCarloPathTracing.cpp" />
     <ClCompile Include="ObjReader.cpp" />
     <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="QuadObj.cpp" />
     <ClCompile Include="RayTracing.cpp" />
     <ClCompile Include="RectObj.cpp" />
     <ClCompile Include="Renderer.cpp" />
@@ -178,6 +179,8 @@
     <ClInclude Include="Plane.h" />
     <ClInclude Include="ProgressPrinter.h" />
     <ClInclude Include="PureSphere.h" />
+    <ClInclude Include="QuadObj.h" />
+    <ClInclude Include="Quadrilateral.h" />
     <ClInclude Include="rapidxml.hpp" />
     <ClInclude Include="rapidxml_iterators.hpp" />
     <ClInclude Include="rapidxml_print.hpp" />

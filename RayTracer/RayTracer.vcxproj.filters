@@ -90,6 +90,9 @@
     <ClCompile Include="RectObj.cpp">
       <Filter>源文件\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="QuadObj.cpp">
+      <Filter>源文件\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vec3.h">
@@ -205,6 +208,12 @@
     </ClInclude>
     <ClInclude Include="RectGeo.h">
       <Filter>头文件\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Quadrilateral.h">
+      <Filter>头文件\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="QuadObj.h">
+      <Filter>头文件\Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

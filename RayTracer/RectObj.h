@@ -16,8 +16,10 @@ protected:
 
 public:
 	RectObj() : Plane() {}
-	RectObj(const std::shared_ptr<Texture> &_texture, const Vec3 &_center, const Vec3 &_x, const Vec3 &_y, real_t _radius) :
-		Plane(_texture, _center, _x, _y), rectangle(_center, _x, _y, _radius) {}
+	RectObj(const std::shared_ptr<Texture> &_texture, const Vec3 &_center, const Vec3 &_x, const Vec3 &_y, real_t _length_x, real_t _length_y) :
+		Plane(_texture, _center, _x, _y), rectangle(_center, _x, _y, _length_x, _length_y) {}
+	RectObj(const std::shared_ptr<Texture> &_texture, const RectGeo &rect) :
+		Plane(_texture, rect.center, rect.x, rect.y), rectangle(rect) {}
 
 	AABB getAABB() const override {
 		if (aabb.bounds[1] != -Vec3::max()) return aabb;

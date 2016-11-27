@@ -1,3 +1,4 @@
+#include "QuadObj.h"
 #include "SceneReader.h"
 #include "Sphere.h"
 #include "Texture.h"
@@ -77,7 +78,10 @@ vector<rapidxml::xml_node<> *> SceneReader::getChildNodes(xml_node<> *parent, co
 		if (*str.rbegin() == '*') tmpNode = parent->first_node(str.substr(0, str.size() - 1).c_str());
 		else {
 			tmpNode = parent->first_node(str.c_str());
-			if (!tmpNode) error_exit("Lack of some essential attribute!\n");
+			if (!tmpNode) {
+				cout << parent->name() << " node: lack of attribute \"" << str << "\"" << endl;
+				error_exit("");
+			}
 		}
 		res.push_back(tmpNode);
 	}
@@ -86,10 +90,17 @@ vector<rapidxml::xml_node<> *> SceneReader::getChildNodes(xml_node<> *parent, co
 }
 
 Vec3 SceneReader::readColor(const string &str) const {
-	auto end = colorMap.cend();
-	auto res = colorMap.find(str);
-	if (res != end) return res->second;
-	else error_exit("No such color!\n");
+	if (str[0] >= '0' && str[0] <= '9') {
+		Vec3 res;
+		istringstream iss(str);
+		iss >> res.x >> res.y >> res.z;
+		return res;
+	} else {
+		auto end = colorMap.cend();
+		auto res = colorMap.find(str);
+		if (res != end) return res->second;
+		else error_exit("No such color!\n");
+	}
 }
 
 Material SceneReader::readMaterial(const string &str) const {
@@ -169,23 +180,29 @@ void SceneReader::readViewer(xml_node<> *node) {
 
 void SceneReader::readLight(xml_node<> *node) {
 	auto lightNodes = getChildNodes(node, {
-		"origin", "color", "intensity", "radius", "area*", "x", "y"
+		"geo", "color", "intensity", "area*"
 	});
 
+	auto geoNodes = getChildNodes(lightNodes[0], {
+		"center", "x", "y", "length_x", "length_y"
+	});
+	RectGeo rectGeo = RectGeo{
+		readVec3(geoNodes[0]),
+		readVec3(geoNodes[1]),
+		readVec3(geoNodes[2]),
+		readReal(geoNodes[3]),
+		readReal(geoNodes[4])
+	};
+
 	shared_ptr<Light> light = make_shared<Light>(Light(
-		readVec3(lightNodes[0]),
+		rectGeo,
 		readColor(getValue(lightNodes[1])),
-		readReal(lightNodes[2]),
-		readVec3(lightNodes[5]),
-		readVec3(lightNodes[6]),
-		readReal(lightNodes[3])
+		readReal(lightNodes[2])
 		));
 
-	bool areaFlag = readBool(lightNodes[4]);
-	if (!areaFlag) {
-		scene.addLight(light);
-	} else {
-		auto areaNodes = getChildNodes(lightNodes[4], {
+	if (!lightNodes[3]) scene.addLight(light);
+	else {
+		auto areaNodes = getChildNodes(lightNodes[3], {
 			"sample", "radius"
 		});
 		int sample = readInt(areaNodes[0]);
@@ -212,6 +229,7 @@ void SceneReader::readObject(xml_node<> *node) {
 	else if (!strcmp(type, "face")) readFace(node);
 	else if (!strcmp(type, "mesh")) readMesh(node);
 	else if (!strcmp(type, "rect")) readRect(node);
+	else if (!strcmp(type, "quad")) readQuad(node);
 	else error_exit("No such Object!\n");
 }
 
@@ -279,13 +297,27 @@ void SceneReader::readMesh(xml_node<> *node) {
 
 void SceneReader::readRect(xml_node<> *node) {
 	auto rectNodes = getChildNodes(node, {
-		"texture", "center", "x", "y", "radius"
+		"texture", "center", "x", "y", "length_x", "length_y"
 	});
 	tmpObjVec.push_back(make_shared<RectObj>(
 		readTexture(rectNodes[0]),
 		readVec3(rectNodes[1]),
 		readVec3(rectNodes[2]),
 		readVec3(rectNodes[3]),
-		readReal(rectNodes[4])
+		readReal(rectNodes[4]),
+		readReal(rectNodes[5])
+		));
+}
+
+void SceneReader::readQuad(xml_node<> *node) {
+	auto quadNodes = getChildNodes(node, {
+		"texture", "a", "b", "c", "d"
+	});
+	tmpObjVec.push_back(make_shared<QuadObj>(
+		readTexture(quadNodes[0]),
+		readVec3(quadNodes[1]),
+		readVec3(quadNodes[2]),
+		readVec3(quadNodes[3]),
+		readVec3(quadNodes[4])
 		));
 }

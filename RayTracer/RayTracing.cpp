@@ -37,6 +37,9 @@ Vec3 RayTracing::getPhongLocal(const IntersectInfo &info, const DistRay &ray, in
 	Vec3 specular = Vec3::zeros();
 
 	Vec3 N = info.normal;
+	if (N.y > -0.5) {
+		printf("");
+	}
 	Vec3 V = (ray.orig - info.interPoint).getNormalized();
 	for (auto &light : scene.lights) {
 		if (isShadow(light, info)) {
