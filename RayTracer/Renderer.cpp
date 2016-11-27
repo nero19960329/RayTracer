@@ -43,17 +43,19 @@ Mat Renderer::rawRender(bool showBar) const {
 			res.at<Vec3d>(j, i)[2] += color[0];
 		};
 	} else if (traceType == MCPT) {
-		if (viewer.mcptSample % 4) error_exit("MCPT sample must be multiple of 4!\n");
-		sample = 4;
+		int jitter_sample = 4;
+		real_t inv_jitter_sample = 1.0 / jitter_sample;
+		sample = jitter_sample * jitter_sample;
+		if (viewer.mcptSample % sample) error_exit("MCPT sample must be multiple of 4!\n");
 		allRays = (long long) screen.width * (long long) screen.height * (long long) sample;
 
 		renderKernel = [&](long long k) {
 			int i = widthVec[(k / sample) / screen.height], j = heightVec[(k / sample) % screen.height];
-			int p = (k % sample) / 2, q = (k % sample) % 2;
+			int p = (k % sample) / jitter_sample, q = (k % sample) % jitter_sample;
 
 			Vec3 color = Vec3::zeros();
-			rep(m, viewer.mcptSample / 4) color += shader->color(viewer.getRay_MCPT(i, j, p, q));
-			color /= (viewer.mcptSample / 4);
+			rep(m, viewer.mcptSample / sample) color += shader->color(viewer.getRay_MCPT(i, j, p, q, inv_jitter_sample));
+			color /= (viewer.mcptSample / sample);
 			res.at<Vec3d>(j, i)[0] += cut(color[2]);
 			res.at<Vec3d>(j, i)[1] += cut(color[1]);
 			res.at<Vec3d>(j, i)[2] += cut(color[0]);

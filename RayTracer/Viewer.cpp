@@ -32,8 +32,8 @@ Ray Viewer::getRay_RT(int i, int j, int p, int q) const {
 	return{ rayCenter, rayDir.getNormalized() };
 }
 
-Ray Viewer::getRay_MCPT(int i, int j, int p, int q) const {
-	Vec3 tmpVec = LT - deltaH * j + deltaW * i - deltaH * q * 0.5 + deltaW * p * 0.5;
+Ray Viewer::getRay_MCPT(int i, int j, int p, int q, real_t inv_k) const {
+	Vec3 tmpVec = LT - deltaH * j + deltaW * i - deltaH * q * inv_k + deltaW * p * inv_k;
 	tmpVec -= erand48() * deltaH;
 	tmpVec += erand48() * deltaW;
 

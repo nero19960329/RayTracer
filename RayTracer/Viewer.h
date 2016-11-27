@@ -56,7 +56,7 @@ public:
 	void setMCPTSample(int _mcptSample) { mcptSample = _mcptSample; }
 
 	Ray getRay_RT(int i, int j, int p, int q) const;
-	Ray getRay_MCPT(int i, int j, int p, int q) const;
+	Ray getRay_MCPT(int i, int j, int p, int q, real_t inv_k) const;
 	Geometry getScreen() const {
 		return screen;
 	}
