@@ -20,4 +20,6 @@ public:
 		c = center + length_x * x - length_y * y;
 		d = center + length_x * x + length_y * y;
 	}
+
+	real_t area() const { return 4 * length_x * length_y; }
 };

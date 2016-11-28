@@ -8,7 +8,7 @@
         <up value="0.0 1.0 0.0"/>
         <fovy value="45.0"/>
 
-        <mcpt_sample value="208"/>
+        <mcpt_sample value="8"/>
     </viewer>
     <light>
         <geo>
@@ -19,7 +19,7 @@
             <length_y value="1.2"/>
         </geo>
     	<color value="white"/>
-    	<intensity value="12.0"/>
+    	<intensity value="1.0"/>
     </light>
     
     <object type="sphere">

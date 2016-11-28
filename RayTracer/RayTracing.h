@@ -10,7 +10,7 @@ public:
 	explicit RayTracing(const Scene &_scene, int _maxDepth = MAX_RAY_TRACING_DEPTH) : TraceBase(_scene), maxDepth(_maxDepth) {}
 	~RayTracing() {}
 
-	Vec3 color(const Ray &ray) const override;
+	std::pair<Vec3, Vec3> color(const Ray &ray) const override;
 
 private:
 	Vec3 getColor(DistRay &ray, int depth = 0) const;

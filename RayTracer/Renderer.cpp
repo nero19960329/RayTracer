@@ -8,17 +8,19 @@
 using namespace cv;
 using namespace std;
 
-Mat Renderer::render(bool showBar) const {
-	Mat img = rawRender(showBar);
-	normalize(img);
-	return double2uchar(img);
+array<Mat, 3> Renderer::render(bool showBar) const {
+	array<Mat, 3> imgs = rawRender(showBar);
+	//normalize(img);
+
+	array<Mat, 3> res = { double2uchar(imgs[0]), double2uchar(imgs[1]), double2uchar(imgs[2]) };
+	return res;
 }
 
-Mat Renderer::rawRender(bool showBar) const {
+array<Mat, 3> Renderer::rawRender(bool showBar) const {
 	auto shader = scene.getTracer(traceType, brdfType);
 	Geometry screen = viewer.getScreen();
 
-	Mat res = Mat::zeros(screen.height, screen.width, CV_64FC3);
+	array<Mat, 3> results;
 	int sample;
 	long long allRays;
 
@@ -30,6 +32,9 @@ Mat Renderer::rawRender(bool showBar) const {
 
 	function<void(long long)> renderKernel;
 	if (traceType == RT) {
+		results[0] = Mat::zeros(screen.height, screen.width, CV_64FC3);
+		Mat &res = results[0];
+
 		int antiSample2 = sqr(viewer.antiSample);
 		sample = viewer.dopSample * viewer.antiSample * viewer.antiSample;
 		allRays = (long long) screen.width * (long long) screen.height * (long long) sample;
@@ -37,28 +42,41 @@ Mat Renderer::rawRender(bool showBar) const {
 		renderKernel = [&](long long k) {
 			int i = widthVec[(k / sample) / screen.height], j = heightVec[(k / sample) % screen.height];
 			int p = ((k / viewer.dopSample) % antiSample2) / viewer.antiSample, q = ((k / viewer.dopSample) % antiSample2) % viewer.antiSample;
-			Vec3 color = shader->color(viewer.getRay_RT(i, j, p, q));
-			res.at<Vec3d>(j, i)[0] += color[2];
-			res.at<Vec3d>(j, i)[1] += color[1];
-			res.at<Vec3d>(j, i)[2] += color[0];
+			pair<Vec3, Vec3> color = shader->color(viewer.getRay_RT(i, j, p, q));
+			res.at<Vec3d>(j, i)[0] += color.first[2];
+			res.at<Vec3d>(j, i)[1] += color.first[1];
+			res.at<Vec3d>(j, i)[2] += color.first[0];
 		};
 	} else if (traceType == MCPT) {
-		int jitter_sample = 4;
+		rep(k, 3) results[k] = Mat::zeros(screen.height, screen.width, CV_64FC3);
+
+		int jitter_sample = 2;
 		real_t inv_jitter_sample = 1.0 / jitter_sample;
 		sample = jitter_sample * jitter_sample;
 		if (viewer.mcptSample % sample) error_exit("MCPT sample must be multiple of 4!\n");
 		allRays = (long long) screen.width * (long long) screen.height * (long long) sample;
+		real_t inv_mcptSample = sample * 1.0 / viewer.mcptSample;
 
 		renderKernel = [&](long long k) {
 			int i = widthVec[(k / sample) / screen.height], j = heightVec[(k / sample) % screen.height];
 			int p = (k % sample) / jitter_sample, q = (k % sample) % jitter_sample;
 
-			Vec3 color = Vec3::zeros();
-			rep(m, viewer.mcptSample / sample) color += shader->color(viewer.getRay_MCPT(i, j, p, q, inv_jitter_sample));
-			color /= (viewer.mcptSample / sample);
-			res.at<Vec3d>(j, i)[0] += cut(color[2]);
-			res.at<Vec3d>(j, i)[1] += cut(color[1]);
-			res.at<Vec3d>(j, i)[2] += cut(color[0]);
+			Vec3 color[3] = { Vec3::zeros(), Vec3::zeros(), Vec3::zeros() };
+
+			rep(m, viewer.mcptSample / sample) {
+				pair<Vec3, Vec3> radiance = shader->color(viewer.getRay_MCPT(i, j, p, q, inv_jitter_sample));
+				Vec3 direct{ cut(radiance.first[0]), cut(radiance.first[1]), cut(radiance.first[2]) };
+				Vec3 undirect{ cut(radiance.second[0]), cut(radiance.second[1]), cut(radiance.second[2]) };
+				color[0] += direct * inv_mcptSample;
+				color[1] += undirect * inv_mcptSample;
+				color[2] += (direct + undirect) * inv_mcptSample;
+			}
+
+			rep(m, 3) {
+				results[m].at<Vec3d>(j, i)[0] += cut(color[m][2]);
+				results[m].at<Vec3d>(j, i)[1] += cut(color[m][1]);
+				results[m].at<Vec3d>(j, i)[2] += cut(color[m][0]);
+			}
 		};
 	}
 
@@ -81,9 +99,11 @@ Mat Renderer::rawRender(bool showBar) const {
 		for (long long k = 0; k < allRays; ++k) renderKernel(k);
 	}
 
-	rep(i, res.rows) rep(j, res.cols) res.at<Vec3d>(i, j) /= sample;
+	for (auto &res : results) {
+		rep(i, res.rows) rep(j, res.cols) res.at<Vec3d>(i, j) /= sample;
+	}
 
-	return res;
+	return results;
 }
 
 void Renderer::normalize(Mat &img) const {

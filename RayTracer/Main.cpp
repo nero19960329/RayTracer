@@ -4,6 +4,8 @@
 #include "TravelManager.h"
 
 #include <opencv2/opencv.hpp>
+
+#include <array>
 #include <fstream>
 
 using namespace cv;
@@ -38,11 +40,14 @@ int main(int argc, char *argv[]) {
 		manager.travel(renderer);
 	} else {
 		Timer timer;
-		Mat img = renderer.render(true);
+		array<Mat, 3> img = renderer.render(true);
 		printf("Render duration: %.4lfs\n", timer.getDuration());
 
 		//imshow("Ray Tracing", img);
-		imwrite(saveName, img);
+		imwrite("../img/test_direct.png", img[0]);
+		imwrite("../img/test_indirect.png", img[1]);
+		imwrite("../img/test_all.png", img[2]);
+
 		cout << "Image is saved at " << saveName << endl;
 		//waitKey(0);
 	}

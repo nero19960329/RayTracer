@@ -6,6 +6,8 @@
 
 #include <opencv2/opencv.hpp>
 
+#include <array>
+
 class Renderer {
 private:
 	Viewer viewer;
@@ -21,11 +23,11 @@ public:
 		viewer(_viewer), scene(_scene), traceType(_traceType), brdfType(_brdfType) {}
 	~Renderer() {}
 
-	cv::Mat render(bool showBar = false) const;
+	std::array<cv::Mat, 3> render(bool showBar = false) const;
 	Viewer &getViewer() { return viewer; }
 
 private:
-	cv::Mat rawRender(bool showBar) const;
+	std::array<cv::Mat, 3> rawRender(bool showBar) const;
 	void normalize(cv::Mat &img) const;
 	cv::Mat double2uchar(const cv::Mat &img) const;
 };

@@ -6,7 +6,7 @@ using namespace std;
 
 shared_ptr<TraceBase> Scene::getTracer(TraceType traceType, BRDFType brdfType) const {
 	if (traceType == RT) return make_shared<RayTracing>(*this);
-	else if (traceType == MCPT) return make_shared<MonteCarloPathTracing>(*this, brdfType);
+	else if (traceType == MCPT) return make_shared<MonteCarloPathTracing>(*this, lights, brdfType);
 	return nullptr;
 }
 

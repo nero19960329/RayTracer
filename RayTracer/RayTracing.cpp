@@ -3,15 +3,13 @@
 
 using namespace std;
 
-Vec3 RayTracing::color(const Ray &ray) const {
+pair<Vec3, Vec3> RayTracing::color(const Ray &ray) const {
 	DistRay distRay(ray, 0.0);
-	return getColor(distRay);
+	return{ getColor(distRay), Vec3::NONE };
 }
 
 Vec3 RayTracing::getColor(DistRay &ray, int depth) const {
-	if (depth > maxDepth) {
-		return Vec3::NONE;
-	}
+	if (depth > maxDepth) return Vec3::NONE;
 
 	auto intersect = scene.getIntersect(ray);
 	if (intersect) {
@@ -27,9 +25,7 @@ Vec3 RayTracing::getColor(DistRay &ray, int depth) const {
 		Vec3 refr = getRefraction(info, ray, depth);
 
 		return emission + ambient + local + refl + refr;
-	} else {
-		return Vec3::NONE;
-	}
+	} else return Vec3::NONE;
 }
 
 Vec3 RayTracing::getPhongLocal(const IntersectInfo &info, const DistRay &ray, int depth) const {

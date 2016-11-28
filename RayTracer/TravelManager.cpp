@@ -11,9 +11,9 @@ const int M_KEY_DOWN = 2621440;
 
 void TravelManager::travel(Renderer &renderer) const {
 	bool exitFlag = false, renderFlag = false;
-	Mat img = renderer.render();
+	Mat img = renderer.render()[0];
 	while (!exitFlag) {
-		if (renderFlag) img = renderer.render();
+		if (renderFlag) img = renderer.render()[0];
 		imshow("Ray Tracing", img);
 		int key = waitKey(100);
 		renderFlag = true;
