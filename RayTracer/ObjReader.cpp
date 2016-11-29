@@ -26,7 +26,7 @@ ObjReader::ObjReader(const string &objFileName, const Vec3 &_center, real_t _rad
 	fin.close();
 }
 
-shared_ptr<Mesh> ObjReader::getMesh() {
+shared_ptr<Mesh> ObjReader::getMesh(int num) {
 	fitSize();
 	for (const auto &idx : triIndices) tris.push_back({ vertices[idx[0]], vertices[idx[1]], vertices[idx[2]] });
 
@@ -48,10 +48,8 @@ shared_ptr<Mesh> ObjReader::getMesh() {
 		}
 
 		for (auto &vertexNormal : vertexNormals) vertexNormal.normalize();
-		return make_shared<Mesh>(nullptr, tris, triIndices, vertexNormals);
-	} else {
-		return make_shared<Mesh>(nullptr, tris, triIndices, vector<Vec3>{});
-	}
+		return make_shared<Mesh>(nullptr, num, tris, triIndices, vertexNormals);
+	} else return make_shared<Mesh>(nullptr, num, tris, triIndices, vector<Vec3>{});
 }
 
 Vec3 ObjReader::readVec3(const string &str) {

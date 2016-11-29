@@ -12,12 +12,13 @@ class Object {
 
 private:
 	std::shared_ptr<Texture> texture;
+	int num;
 
 protected:
 	mutable AABB aabb;
 
 public:
-	explicit Object(const std::shared_ptr<Texture> &_texture) : texture(_texture) {}
+	Object(const std::shared_ptr<Texture> &_texture, int _num) : texture(_texture), num(_num) {}
 	virtual ~Object() {}
 
 	virtual bool isInfinity() const { return false; }
@@ -41,6 +42,8 @@ public:
 		}
 		return B;
 	}
+
+	int getNum() const { return num; }
 };
 
 struct IntersectInfo {
@@ -48,6 +51,7 @@ struct IntersectInfo {
 	Vec3 normal;
 	std::shared_ptr<Surface> surface;
 	real_t nextRefrIdx;
+	int objNum;
 };
 
 class Intersect {
@@ -57,7 +61,6 @@ protected:
 	mutable real_t distToInter = std::numeric_limits<real_t>::infinity();	// distance to intersection point
 	mutable Vec3 interPoint = Vec3::infinity();
 
-	virtual const Object *getObj() const = 0;
 	virtual std::shared_ptr<Surface> getInterPointSurfaceProperty() const = 0;
 
 public:
@@ -66,6 +69,8 @@ public:
 
 	Intersect(const Intersect &) = delete;
 	Intersect &operator = (const Intersect &) = delete;
+
+	virtual const Object *getObj() const = 0;
 
 	virtual real_t getDistToInter() const = 0;
 
@@ -79,7 +84,7 @@ public:
 	virtual IntersectInfo getIntersectInfo() {
 		auto obj = getObj();
 		//assert(obj->getTexture());
-		return IntersectInfo{ getIntersection(), getNormal(), getSurface(), getNextRefractionIndex() };
+		return IntersectInfo{ getIntersection(), getNormal(), getSurface(), getNextRefractionIndex(), obj->getNum() };
 	}
 
 	virtual std::shared_ptr<Surface> getSurface() const {

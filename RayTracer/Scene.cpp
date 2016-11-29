@@ -48,3 +48,13 @@ shared_ptr<Intersect> Scene::getIntersect(const Ray &ray) const {
 
 	return res;
 }
+
+bool Scene::isInnerPoint(const Vec3 &p) const {
+	Vec3 dir{ 0.0, 1.0, 0.0 };
+	Ray testRay{ p, dir };
+	auto intersect = getIntersect(testRay);
+	if (!intersect) return true;
+
+	IntersectInfo info = intersect->getIntersectInfo();
+	return intersect->getObj()->hasInside();
+}

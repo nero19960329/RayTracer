@@ -78,6 +78,7 @@ private:
 
 	mutable Vec3 normal;
 	mutable real_t refrIdx;
+	mutable int objNum;
 	mutable std::shared_ptr<Surface> surface;
 
 	virtual std::shared_ptr<Surface> getInterPointSurfaceProperty() const override;
@@ -94,10 +95,12 @@ public:
 	bool isIntersect() const override;
 	Vec3 getNormal() const override;
 
-private:
-	std::shared_ptr<Surface> getSurface() const override {
-		return surface;
+	IntersectInfo getIntersectInfo() override {
+		return IntersectInfo{ getIntersection(), getNormal(), getSurface(), getNextRefractionIndex(), objNum };
 	}
+
+private:
+	std::shared_ptr<Surface> getSurface() const override { return surface; }
 
 	bool isIntersect(const std::shared_ptr<KDNode> &node, const Ray &ray) const;
 

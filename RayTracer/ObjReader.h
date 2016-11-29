@@ -23,7 +23,7 @@ public:
 	explicit ObjReader(const std::string &objFileName, const Vec3 &_center = Vec3::zeros(), real_t _radius = 1.0, bool _smooth = false);
 	~ObjReader() {}
 
-	std::shared_ptr<Mesh> getMesh();
+	std::shared_ptr<Mesh> getMesh(int num);
 	void setCenter(const Vec3 &_center) { center = _center; }
 	void setRadius(real_t _radius) { radius = _radius; }
 	void setSmoothShading(bool _smoothShadingFlag) { smoothShadingFlag = _smoothShadingFlag; }

@@ -1,3 +1,4 @@
+#include "DataGenerator.h"
 #include "Renderer.h"
 #include "SceneReader.h"
 #include "Timer.h"
@@ -33,7 +34,11 @@ int main(int argc, char *argv[]) {
 	}
 
 	SceneReader sceneReader(sceneName);
-	Renderer renderer{ sceneReader };
+
+	DataGenerator dataGenerator{ sceneReader.getScene(), 10, 6000, 40, 7, { -0.5, 0.0, -0.5 }, { 0.5, 1.0, 0.5 } };
+	dataGenerator.generateTrainData();
+
+	/*Renderer renderer{ sceneReader };
 
 	if (travelFlag) {
 		TravelManager manager;
@@ -50,7 +55,7 @@ int main(int argc, char *argv[]) {
 
 		cout << "Image is saved at " << saveName << endl;
 		//waitKey(0);
-	}
+	}*/
 
 	return 0;
 }

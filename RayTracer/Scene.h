@@ -26,4 +26,6 @@ public:
 
 	bool isIntersect(const Ray &ray, real_t dist) const;
 	std::shared_ptr<Intersect> getIntersect(const Ray &ray) const;
+
+	bool isInnerPoint(const Vec3 &p) const;
 };

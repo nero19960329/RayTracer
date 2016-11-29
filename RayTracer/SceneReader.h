@@ -41,6 +41,8 @@ protected:
 	BRDFType brdfType = LAMBERTIAN;
 	TraceType traceType = RT;
 
+	int nowObjNum = 0;
+
 public:
 	explicit SceneReader(const std::string &sceneFileName);
 	~SceneReader() {}

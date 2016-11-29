@@ -12,9 +12,9 @@ protected:
 	Quadrilateral quad;
 
 public:
-	QuadObj() : Object(nullptr) {}
-	QuadObj(const std::shared_ptr<Texture> &_texture, const Vec3 &a, const Vec3 &b, const Vec3 &c, const Vec3 &d) :
-		Object(_texture), quad(a, b, c, d) {}
+	//QuadObj() : Object(nullptr) {}
+	QuadObj(const std::shared_ptr<Texture> &_texture, int _num, const Vec3 &a, const Vec3 &b, const Vec3 &c, const Vec3 &d) :
+		Object(_texture, _num), quad(a, b, c, d) {}
 
 	AABB getAABB() const override {
 		if (aabb.bounds[1] != -Vec3::max()) return aabb;

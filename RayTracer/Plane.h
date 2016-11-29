@@ -13,15 +13,15 @@ protected:
 	InfPlane infPlane;
 
 public:
-	Plane() : Object(nullptr) {}
+	Plane() : Object(nullptr, -1) {}
 
-	Plane(const std::shared_ptr<Texture> &_texture, const Vec3 &_normal, real_t _offset, bool isNormalized = true) :
-		Object(_texture), infPlane(_normal, _offset) {
+	Plane(const std::shared_ptr<Texture> &_texture, int _num, const Vec3 &_normal, real_t _offset, bool isNormalized = true) :
+		Object(_texture, _num), infPlane(_normal, _offset) {
 		if (!isNormalized) infPlane.normal.normalize();
 	}
 
-	Plane(const std::shared_ptr<Texture> &_texture, const Vec3 &_normal, const Vec3 &_point, bool isNormalized = true) :
-		Object(_texture), infPlane(_normal) {
+	Plane(const std::shared_ptr<Texture> &_texture, int _num, const Vec3 &_normal, const Vec3 &_point, bool isNormalized = true) :
+		Object(_texture, _num), infPlane(_normal) {
 		if (!isNormalized) infPlane.normal.normalize();
 		infPlane.offset = _point.dot(infPlane.normal);
 	}
@@ -32,14 +32,14 @@ public:
 		infPlane.offset = a.dot(infPlane.normal);
 	}*/
 
-	Plane(const std::shared_ptr<Texture> &_texture, const Vec3 &center, const Vec3 &x, const Vec3 &y) :
-		Object(_texture) {
+	Plane(const std::shared_ptr<Texture> &_texture, int _num, const Vec3 &center, const Vec3 &x, const Vec3 &y) :
+		Object(_texture, _num) {
 		infPlane.normal = x.cross(y).getNormalized();
 		infPlane.offset = center.dot(infPlane.normal);
 	}
 
-	Plane(const std::shared_ptr<Texture> &_texture, real_t a, real_t b, real_t c, real_t w) :
-		Object(_texture) {
+	Plane(const std::shared_ptr<Texture> &_texture, int _num, real_t a, real_t b, real_t c, real_t w) :
+		Object(_texture, _num) {
 		infPlane.normal = Vec3{ a, b, c }.getNormalized();
 		infPlane.offset = -w;
 	}

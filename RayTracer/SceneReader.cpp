@@ -242,6 +242,7 @@ void SceneReader::readSphere(xml_node<> *node) {
 	if (!transFlag) {
 		tmpObjVec.push_back(make_shared<Sphere>(
 			readTexture(sphereNodes[0]),
+			nowObjNum++,
 			readVec3(sphereNodes[1]),
 			readReal(sphereNodes[2])
 			));
@@ -249,6 +250,7 @@ void SceneReader::readSphere(xml_node<> *node) {
 		auto transNodes = getChildNodes(sphereNodes[3], { "refraction_index" });
 		tmpObjVec.push_back(make_shared<Sphere>(
 			readTexture(sphereNodes[0]),
+			nowObjNum++,
 			readVec3(sphereNodes[1]),
 			readReal(sphereNodes[2]),
 			readRefrIdx(getValue(transNodes[0]))
@@ -262,6 +264,7 @@ void SceneReader::readPlane(xml_node<> *node) {
 	});
 	scene.addObject(make_shared<Plane>(
 		readTexture(planeNodes[0]),
+		nowObjNum++,
 		readVec3(planeNodes[1]),
 		readReal(planeNodes[2]),
 		false
@@ -274,6 +277,7 @@ void SceneReader::readFace(xml_node<> *node) {
 	});
 	tmpObjVec.push_back(make_shared<Face>(
 		readTexture(faceNodes[0]),
+		nowObjNum++,
 		readVec3(faceNodes[1]),
 		readVec3(faceNodes[2]),
 		readVec3(faceNodes[3])
@@ -290,7 +294,7 @@ void SceneReader::readMesh(xml_node<> *node) {
 		readReal(meshNodes[3]),
 		readBool(meshNodes[4])
 		);
-	shared_ptr<Mesh> mesh = reader->getMesh();
+	shared_ptr<Mesh> mesh = reader->getMesh(nowObjNum++);
 	mesh->setTexture(readTexture(meshNodes[0]));
 	tmpObjVec.push_back(mesh);
 }
@@ -301,6 +305,7 @@ void SceneReader::readRect(xml_node<> *node) {
 	});
 	tmpObjVec.push_back(make_shared<RectObj>(
 		readTexture(rectNodes[0]),
+		nowObjNum++,
 		readVec3(rectNodes[1]),
 		readVec3(rectNodes[2]),
 		readVec3(rectNodes[3]),
@@ -315,6 +320,7 @@ void SceneReader::readQuad(xml_node<> *node) {
 	});
 	tmpObjVec.push_back(make_shared<QuadObj>(
 		readTexture(quadNodes[0]),
+		nowObjNum++,
 		readVec3(quadNodes[1]),
 		readVec3(quadNodes[2]),
 		readVec3(quadNodes[3]),

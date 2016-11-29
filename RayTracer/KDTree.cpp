@@ -185,7 +185,7 @@ shared_ptr<KDNode> KDNode::build(const vector<shared_ptr<Object>> &_objs, const 
 }
 
 KDTree::KDTree(const vector<shared_ptr<Object>> &_objs) :
-	Object(nullptr) {
+	Object(nullptr, -1) {
 	//Timer timer;
 	//timer.begin();
 	AABB aabb;
@@ -236,6 +236,7 @@ bool KDTreeIntersect::leafIntersect(const vector<shared_ptr<Object>> &objs) cons
 				normal = intersect->getNormal();
 				surface = intersect->getSurface();
 				refrIdx = intersect->getNextRefractionIndex();
+				objNum = intersect->getObj()->getNum();
 			}
 			flag = true;
 		}

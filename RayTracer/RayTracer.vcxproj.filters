@@ -93,6 +93,9 @@
     <ClCompile Include="QuadObj.cpp">
       <Filter>源文件\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="DataGenerator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vec3.h">

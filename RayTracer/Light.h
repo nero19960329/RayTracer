@@ -12,9 +12,9 @@ public:
 	real_t intensity;
 
 public:
-	Light() {}
+	Light() : RectObj() {}
 	Light(const RectGeo &rect, const Vec3 &_color, real_t _intensity) :
-		RectObj(std::make_shared<PureTexture>(Material{ 0.0, 0.0, 0.0, 0.0, 0.0, _color * _intensity }, _color), rect), color(_color), intensity(_intensity) {}
+		RectObj(std::make_shared<PureTexture>(Material{ 0.0, 0.0, 0.0, 0.0, 0.0, _color * _intensity }, _color), -1, rect), color(_color), intensity(_intensity) {}
 	~Light() {}
 
 	Vec3 getCenter() const { return rectangle.center; }
