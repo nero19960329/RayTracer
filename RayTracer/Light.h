@@ -32,4 +32,8 @@ public:
 		std::array<Vec3, 4> res = { rectangle.a, rectangle.b, rectangle.c, rectangle.d };
 		return res;
 	}
+
+	real_t v1crossv2() const {
+		return (2 * rectangle.length_x * rectangle.x).cross(2 * rectangle.length_y * rectangle.y).norm();
+	}
 };
