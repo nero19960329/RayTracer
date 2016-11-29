@@ -8,7 +8,7 @@
         <up value="0.0 1.0 0.0"/>
         <fovy value="37.5"/>
 
-        <mcpt_sample value="40"/>
+        <mcpt_sample value="200"/>
 
         <anti value="false">
             <sample value="5"/>
