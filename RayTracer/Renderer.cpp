@@ -42,7 +42,7 @@ array<Mat, 3> Renderer::rawRender(bool showBar) const {
 		renderKernel = [&](long long k) {
 			int i = widthVec[(k / sample) / screen.height], j = heightVec[(k / sample) % screen.height];
 			int p = ((k / viewer.dopSample) % antiSample2) / viewer.antiSample, q = ((k / viewer.dopSample) % antiSample2) % viewer.antiSample;
-			pair<Vec3, Vec3> color = shader->color(viewer.getRay_RT(i, j, p, q));
+			pair<Vec3, Vec3> color = shader->color(viewer.getJitterSampleRay(i, j, p, q, viewer.antiSample));
 			res.at<Vec3d>(j, i)[0] += color.first[2];
 			res.at<Vec3d>(j, i)[1] += color.first[1];
 			res.at<Vec3d>(j, i)[2] += color.first[0];
@@ -50,32 +50,22 @@ array<Mat, 3> Renderer::rawRender(bool showBar) const {
 	} else if (traceType == MCPT) {
 		rep(k, 3) results[k] = Mat::zeros(screen.height, screen.width, CV_64FC3);
 
-		int jitter_sample = 2;
-		real_t inv_jitter_sample = 1.0 / jitter_sample;
-		sample = jitter_sample * jitter_sample;
-		if (viewer.mcptSample % sample) error_exit("MCPT sample must be multiple of 4!\n");
+		sample = viewer.mcptSample;
 		allRays = (long long) screen.width * (long long) screen.height * (long long) sample;
-		real_t inv_mcptSample = sample * 1.0 / viewer.mcptSample;
 
 		renderKernel = [&](long long k) {
 			int i = widthVec[(k / sample) / screen.height], j = heightVec[(k / sample) % screen.height];
-			int p = (k % sample) / jitter_sample, q = (k % sample) % jitter_sample;
 
-			Vec3 color[3] = { Vec3::zeros(), Vec3::zeros(), Vec3::zeros() };
+			pair<Vec3, Vec3> radiance = shader->color(viewer.getRandomSampleRay(i, j));
+			Vec3 direct{ cut(radiance.first[0]), cut(radiance.first[1]), cut(radiance.first[2]) };
+			Vec3 indirect{ cut(radiance.second[0]), cut(radiance.second[1]), cut(radiance.second[2]) };
 
-			rep(m, viewer.mcptSample / sample) {
-				pair<Vec3, Vec3> radiance = shader->color(viewer.getRay_MCPT(i, j, p, q, inv_jitter_sample));
-				Vec3 direct{ cut(radiance.first[0]), cut(radiance.first[1]), cut(radiance.first[2]) };
-				Vec3 undirect{ cut(radiance.second[0]), cut(radiance.second[1]), cut(radiance.second[2]) };
-				color[0] += direct * inv_mcptSample;
-				color[1] += undirect * inv_mcptSample;
-				color[2] += (direct + undirect) * inv_mcptSample;
-			}
+			Vec3 color[3] = { direct, indirect, direct + indirect };
 
 			rep(m, 3) {
-				results[m].at<Vec3d>(j, i)[0] += cut(color[m][2]);
-				results[m].at<Vec3d>(j, i)[1] += cut(color[m][1]);
-				results[m].at<Vec3d>(j, i)[2] += cut(color[m][0]);
+				results[m].at<Vec3d>(j, i)[0] += color[m][2];
+				results[m].at<Vec3d>(j, i)[1] += color[m][1];
+				results[m].at<Vec3d>(j, i)[2] += color[m][0];
 			}
 		};
 	}

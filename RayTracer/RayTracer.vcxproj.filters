@@ -215,5 +215,8 @@
     <ClInclude Include="QuadObj.h">
       <Filter>头文件\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="DataGenerator.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

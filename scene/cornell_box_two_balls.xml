@@ -8,7 +8,7 @@
         <up value="0.0 1.0 0.0"/>
         <fovy value="45.0"/>
 
-        <mcpt_sample value="40"/>
+        <mcpt_sample value="8"/>
     </viewer>
     <light>
         <geo>

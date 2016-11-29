@@ -167,6 +167,7 @@
     <ClInclude Include="AABB.h" />
     <ClInclude Include="BRDF.h" />
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="DataGenerator.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="InfPlane.h" />
     <ClInclude Include="KDTree.h" />

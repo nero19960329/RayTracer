@@ -55,8 +55,8 @@ public:
 	void setViewPort(Geometry _viewport = Geometry{ 0, 0 }) { viewport = _viewport; }
 	void setMCPTSample(int _mcptSample) { mcptSample = _mcptSample; }
 
-	Ray getRay_RT(int i, int j, int p, int q) const;
-	Ray getRay_MCPT(int i, int j, int p, int q, real_t inv_k) const;
+	Ray getJitterSampleRay(int i, int j, int p, int q, int sample) const;
+	Ray getRandomSampleRay(int i, int j) const;
 	Geometry getScreen() const {
 		return screen;
 	}

@@ -4,13 +4,13 @@
 
 using namespace std;
 
-Ray Viewer::getRay_RT(int i, int j, int p, int q) const {
-	Vec3 tmpVec = LT - deltaH * j + deltaW * i - deltaH * q / antiSample + deltaW * p / antiSample;
+Ray Viewer::getJitterSampleRay(int i, int j, int p, int q, int sample) const {
+	Vec3 tmpVec = LT - deltaH * j + deltaW * i - deltaH * q / sample + deltaW * p / sample;
 	Vec3 rayCenter, rayDir;
 
 	if (antialiasingFlag) {
-		tmpVec -= erand48() * deltaH / antiSample;
-		tmpVec += erand48() * deltaW / antiSample;
+		tmpVec -= erand48() * deltaH / sample;
+		tmpVec += erand48() * deltaW / sample;
 	}
 
 	if (!dopFlag) {
@@ -32,8 +32,8 @@ Ray Viewer::getRay_RT(int i, int j, int p, int q) const {
 	return{ rayCenter, rayDir.getNormalized() };
 }
 
-Ray Viewer::getRay_MCPT(int i, int j, int p, int q, real_t inv_k) const {
-	Vec3 tmpVec = LT - deltaH * j + deltaW * i - deltaH * q * inv_k + deltaW * p * inv_k;
+Ray Viewer::getRandomSampleRay(int i, int j) const {
+	Vec3 tmpVec = LT - deltaH * j + deltaW * i;
 	tmpVec -= erand48() * deltaH;
 	tmpVec += erand48() * deltaW;
 
