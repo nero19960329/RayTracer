@@ -28,17 +28,17 @@ int main(int argc, char *argv[]) {
 		else error_exit("Error at argument 2!\n");
 
 		if (argc == 4) saveName = argv[3];
-		else saveName = "../img/test.png";
+		else saveName = "../img/test";
 	} else {
 		error_exit("Input arguments are wrong!\n");
 	}
 
 	SceneReader sceneReader(sceneName);
 
-	DataGenerator dataGenerator{ sceneReader.getScene(), 10, 6000, 40, 7, { -0.5, 0.0, -0.5 }, { 0.5, 1.0, 0.5 } };
-	dataGenerator.generateTrainData();
+	/*DataGenerator dataGenerator{ sceneReader.getScene(), 10, 6000, 40, 7, { -0.5, 0.0, -0.5 }, { 0.5, 1.0, 0.5 } };
+	dataGenerator.generateTrainData();*/
 
-	/*Renderer renderer{ sceneReader };
+	Renderer renderer{ sceneReader };
 
 	if (travelFlag) {
 		TravelManager manager;
@@ -49,13 +49,19 @@ int main(int argc, char *argv[]) {
 		printf("Render duration: %.4lfs\n", timer.getDuration());
 
 		//imshow("Ray Tracing", img);
-		imwrite("../img/test_direct.png", img[0]);
-		imwrite("../img/test_indirect.png", img[1]);
-		imwrite("../img/test_all.png", img[2]);
+		ostringstream oss;
+		oss << saveName << "_direct.png";
+		imwrite(oss.str(), img[0]);
+		oss.str("");
+		oss << saveName << "_indirect.png";
+		imwrite(oss.str(), img[1]);
+		oss.str("");
+		oss << saveName << "_all.png";
+		imwrite(oss.str(), img[2]);
 
 		cout << "Image is saved at " << saveName << endl;
 		//waitKey(0);
-	}*/
+	}
 
 	return 0;
 }
