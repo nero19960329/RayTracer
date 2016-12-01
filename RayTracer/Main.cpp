@@ -1,4 +1,6 @@
 #include "DataGenerator.h"
+#include "MatReader.h"
+#include "NeuralNetwork.h"
 #include "Renderer.h"
 #include "SceneReader.h"
 #include "Timer.h"
@@ -35,8 +37,10 @@ int main(int argc, char *argv[]) {
 
 	SceneReader sceneReader(sceneName);
 
-	/*DataGenerator dataGenerator{ sceneReader.getScene(), 10, 6000, 40, 7, { -0.5, 0.0, -0.5 }, { 0.5, 1.0, 0.5 } };
-	dataGenerator.generateTrainData();*/
+	/*Timer timer;
+	DataGenerator dataGenerator{ sceneReader.getScene(), 200, 6000, 200, 7, { -0.5, 0.0, -0.5 }, { 0.5, 1.0, 0.5 } };
+	dataGenerator.generateTrainData();
+	cout << "Duration: " << timer.getDuration() << "s" << endl;*/
 
 	Renderer renderer{ sceneReader };
 
@@ -50,14 +54,17 @@ int main(int argc, char *argv[]) {
 
 		//imshow("Ray Tracing", img);
 		ostringstream oss;
-		oss << saveName << "_direct.png";
+		oss << saveName << ".png";
 		imwrite(oss.str(), img[0]);
-		oss.str("");
-		oss << saveName << "_indirect.png";
-		imwrite(oss.str(), img[1]);
-		oss.str("");
-		oss << saveName << "_all.png";
-		imwrite(oss.str(), img[2]);
+
+		//oss << saveName << "_direct.png";
+		//imwrite(oss.str(), img[0]);
+		//oss.str("");
+		//oss << saveName << "_indirect.png";
+		//imwrite(oss.str(), img[1]);
+		//oss.str("");
+		//oss << saveName << "_all.png";
+		//imwrite(oss.str(), img[2]);
 
 		cout << "Image is saved at " << saveName << endl;
 		//waitKey(0);

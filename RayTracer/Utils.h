@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <random>
 #include <vector>
 
 using real_t = double;
@@ -15,10 +16,11 @@ const real_t PI = 3.14159265359;
 const real_t INV_PI = 1.0 / PI;
 const real_t INV_RAND_MAX = 1.0 / RAND_MAX;
 
+#define GETRNG uniform_real_distribution<real_t> uni(0, 1);
+
 #define rep(x, y) for (auto x = decltype(y){0}; x != y; ++x)
 #define repa(x, y, z) for (auto x = decltype(z){y}; x != z; ++x)
 #define repd(x, y, z) for (auto x = decltype(z){y}; x != z; --x)
-#define erand48() (rand() * INV_RAND_MAX)
 
 // left-closed and right-open
 template <typename T> inline bool betw(const T &x, const T &y, const T &z) { return x >= y && x < z }

@@ -4,13 +4,13 @@
 
 using namespace std;
 
-Ray Viewer::getJitterSampleRay(int i, int j, int p, int q, int sample) const {
+Ray Viewer::getJitterSampleRay(RNGenerator &rng, int i, int j, int p, int q, int sample) const {
 	Vec3 tmpVec = LT - deltaH * j + deltaW * i - deltaH * q / sample + deltaW * p / sample;
 	Vec3 rayCenter, rayDir;
 
 	if (antialiasingFlag) {
-		tmpVec -= erand48() * deltaH / sample;
-		tmpVec += erand48() * deltaW / sample;
+		tmpVec -= rng.randomReal() * deltaH / sample;
+		tmpVec += rng.randomReal() * deltaW / sample;
 	}
 
 	if (!dopFlag) {
@@ -18,8 +18,8 @@ Ray Viewer::getJitterSampleRay(int i, int j, int p, int q, int sample) const {
 		rayDir = tmpVec - rayCenter;
 	} else {
 		Vec3 focusPoint = center + (tmpVec - center).getNormalized() * focusOffset;
-		real_t tmpRadius = erand48() * apertureSize;
-		real_t tmpTheta = erand48() * 360.0;
+		real_t tmpRadius = rng.randomReal() * apertureSize;
+		real_t tmpTheta = rng.randomReal() * 360.0;
 		rayCenter = center + tmpRadius * (cos(tmpTheta) * x + sin(tmpTheta) * y);
 		rayDir = focusPoint - rayCenter;
 	}
@@ -32,10 +32,10 @@ Ray Viewer::getJitterSampleRay(int i, int j, int p, int q, int sample) const {
 	return{ rayCenter, rayDir.getNormalized() };
 }
 
-Ray Viewer::getRandomSampleRay(int i, int j) const {
+Ray Viewer::getRandomSampleRay(RNGenerator &rng, int i, int j) const {
 	Vec3 tmpVec = LT - deltaH * j + deltaW * i;
-	tmpVec -= erand48() * deltaH;
-	tmpVec += erand48() * deltaW;
+	tmpVec -= rng.randomReal() * deltaH;
+	tmpVec += rng.randomReal() * deltaW;
 
 	return{ center, (tmpVec - center).getNormalized() };
 }

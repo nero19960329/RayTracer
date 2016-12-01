@@ -1,9 +1,10 @@
 #include "Constants.h"
+#include "DataGenerator.h"
 #include "RayTracing.h"
 
 using namespace std;
 
-pair<Vec3, Vec3> RayTracing::color(const Ray &ray) const {
+pair<Vec3, Vec3> RayTracing::color(const Ray &ray, RNGenerator *) const {
 	DistRay distRay(ray, 0.0);
 	return{ getColor(distRay), Vec3::NONE };
 }
@@ -16,6 +17,14 @@ Vec3 RayTracing::getColor(DistRay &ray, int depth) const {
 		IntersectInfo info = intersect->getIntersectInfo();
 
 		Vec3 emission = info.surface->emission;
+		if (!emission.isZero()) return emission;
+
+		const NeuralNetwork &direct = directNNVec[info.objNum];
+		const NeuralNetwork &indirect = indirectNNVec[info.objNum];
+		DataGenerator::TrainData input{ info.interPoint, ray.dir, Vec3::zeros(), info.normal, info.surface->diffuse };
+		return direct.predict(input) + indirect.predict(input);
+
+		/*Vec3 emission = info.surface->emission;
 		Vec3 ambient = AMBIENT_INTENSITY * info.surface->ambient;
 		Vec3 local = getPhongLocal(info, ray);
 		ray.dist += intersect->getDistToInter();
@@ -24,7 +33,7 @@ Vec3 RayTracing::getColor(DistRay &ray, int depth) const {
 		Vec3 refl = getReflection(info, ray, depth);
 		Vec3 refr = getRefraction(info, ray, depth);
 
-		return emission + ambient + local + refl + refr;
+		return emission + ambient + local + refl + refr;*/
 	} else return Vec3::NONE;
 }
 

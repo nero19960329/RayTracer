@@ -221,5 +221,14 @@
     <ClInclude Include="DataGenerator.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="RNG.h">
+      <Filter>头文件\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="MatReader.h">
+      <Filter>头文件\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="NeuralNetwork.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

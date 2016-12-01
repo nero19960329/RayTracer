@@ -1,10 +1,13 @@
 #pragma once
 
 #include "BRDF.h"
+#include "RNG.h"
 #include "Scene.h"
 #include "TraceBase.h"
 #include "Utils.h"
 #include "Vec3.h"
+
+#include <omp.h>
 
 class DataGenerator {
 private:
@@ -16,6 +19,9 @@ private:
 
 	std::shared_ptr<TraceBase> tracer;
 
+	omp_lock_t printLock;
+
+public:
 	struct TrainData {
 		Vec3 hitPoint, viewDir, lightPos, normal;
 		Vec3 brdfParameter;
@@ -36,30 +42,31 @@ public:
 		bounds[1] = maxBound;
 
 		tracer = scene.getTracer(MCPT, LAMBERTIAN);
+
+		omp_init_lock(&printLock);
 	}
 
-	void generateTrainData() const;
+	void generateTrainData();
 
 private:
-	inline Vec3 getRandomViewPoint() const {
+	inline Vec3 getRandomViewPoint(RNGenerator &rng) const {
 		while (true) {
 			Vec3 res;
-			rep(k, 3) res[k] = erand48() * (bounds[1][k] - bounds[0][k]) + bounds[0][k];
+			rep(k, 3) res[k] = rng.randomReal() * (bounds[1][k] - bounds[0][k]) + bounds[0][k];
 			if (!scene.isInnerPoint(res)) return res;
 		}
 	}
 
-	inline Vec3 getRandomRayDir() const {
-		real_t theta = 2 * PI * erand48();
-		real_t u = 2 * erand48() - 1;
+	inline Vec3 getRandomRayDir(RNGenerator &rng) const {
+		real_t theta = 2 * PI * rng.randomReal();
+		real_t u = 2 * rng.randomReal() - 1;
 		return{ sqrt(1 - sqr(u)) * cos(theta), sqrt(1 - sqr(u)) * sin(theta), u };
 	}
 
-	std::pair<TrainData, TrainData> getSingleTrainData(const Vec3 &viewPoint, const Vec3 &rayDir, int &objNum) const;
+	std::pair<TrainData, TrainData> getSingleTrainData(RNGenerator *rng, const Vec3 &viewPoint, const Vec3 &rayDir, int &objNum) const;
 
 	inline void outputTrainData(std::ofstream &os, const TrainData &trainData) const {
 		TrainData data = trainData;
-		//data.normalize(bounds[0], bounds[1]);
 		os << data.hitPoint << " "
 			<< data.viewDir << " "
 			<< data.lightPos << " "

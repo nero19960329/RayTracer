@@ -2,6 +2,7 @@
 
 #include "Geometry.h"
 #include "Ray.h"
+#include "RNG.h"
 #include "Vec3.h"
 
 #include <cstdlib>
@@ -55,8 +56,8 @@ public:
 	void setViewPort(Geometry _viewport = Geometry{ 0, 0 }) { viewport = _viewport; }
 	void setMCPTSample(int _mcptSample) { mcptSample = _mcptSample; }
 
-	Ray getJitterSampleRay(int i, int j, int p, int q, int sample) const;
-	Ray getRandomSampleRay(int i, int j) const;
+	Ray getJitterSampleRay(RNGenerator &rng, int i, int j, int p, int q, int sample) const;
+	Ray getRandomSampleRay(RNGenerator &rng, int i, int j) const;
 	Geometry getScreen() const {
 		return screen;
 	}
