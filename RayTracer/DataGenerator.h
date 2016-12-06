@@ -51,7 +51,7 @@ public:
 private:
 	inline Vec3 getRandomViewPoint(RNGenerator &rng, int dims[3], int dim) const {
 		int cnt = 0;
-		while (cnt < 100000) {
+		while (cnt < 100) {
 			Vec3 res;
 			rep(k, 3) res[k] = ((dims[k] + rng.randomReal()) * 1.0 / dim) * (bounds[1][k] - bounds[0][k]) + bounds[0][k];
 			if (!scene.isInnerPoint(res)) return res;

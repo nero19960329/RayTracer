@@ -101,12 +101,12 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4819</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>D:\MATLAB\R2015b\extern\include;D:\opencv\opencv\build\include;D:\opencv\opencv\build\include\opencv;D:\opencv\opencv\build\include\opencv2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\MATLAB\R2016b\extern\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\MATLAB\R2015b\extern\lib\win64\mingw64;D:\opencv\opencv\build\x64\vc12\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>E:\MATLAB\R2016b\extern\lib\win64\mingw64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libmat.lib;libmx.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

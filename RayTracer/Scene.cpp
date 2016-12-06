@@ -70,7 +70,5 @@ bool Scene::isInnerPoint(const Vec3 &p) const {
 	Ray testRay{ p, dir };
 	auto intersect = getIntersect(testRay);
 	if (!intersect) return true;
-
-	IntersectInfo info = intersect->getIntersectInfo();
-	return intersect->getObj()->hasInside();
+	return intersect->hasInside();
 }

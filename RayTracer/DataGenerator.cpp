@@ -64,15 +64,11 @@ void DataGenerator::generateTrainData() {
 		omp_set_lock(&printLock);
 		cout << "Handling viewPoint " << i << ": " << viewPoint << " . . ." << endl;
 		omp_unset_lock(&printLock);
-		//cout << "viewPoint: " << viewPoint << endl;
 
-		if (!viewPoint.isFinite()) {
-			continue;
-		}
+		if (!viewPoint.isFinite()) continue;
 
 		for (int j = 0; j < rayCnt; ++j) {
 			Vec3 rayDir = getRandomRayDir(*rng);
-			//cout << "rayDir: " << rayDir << endl;
 
 			int objNum;
 			auto dataPair = getSingleTrainData(rng, viewPoint, rayDir, objNum);

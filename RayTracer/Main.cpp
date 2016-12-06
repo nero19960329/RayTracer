@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
 	SceneReader sceneReader(sceneName);
 
 	Timer timer;
-	DataGenerator dataGenerator{ sceneReader.getScene(), 10, 1200, 20, 7, { -0.5, -0.5, -0.5 }, { 0.5, 0.5, 0.5 } };
+	DataGenerator dataGenerator{ sceneReader.getScene(), 10, 1200, 10000, 7, { -0.5, -0.5, -0.5 }, { 0.5, 0.5, 0.5 } };
 	dataGenerator.generateTrainData();
 	cout << "Duration: " << timer.getDuration() << "s" << endl;
 
