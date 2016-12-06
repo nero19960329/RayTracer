@@ -33,7 +33,6 @@ public:
 		rep(k, 3) tmpInput.at<real_t>(k + 12, 0) = inputData.brdfParameter[k];
 
 		mapminmax(tmpInput, inputMin, inputMax);
-		//std::cout << "tmpInput: " << tmpInput << std::endl;
 
 		cv::Mat input(w[0].cols, 1, CV_64F);
 		int cnt = 0;
@@ -41,22 +40,15 @@ public:
 			if (isfinite(tmpInput.at<real_t>(i, 0))) input.at<real_t>(cnt++, 0) = tmpInput.at<real_t>(i, 0);
 		}
 
-		//std::cout << "input: " << input << std::endl;
-
 		cv::Mat a[2];
 		a[0] = cv::Mat(b[0].rows, b[0].cols, CV_64F);
 		a[0] = w[0] * input + b[0];
-		//std::cout << "z[0]: " << a[0] << std::endl;
 		std::transform(a[0].begin<real_t>(), a[0].end<real_t>(), a[0].begin<real_t>(), bind(&NeuralNetwork::tansig, this, std::placeholders::_1));
-		//std::cout << "a[0]: " << a[0] << std::endl;
 		a[1] = cv::Mat(b[1].rows, b[1].cols, CV_64F);
 		a[1] = w[1] * a[0] + b[1];
-		//std::cout << "z[1]: " << a[1] << std::endl;
 		std::transform(a[1].begin<real_t>(), a[1].end<real_t>(), a[1].begin<real_t>(), bind(&NeuralNetwork::tansig, this, std::placeholders::_1));
-		//std::cout << "a[1]: " << a[1] << std::endl;
 		cv::Mat output = cv::Mat(b[2].rows, b[2].cols, CV_64F);
 		output = w[2] * a[1] + b[2];
-		//std::cout << "output_before_invmap: " << output << std::endl;
 
 		invMapminmax(output, outputMin, outputMax);
 

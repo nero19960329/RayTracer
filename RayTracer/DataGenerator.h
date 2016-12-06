@@ -11,7 +11,7 @@
 
 class DataGenerator {
 private:
-	int viewPointCnt, rayCnt, mcptSample;
+	int viewPointCnt, viewPointDim, rayCnt, mcptSample;
 	int allObjNum;
 	const Scene &scene;
 
@@ -36,8 +36,8 @@ public:
 	};
 
 public:
-	DataGenerator(const Scene &_scene, int _viewPointCnt, int _rayCnt, int _mcptSample, int _allObjNum, const Vec3 &minBound, const Vec3 &maxBound) :
-		scene(_scene), viewPointCnt(_viewPointCnt), rayCnt(_rayCnt), mcptSample(_mcptSample), allObjNum(_allObjNum) {
+	DataGenerator(const Scene &_scene, int _viewPointDim, int _rayCnt, int _mcptSample, int _allObjNum, const Vec3 &minBound, const Vec3 &maxBound) :
+		scene(_scene), viewPointDim(_viewPointDim), viewPointCnt(_viewPointDim * _viewPointDim * _viewPointDim), rayCnt(_rayCnt), mcptSample(_mcptSample), allObjNum(_allObjNum) {
 		bounds[0] = minBound;
 		bounds[1] = maxBound;
 
@@ -49,12 +49,15 @@ public:
 	void generateTrainData();
 
 private:
-	inline Vec3 getRandomViewPoint(RNGenerator &rng) const {
-		while (true) {
+	inline Vec3 getRandomViewPoint(RNGenerator &rng, int dims[3], int dim) const {
+		int cnt = 0;
+		while (cnt < 100000) {
 			Vec3 res;
-			rep(k, 3) res[k] = rng.randomReal() * (bounds[1][k] - bounds[0][k]) + bounds[0][k];
+			rep(k, 3) res[k] = ((dims[k] + rng.randomReal()) * 1.0 / dim) * (bounds[1][k] - bounds[0][k]) + bounds[0][k];
 			if (!scene.isInnerPoint(res)) return res;
+			++cnt;
 		}
+		return Vec3::infinity();
 	}
 
 	inline Vec3 getRandomRayDir(RNGenerator &rng) const {

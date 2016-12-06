@@ -162,8 +162,7 @@ void SceneReader::readViewer(xml_node<> *node) {
 	};
 
 	if (viewerNodes[5]) {
-		auto antiNodes = getChildNodes(viewerNodes[5], { "sample" });
-		viewer.setAntiThings(readInt(antiNodes[0]));
+		viewer.setAntiThings(readInt(viewerNodes[5]));
 	}
 	if (viewerNodes[6]) {
 		auto dopNodes = getChildNodes(viewerNodes[6], { "aperture", "offset", "sample" });

@@ -60,7 +60,7 @@ array<Mat, 3> Renderer::rawRender(bool showBar) const {
 			Vec3 direct{ cut(radiance.first[0]), cut(radiance.first[1]), cut(radiance.first[2]) };
 			Vec3 indirect{ cut(radiance.second[0]), cut(radiance.second[1]), cut(radiance.second[2]) };
 
-			Vec3 color[3] = { direct, indirect, direct + indirect };
+			Vec3 color[3] = { direct + indirect, direct, indirect };
 			rep(m, 3) {
 				results[m].at<Vec3d>(j, i)[0] += color[m][2];
 				results[m].at<Vec3d>(j, i)[1] += color[m][1];
