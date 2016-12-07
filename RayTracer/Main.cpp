@@ -37,12 +37,12 @@ int main(int argc, char *argv[]) {
 
 	SceneReader sceneReader(sceneName);
 
-	/*Timer timer;
-	DataGenerator dataGenerator{ sceneReader.getScene(), 200, 6000, 200, 7, { -0.5, 0.0, -0.5 }, { 0.5, 1.0, 0.5 } };
+	Timer timer;
+	DataGenerator dataGenerator{ sceneReader.getScene(), 10, 1200, 10000, 7, { -0.5, -0.5, -0.5 }, { 0.5, 0.5, 0.5 } };
 	dataGenerator.generateTrainData();
-	cout << "Duration: " << timer.getDuration() << "s" << endl;*/
+	cout << "Duration: " << timer.getDuration() << "s" << endl;
 
-	Renderer renderer{ sceneReader };
+	/*Renderer renderer{ sceneReader };
 
 	if (travelFlag) {
 		TravelManager manager;
@@ -57,18 +57,9 @@ int main(int argc, char *argv[]) {
 		oss << saveName << ".png";
 		imwrite(oss.str(), img[0]);
 
-		//oss << saveName << "_direct.png";
-		//imwrite(oss.str(), img[0]);
-		//oss.str("");
-		//oss << saveName << "_indirect.png";
-		//imwrite(oss.str(), img[1]);
-		//oss.str("");
-		//oss << saveName << "_all.png";
-		//imwrite(oss.str(), img[2]);
-
 		cout << "Image is saved at " << saveName << endl;
 		//waitKey(0);
-	}
+	}*/
 
 	return 0;
 }

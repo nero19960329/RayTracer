@@ -80,13 +80,15 @@ private:
 	mutable real_t refrIdx;
 	mutable int objNum;
 	mutable std::shared_ptr<Surface> surface;
+	mutable bool insideFlag;
 
 	virtual std::shared_ptr<Surface> getInterPointSurfaceProperty() const override;
 
 	const Object *getObj() const override { return &tree; }
 
 public:
-	KDTreeIntersect(const KDTree &_tree, const Ray &_ray) : Intersect(_ray), tree(_tree) {
+	KDTreeIntersect(const KDTree &_tree, const Ray &_ray) : 
+		Intersect(_ray), tree(_tree) {
 		distToInter = std::numeric_limits<real_t>::max();
 	}
 	~KDTreeIntersect() {}
@@ -98,6 +100,8 @@ public:
 	IntersectInfo getIntersectInfo() override {
 		return IntersectInfo{ getIntersection(), getNormal(), getSurface(), getNextRefractionIndex(), objNum };
 	}
+
+	bool hasInside() const override { return insideFlag; }
 
 private:
 	std::shared_ptr<Surface> getSurface() const override { return surface; }

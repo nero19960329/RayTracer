@@ -9,6 +9,8 @@
         <fovy value="45.0"/>
 
         <mcpt_sample value="200"/>
+
+        <anti value="4"/>
     </viewer>
     <light>
         <geo>

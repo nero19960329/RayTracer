@@ -53,15 +53,22 @@ void DataGenerator::generateTrainData() {
 	#pragma omp parallel for
 	for (int i = 0; i < viewPointCnt; ++i) {
 		RNGenerator *rng = rngs[omp_get_thread_num()];
-		Vec3 viewPoint = getRandomViewPoint(*rng);
+
+		int dim[3];
+		dim[0] = i / sqr(viewPointDim);
+		dim[1] = (i - dim[0] * sqr(viewPointDim)) / viewPointDim;
+		dim[2] = i % viewPointDim;
+
+		Vec3 viewPoint = getRandomViewPoint(*rng, dim, viewPointDim);
+
 		omp_set_lock(&printLock);
-		cout << "Handling viewPoint " << i << ": " << viewPoint << " , . . ." << endl;
+		cout << "Handling viewPoint " << i << ": " << viewPoint << " . . ." << endl;
 		omp_unset_lock(&printLock);
-		//cout << "viewPoint: " << viewPoint << endl;
+
+		if (!viewPoint.isFinite()) continue;
 
 		for (int j = 0; j < rayCnt; ++j) {
 			Vec3 rayDir = getRandomRayDir(*rng);
-			//cout << "rayDir: " << rayDir << endl;
 
 			int objNum;
 			auto dataPair = getSingleTrainData(rng, viewPoint, rayDir, objNum);
@@ -71,16 +78,6 @@ void DataGenerator::generateTrainData() {
 				outputTrainData(*direct_fouts[objNum], dataPair.first);
 				outputTrainData(*indirect_fouts[objNum], dataPair.second);
 				omp_unset_lock(&printLock);
-				/*cout << "ID: " << objNum << endl;
-				cout << "hitPoint: " << dataPair.first.hitPoint << endl;
-				cout << "viewDir: " << dataPair.first.viewDir << endl;
-				cout << "lightPos: " << dataPair.first.lightPos << endl;
-				cout << "normal: " << dataPair.first.normal << endl;
-				cout << "brdf: " << dataPair.first.brdfParameter << endl;
-				cout << "direct: " << dataPair.first.color << endl;
-				cout << "indirect: " << dataPair.second.color << endl;
-
-				getchar();*/
 			}
 		}
 	}

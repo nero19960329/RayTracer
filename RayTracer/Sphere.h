@@ -15,12 +15,13 @@ protected:
 	real_t innerRefrIdx;
 
 public:
-	//Sphere() : Object(nullptr), innerRefrIdx(VACUUM_REFRACTION_INDEX) {}
 	Sphere(const std::shared_ptr<Texture> &_texture, int _num, const Vec3 &_center, real_t _radius, real_t _innerRefrIdx = VACUUM_REFRACTION_INDEX) :
 		Object(_texture, _num), pureSphere(_center, _radius), innerRefrIdx(_innerRefrIdx) {}
 	Sphere(const std::shared_ptr<Texture> &_texture, int _num, const PureSphere &_pureSphere, real_t _innerRefrIdx = VACUUM_REFRACTION_INDEX) :
 		Object(_texture, _num), pureSphere(_pureSphere), innerRefrIdx(_innerRefrIdx) {}
 	~Sphere() {}
+
+	bool hasInside() const override { return true; }
 
 	std::shared_ptr<Intersect> getTrace(const Ray &ray, real_t dist = std::numeric_limits<real_t>::max()) const override;
 

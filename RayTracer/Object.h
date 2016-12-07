@@ -71,6 +71,7 @@ public:
 	Intersect &operator = (const Intersect &) = delete;
 
 	virtual const Object *getObj() const = 0;
+	virtual bool hasInside() const { return getObj()->hasInside(); }
 
 	virtual real_t getDistToInter() const = 0;
 

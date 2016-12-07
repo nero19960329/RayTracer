@@ -237,6 +237,7 @@ bool KDTreeIntersect::leafIntersect(const vector<shared_ptr<Object>> &objs) cons
 				surface = intersect->getSurface();
 				refrIdx = intersect->getNextRefractionIndex();
 				objNum = intersect->getObj()->getNum();
+				insideFlag = intersect->hasInside();
 			}
 			flag = true;
 		}
