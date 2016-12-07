@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<scene type="rt">
+<scene type="mcpt">
 	<brdf type="lambertian"/>
     <viewer>
         <geo value="800 600"/>
@@ -8,7 +8,7 @@
         <up value="0.0 1.0 0.0"/>
         <fovy value="45.0"/>
 
-        <mcpt_sample value="8"/>
+        <mcpt_sample value="200"/>
     </viewer>
     <light>
         <geo>
@@ -22,7 +22,7 @@
     	<intensity value="25.0"/>
     </light>
     
-    <object type="sphere">
+    <!--<object type="sphere">
     	<texture type="pure">
     		<material value="plastic"/>
     		<color value="magenta"/>
@@ -42,6 +42,17 @@
     	<center value="-0.3 -0.3 -0.3"/>
     	<radius value="0.2"/>
     	<transparency value="false"/>
+    </object>-->
+
+    <object type="mesh">
+        <texture type="pure">
+            <material value="plastic"/>
+            <color value="white"/>
+        </texture>
+        <filename value="../objs/dragon.obj"/>
+        <center value="0.0 -0.2 0.0"/>
+        <radius value="0.4"/>
+        <smooth value="true"/>
     </object>
 
     <!-- left red wall -->
