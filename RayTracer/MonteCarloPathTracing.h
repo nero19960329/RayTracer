@@ -11,11 +11,10 @@ class MonteCarloPathTracing : public TraceBase {
 private:
 	int minDepth;
 	std::shared_ptr<BRDF> brdf;
-	const std::vector<std::shared_ptr<Light>> lights;
 
 public:
-	explicit MonteCarloPathTracing(const Scene &scene, const std::vector<std::shared_ptr<Light>> &_lights, BRDFType brdfType = LAMBERTIAN, int _minDepth = MIN_MONTE_CARLO_PATH_TRACING_DEPTH) :
-		TraceBase(scene), lights(_lights), minDepth(_minDepth) {
+	explicit MonteCarloPathTracing(const Scene &scene, BRDFType brdfType = LAMBERTIAN, int _minDepth = MIN_MONTE_CARLO_PATH_TRACING_DEPTH) :
+		TraceBase(scene), minDepth(_minDepth) {
 		if (brdfType == LAMBERTIAN) brdf = std::make_shared<LambertianBRDF>();
 		else if (brdfType == PHONG) brdf = std::make_shared<PhongBRDF>();
 	}

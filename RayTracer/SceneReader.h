@@ -10,6 +10,7 @@
 #include "Plane.h"
 #include "PureSphere.h"
 #include "Scene.h"
+#include "TraceBase.h"
 #include "Tri.h"
 #include "Utils.h"
 #include "Viewer.h"
@@ -23,9 +24,11 @@
 #include <unordered_map>
 #include <vector>
 
+class DataGenerator;
 class Renderer;
 
 class SceneReader {
+	friend class DataGenerator;
 	friend class Renderer;
 
 protected:
@@ -37,6 +40,8 @@ protected:
 	std::unordered_map<std::string, Vec3> colorMap;
 	std::unordered_map<std::string, Material> materialMap;
 	std::unordered_map<std::string, real_t> refrIdxMap;
+
+	std::shared_ptr<TraceBase> tracer;
 
 	BRDFType brdfType = LAMBERTIAN;
 	TraceType traceType = RT;
@@ -54,6 +59,8 @@ public:
 	const TraceType &getTraceType() const { return traceType; }
 
 	const BRDFType &getBRDFType() const { return brdfType; }
+
+	int getObjNum() const { return tmpObjVec.size(); }
 
 private:
 	std::vector<rapidxml::xml_node<> *> getChildNodes(rapidxml::xml_node<> *parent, const std::vector<std::string> &strVec) const;

@@ -66,6 +66,6 @@ private:
 	}
 
 	inline void invMapminmax(cv::Mat &data, const cv::Mat &min, const cv::Mat &max) const {
-		rep(i, data.rows) data.at<real_t>(i, 0) = (data.at<real_t>(i, 0) + 1) * (max.at<real_t>(i, 0) + min.at<real_t>(i, 0)) * 0.5 + min.at<real_t>(i, 0);
+		rep(i, data.rows) data.at<real_t>(i, 0) = (data.at<real_t>(i, 0) + 1) * (max.at<real_t>(i, 0) - min.at<real_t>(i, 0)) * 0.5 + min.at<real_t>(i, 0);
 	}
 };

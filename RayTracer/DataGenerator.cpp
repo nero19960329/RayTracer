@@ -36,6 +36,8 @@ pair<DataGenerator::TrainData, DataGenerator::TrainData> DataGenerator::getSingl
 }
 
 void DataGenerator::generateTrainData() {
+	if (!bounds[1].isFinite()) error_exit("Infinite object is included!\n");
+
 	vector<ofstream *> direct_fouts, indirect_fouts;
 	rep(k, allObjNum) {
 		ostringstream oss;

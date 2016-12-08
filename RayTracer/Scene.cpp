@@ -1,30 +1,13 @@
 #include "MatReader.h"
 #include "MonteCarloPathTracing.h"
 #include "NeuralNetwork.h"
-#include "Scene.h"
+#include "PredictRayTracing.h"
 #include "RayTracing.h"
+#include "Scene.h"
 
 #include <sstream>
 
 using namespace std;
-
-shared_ptr<TraceBase> Scene::getTracer(TraceType traceType, BRDFType brdfType) const {
-	if (traceType == RT) {
-		vector<NeuralNetwork> directNNVec, indirectNNVec;
-		rep(i, 7) {
-			ostringstream oss;
-			oss << "../nn/direct_" << (i + 1) << ".mat";
-			MatReader reader(oss.str());
-			directNNVec.push_back(NeuralNetwork(reader));
-			oss.str("");
-			oss << "../nn/indirect_" << (i + 1) << ".mat";
-			reader = MatReader(oss.str());
-			indirectNNVec.push_back(NeuralNetwork(reader));
-		}
-		return make_shared<RayTracing>(*this, directNNVec, indirectNNVec);
-	} else if (traceType == MCPT) return make_shared<MonteCarloPathTracing>(*this, lights, brdfType);
-	return nullptr;
-}
 
 void Scene::addLight(const shared_ptr<Light> &light) {
 	lights.push_back(light);

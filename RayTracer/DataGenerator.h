@@ -1,8 +1,9 @@
 #pragma once
 
 #include "BRDF.h"
+#include "MonteCarloPathTracing.h"
 #include "RNG.h"
-#include "Scene.h"
+#include "SceneReader.h"
 #include "TraceBase.h"
 #include "Utils.h"
 #include "Vec3.h"
@@ -36,12 +37,13 @@ public:
 	};
 
 public:
-	DataGenerator(const Scene &_scene, int _viewPointDim, int _rayCnt, int _mcptSample, int _allObjNum, const Vec3 &minBound, const Vec3 &maxBound) :
-		scene(_scene), viewPointDim(_viewPointDim), viewPointCnt(_viewPointDim * _viewPointDim * _viewPointDim), rayCnt(_rayCnt), mcptSample(_mcptSample), allObjNum(_allObjNum) {
-		bounds[0] = minBound;
-		bounds[1] = maxBound;
+	DataGenerator(const SceneReader &sceneReader, int _viewPointDim, int _rayCnt, int _mcptSample) :
+		scene(sceneReader.scene), viewPointDim(_viewPointDim), viewPointCnt(_viewPointDim * _viewPointDim * _viewPointDim), rayCnt(_rayCnt), mcptSample(_mcptSample), allObjNum(sceneReader.tmpObjVec.size()) {
+		tracer = std::make_shared<MonteCarloPathTracing>(scene, sceneReader.brdfType);
 
-		tracer = scene.getTracer(MCPT, LAMBERTIAN);
+		AABB aabb = scene.getAABB();
+		bounds[0] = aabb.bounds[0];
+		bounds[1] = aabb.bounds[1];
 
 		omp_init_lock(&printLock);
 	}

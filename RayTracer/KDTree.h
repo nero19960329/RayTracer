@@ -67,9 +67,7 @@ public:
 
 	std::shared_ptr<Intersect> getTrace(const Ray &ray, real_t dist = std::numeric_limits<real_t>::max()) const override;
 
-	AABB getAABB() const override {
-		return root->aabb;
-	}
+	AABB getAABB() const override { return root->aabb; }
 };
 
 class KDTreeIntersect : public Intersect {

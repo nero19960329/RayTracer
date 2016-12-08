@@ -10,14 +10,11 @@ using namespace std;
 
 array<Mat, 3> Renderer::render(bool showBar) const {
 	array<Mat, 3> imgs = rawRender(showBar);
-	//normalize(img);
-
 	array<Mat, 3> res = { double2uchar(imgs[0]), double2uchar(imgs[1]), double2uchar(imgs[2]) };
 	return res;
 }
 
 array<Mat, 3> Renderer::rawRender(bool showBar) const {
-	auto shader = scene.getTracer(traceType, brdfType);
 	Geometry screen = viewer.getScreen();
 
 	array<Mat, 3> results;
@@ -31,7 +28,7 @@ array<Mat, 3> Renderer::rawRender(bool showBar) const {
 	random_shuffle(heightVec.begin(), heightVec.end());
 
 	function<void(long long, RNGenerator *)> renderKernel;
-	if (traceType == RT) {
+	if (traceType == RT || traceType == PRT) {
 		results[0] = Mat::zeros(screen.height, screen.width, CV_64FC3);
 		Mat &res = results[0];
 
@@ -42,7 +39,7 @@ array<Mat, 3> Renderer::rawRender(bool showBar) const {
 		renderKernel = [&](long long k, RNGenerator *rng) {
 			int i = widthVec[(k / sample) / screen.height], j = heightVec[(k / sample) % screen.height];
 			int p = ((k / viewer.dopSample) % antiSample2) / viewer.antiSample, q = ((k / viewer.dopSample) % antiSample2) % viewer.antiSample;
-			pair<Vec3, Vec3> color = shader->color(viewer.getJitterSampleRay(*rng, i, j, p, q, viewer.antiSample));
+			pair<Vec3, Vec3> color = tracer->color(viewer.getJitterSampleRay(*rng, i, j, p, q, viewer.antiSample));
 			res.at<Vec3d>(j, i)[0] += color.first[2];
 			res.at<Vec3d>(j, i)[1] += color.first[1];
 			res.at<Vec3d>(j, i)[2] += color.first[0];
@@ -56,7 +53,7 @@ array<Mat, 3> Renderer::rawRender(bool showBar) const {
 		renderKernel = [&](long long k, RNGenerator *rng) {
 			int i = widthVec[(k / sample) / screen.height], j = heightVec[(k / sample) % screen.height];
 
-			pair<Vec3, Vec3> radiance = shader->color(viewer.getRandomSampleRay(*rng, i, j), rng);
+			pair<Vec3, Vec3> radiance = tracer->color(viewer.getRandomSampleRay(*rng, i, j), rng);
 			Vec3 direct{ cut(radiance.first[0]), cut(radiance.first[1]), cut(radiance.first[2]) };
 			Vec3 indirect{ cut(radiance.second[0]), cut(radiance.second[1]), cut(radiance.second[2]) };
 
@@ -97,21 +94,6 @@ array<Mat, 3> Renderer::rawRender(bool showBar) const {
 	}
 
 	return results;
-}
-
-void Renderer::normalize(Mat &img) const {
-	//double maxValue;
-
-	rep(i, img.rows) rep(j, img.cols) {
-		Vec3d &rgb = img.at<Vec3d>(i, j);
-		rgb = Vec3d{ cut(rgb[0]), cut(rgb[1]), cut(rgb[2]) };
-	}
-
-	/*if (maxValue > 1.0f) {
-		rep(i, img.rows) rep(j, img.cols) {
-			img.at<Vec3d>(i, j) /= maxValue;
-		}
-	}*/
 }
 
 Mat Renderer::double2uchar(const Mat &img) const {

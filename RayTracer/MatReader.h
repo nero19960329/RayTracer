@@ -19,7 +19,6 @@ public:
 	std::vector<cv::Mat> readMats() const {
 		MATFile *pmat;
 
-		std::cout << filename << std::endl;
 		pmat = matOpen(filename.c_str(), "r");
 		if (!pmat) error_exit("Open file error!\n");
 

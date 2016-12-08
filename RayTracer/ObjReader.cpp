@@ -14,13 +14,9 @@ ObjReader::ObjReader(const string &objFileName, const Vec3 &_center, real_t _rad
 
 		if (!line.size() || line[0] == '#') continue;
 
-		if (line.find("vn") == 0) {
-			vertexNormals.push_back(readVec3(line));
-		} else if (line.find("v") == 0) {
-			vertices.push_back(readVec3(line));
-		} else if (line.find("f") == 0) {
-			triIndices.push_back(readTri(line));
-		}
+		if (line.find("vn") == 0) vertexNormals.push_back(readVec3(line));
+		else if (line.find("v") == 0) vertices.push_back(readVec3(line));
+		else if (line.find("f") == 0) triIndices.push_back(readTri(line));
 	}
 
 	fin.close();

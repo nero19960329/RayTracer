@@ -15,16 +15,16 @@ pair<Vec3, Vec3> MonteCarloPathTracing::getColor(DistRay &ray, RNGenerator *rng,
 }
 
 pair<Vec3, Vec3> MonteCarloPathTracing::getReflectedRadiance(DistRay &ray, const IntersectInfo &info, RNGenerator *rng, int depth) const {
-	auto vertices = lights[0]->vertices();
+	auto vertices = scene.lights[0]->vertices();
 	return{ getDirectRadiance(ray, info, rng), getIndirectRadiance(ray, info, rng, depth) };
 }
 
 Vec3 MonteCarloPathTracing::getDirectRadiance(DistRay &ray, const IntersectInfo &info, RNGenerator *rng) const {
 	Vec3 inDir = (ray.orig - info.interPoint).getNormalized();
 	Vec3 outDir;
-	if (lights.size() == 1) {
+	if (scene.lights.size() == 1) {
 		if (!info.surface->emission.isZero()) return Vec3::NONE;
-		else lights[0]->luminaireSample(*rng, info.interPoint, outDir);
+		else scene.lights[0]->luminaireSample(*rng, info.interPoint, outDir);
 	} else error_exit("Only support one light!\n");
 
 	real_t cos_theta = outDir.dot(info.normal);
@@ -36,7 +36,7 @@ Vec3 MonteCarloPathTracing::getDirectRadiance(DistRay &ray, const IntersectInfo 
 
 	IntersectInfo newInfo = intersect->getIntersectInfo();
 	return brdf->eval(*rng, inDir, outDir, info.normal, info.surface, DIFFUSE).mul(newInfo.surface->emission) * cos_theta * std::max(0.0, (-outDir).dot(newInfo.normal)) /
-		((info.interPoint - newInfo.interPoint).sqr() * (2.0 / lights[0]->v1crossv2()));
+		((info.interPoint - newInfo.interPoint).sqr() * (2.0 / scene.lights[0]->v1crossv2()));
 }
 
 Vec3 MonteCarloPathTracing::getIndirectRadiance(DistRay &ray, const IntersectInfo &info, RNGenerator *rng, int depth) const {
@@ -63,7 +63,7 @@ Vec3 MonteCarloPathTracing::getIndirectRadiance(DistRay &ray, const IntersectInf
 	real_t pdf = brdf->pdf(*rng, inDir, outDir, info.normal, info.surface, reflType);
 
 	pair<Vec3, Vec3> radiance = getReflectedRadiance(newRay, newInfo, rng, depth + 1);
-	if (pdf > epsilon) return brdf->eval(*rng, inDir, outDir, info.normal, info.surface, reflType).mul(radiance.first + radiance.second) * cos_theta / (p * pdf);
+	if (pdf > 0.0) return brdf->eval(*rng, inDir, outDir, info.normal, info.surface, reflType).mul(radiance.first + radiance.second) * cos_theta / (p * pdf);
 
 	return Vec3::NONE;
 }

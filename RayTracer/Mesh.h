@@ -19,7 +19,6 @@ protected:
 	std::vector<std::shared_ptr<Object>> faces;
 
 public:
-	//Mesh() : Object(nullptr) {}
 	Mesh(const std::shared_ptr<Texture> &_texture, int _num, const std::vector<Tri> &_tris, const std::vector<std::array<int, 3>> &_triIndices, const std::vector<Vec3> &_normals) :
 		Object(_texture, _num) {
 		if (_normals.size()) {

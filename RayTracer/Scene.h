@@ -6,7 +6,7 @@
 #include <list>
 #include <vector>
 
-enum TraceType { RT, MCPT };
+enum TraceType { RT, MCPT, PRT };
 
 class TraceBase;
 
@@ -19,8 +19,6 @@ public:
 	Scene() {}
 	virtual ~Scene() {}
 
-	std::shared_ptr<TraceBase> getTracer(TraceType traceType, BRDFType brdfType) const;
-
 	void addLight(const std::shared_ptr<Light> &light);
 	void addObject(const std::shared_ptr<Object> &object);
 
@@ -28,4 +26,9 @@ public:
 	std::shared_ptr<Intersect> getIntersect(const Ray &ray) const;
 
 	bool isInnerPoint(const Vec3 &p) const;
+
+	AABB getAABB() const {
+		if (objs.size() != 1 || (*objs.begin())->isInfinity()) return{ -Vec3::infinity(), Vec3::infinity() };
+		else return (*objs.begin())->getAABB();
+	}
 };

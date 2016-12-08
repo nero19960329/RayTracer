@@ -96,6 +96,9 @@
     <ClCompile Include="DataGenerator.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="PredictRayTracing.cpp">
+      <Filter>源文件\Trace</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vec3.h">
@@ -229,6 +232,9 @@
     </ClInclude>
     <ClInclude Include="NeuralNetwork.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PredictRayTracing.h">
+      <Filter>头文件\Trace</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,4 +1,9 @@
+#include "DataGenerator.h"
+#include "MonteCarloPathTracing.h"
+#include "NeuralNetwork.h"
+#include "PredictRayTracing.h"
 #include "QuadObj.h"
+#include "RayTracing.h"
 #include "SceneReader.h"
 #include "Sphere.h"
 #include "Texture.h"
@@ -27,6 +32,7 @@ SceneReader::SceneReader(const string &sceneFileName) {
 		const char *trace_type = traceNode->value();
 		if (!strcmp(trace_type, "rt")) traceType = RT;
 		else if (!strcmp(trace_type, "mcpt")) traceType = MCPT;
+		else if (!strcmp(trace_type, "prt")) traceType = PRT;
 	}
 
 	xml_node<> *brdfNode = root->first_node("brdf");
@@ -45,6 +51,26 @@ SceneReader::SceneReader(const string &sceneFileName) {
 	if (tmpObjVec.size()) {
 		shared_ptr<KDTree> tree = make_shared<KDTree>(tmpObjVec);
 		scene.addObject(tree);
+	}
+
+	if (traceType == RT) tracer = make_shared<RayTracing>(scene);
+	else if (traceType == MCPT) tracer = make_shared<MonteCarloPathTracing>(scene, brdfType);
+	else if (traceType == PRT) {
+		if (!root->first_node("nn_path")) error_exit("Doesn't input neural network folder path!\n");
+
+		const char *nn_path = root->first_node("nn_path")->first_attribute("value")->value();
+		vector<NeuralNetwork> directNNVec, indirectNNVec;
+		rep(i, tmpObjVec.size()) {
+			ostringstream oss;
+			oss << nn_path << "/direct_" << (i + 1) << ".mat";
+			MatReader reader(oss.str());
+			directNNVec.push_back(NeuralNetwork(reader));
+			oss.str("");
+			oss << nn_path << "/indirect_" << (i + 1) << ".mat";
+			reader = MatReader(oss.str());
+			indirectNNVec.push_back(NeuralNetwork(reader));
+		}
+		tracer = make_shared<PredictRayTracing>(scene, directNNVec, indirectNNVec);
 	}
 }
 
@@ -104,10 +130,17 @@ Vec3 SceneReader::readColor(const string &str) const {
 }
 
 Material SceneReader::readMaterial(const string &str) const {
-	auto end = materialMap.cend();
-	auto res = materialMap.find(str);
-	if (res != end) return res->second;
-	else error_exit("No such material!\n");
+	if (str[0] >= '0' && str[0] <= '9') {
+		istringstream iss(str);
+		real_t ambient, specular, shininess, refl, refr;
+		iss >> ambient >> specular >> shininess >> refl >> refr;
+		return Material{ ambient, specular, shininess, refl, refr };
+	} else {
+		auto end = materialMap.cend();
+		auto res = materialMap.find(str);
+		if (res != end) return res->second;
+		else error_exit("No such material!\n");
+	}
 }
 
 real_t SceneReader::readRefrIdx(const string &str) const {
