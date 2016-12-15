@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
 		cout << "Image is saved at " << saveName << endl;
 	} else if (status == GENERATE) {
 		Timer timer;
-		DataGenerator dataGenerator{ sceneReader, 15, 1200, 10000 };
+		DataGenerator dataGenerator{ sceneReader, 15, 1200, 2000 };
 		dataGenerator.generateTrainData();
 		cout << "Duration: " << timer.getDuration() << "s" << endl;
 	}

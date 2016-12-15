@@ -9,7 +9,7 @@
         <up value="0.0 1.0 0.0"/>
         <fovy value="45.0"/>
 
-        <mcpt_sample value="200"/>
+        <mcpt_sample value="10000"/>
 
         <!--<anti value="1"/>-->
     </viewer>

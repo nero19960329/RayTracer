@@ -30,6 +30,9 @@ Some example scene files can be found in "scene/".
 
 ## Gallery
 
++ Utah teapot & Stanford bunny in Cornell box with 10000spp.
+<div style="text-align:center; margin-top:30px"><img src="gallery/objs_ground_truth.png"></div>
+
 + Stanford dragon and 10,000 spheres with depth-of-field & anti-aliasing & soft shadow.
 <div style="text-align:center; margin-top:30px"><img src="gallery/dragon_dop20_anti20_soft49.png"></div>
 
