@@ -17,7 +17,7 @@ Ray Viewer::getJitterSampleRay(RNGenerator &rng, int i, int j, int p, int q, int
 		rayCenter = center;
 		rayDir = tmpVec - rayCenter;
 	} else {
-		Vec3 focusPoint = center + (tmpVec - center).getNormalized() * focusOffset;
+		Vec3 focusPoint = center + (tmpVec - center) * focusOffset;
 		real_t tmpRadius = rng.randomReal() * apertureSize;
 		real_t tmpTheta = rng.randomReal() * 360.0;
 		rayCenter = center + tmpRadius * (cos(tmpTheta) * x + sin(tmpTheta) * y);
