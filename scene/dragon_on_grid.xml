@@ -1,33 +1,32 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<scene>
+<scene type="rt">
     <viewer>
         <geo value="800 600"/>
         <center value="-1.0 4.0 0.0"/>
         <target value="0.0 2.0 -10.0"/>
         <up value="0.0 1.0 0.0"/>
         <fovy value="60.0"/>
-        <anti value="true">
-        	<sample value="2"/>
-        </anti>
-        <dop value="false"/>
-        <view value="false"/>
+        <anti value="4"/>
     </viewer>
     
     <light>
-    	<origin value="0.0 4.0 1.0"/>
+        <geo>
+    	   <center value="0.0 4.0 1.0"/>
+        </geo>
     	<color value="white"/>
     	<intensity value="0.25"/>
-    	<area value="false"/>
     </light>
 
     <light>
-    	<origin value="-1.0 10.0 -10.0"/>
+        <geo>
+    	   <center value="-1.0 10.0 -10.0"/>
+        </geo>
     	<color value="white"/>
     	<intensity value="1.0"/>
-    	<area value="true">
+    	<!--<area>
     		<sample value="5"/>
     		<radius value="0.25"/>
-    	</area>
+    	</area>-->
     </light>
 
     <object type="plane">

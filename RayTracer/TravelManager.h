@@ -4,8 +4,8 @@
 
 class TravelManager {
 private:
-	real_t step = 0.5;
-	real_t thetaStep = step * 0.04 * PI;
+	real_t step = 5.0;
+	real_t thetaStep = step * 0.02 * PI;
 
 public:
 	TravelManager() {}

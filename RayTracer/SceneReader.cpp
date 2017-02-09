@@ -194,9 +194,7 @@ void SceneReader::readViewer(xml_node<> *node) {
 		readReal(viewerNodes[4]),
 	};
 
-	if (viewerNodes[5]) {
-		viewer.setAntiThings(readInt(viewerNodes[5]));
-	}
+	if (viewerNodes[5]) viewer.setAntiThings(readInt(viewerNodes[5]));
 	if (viewerNodes[6]) {
 		auto dopNodes = getChildNodes(viewerNodes[6], { "aperture", "offset", "sample" });
 		viewer.setDopThings(readReal(dopNodes[0]), readReal(dopNodes[1]), readInt(dopNodes[2]));
@@ -205,9 +203,7 @@ void SceneReader::readViewer(xml_node<> *node) {
 		auto viewNodes = getChildNodes(viewerNodes[7], { "size" });
 		viewer.setViewPort(Geometry{ readPair(viewNodes[0]) });
 	}
-	if (viewerNodes[8]) {
-		viewer.setMCPTSample(readInt(viewerNodes[8]));
-	}
+	if (viewerNodes[8]) viewer.setMCPTSample(readInt(viewerNodes[8]));
 }
 
 void SceneReader::readLight(xml_node<> *node) {
@@ -216,15 +212,27 @@ void SceneReader::readLight(xml_node<> *node) {
 	});
 
 	auto geoNodes = getChildNodes(lightNodes[0], {
-		"center", "x", "y", "length_x", "length_y"
+		"center", "x*", "y*", "length_x*", "length_y*"
 	});
-	RectGeo rectGeo = RectGeo{
-		readVec3(geoNodes[0]),
-		readVec3(geoNodes[1]),
-		readVec3(geoNodes[2]),
-		readReal(geoNodes[3]),
-		readReal(geoNodes[4])
-	};
+
+	RectGeo rectGeo;
+	if (geoNodes[1] && geoNodes[2] && geoNodes[3] && geoNodes[4]) {
+		rectGeo = RectGeo{
+			readVec3(geoNodes[0]),
+			readVec3(geoNodes[1]),
+			readVec3(geoNodes[2]),
+			readReal(geoNodes[3]),
+			readReal(geoNodes[4])
+		};
+	} else {
+		rectGeo = RectGeo{
+			readVec3(geoNodes[0]),
+			{ 1, 0, 0 },
+			{ 0, 1, 0 },
+			1e-6,
+			1e-6
+		};
+	}
 
 	shared_ptr<Light> light = make_shared<Light>(Light(
 		rectGeo,
