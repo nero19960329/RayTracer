@@ -1,9 +1,10 @@
-This is a photo-realistic ray tracing renderer written in C++. Also as a course project, you can see <a href="https://github.com/nero19960329/RayTracer/blob/master/report.pdf">report</a> in this repository.
+This is a photo-realistic ray tracing renderer written in C++. Also as a course project, you can see <a href="https://github.com/nero19960329/RayTracer/blob/master/report.pdf">ray tracing</a> and <a href="https://github.com/nero19960329/RealTimeGI/blob/master/report/report.pdf">mcpt</a> reports.
 
 ## Dependencies
 
 + Visual Studio 2013
 + OpenCV 3.1.0
++ Matlab libraries
 
 ## Use
 
@@ -17,7 +18,7 @@ Some example scene files can be found in "scene/".
 
 ## Features
 
-+ <a href="https://en.wikipedia.org/wiki/Phong_reflection_model">Phong model</a>.
++ <a href="https://en.wikipedia.org/wiki/Phong_reflection_model">Phong model</a> in ray tracing, phong & lambertian model in monte carlo path tracing.
 + Rendering of infinite plane, sphere and obj mesh model.
 + Reflection & refraction.
 + Orthographic projection & perspective projection.
@@ -29,6 +30,9 @@ Some example scene files can be found in "scene/".
 + Smooth shading.
 
 ## Gallery
+
++ Cornell box with 20000spp.
+<div style="text-align:center; margin-top:30px"><img src="gallery/mcpt_boxes_lambertian_all.png"></div>
 
 + Utah teapot & Stanford bunny in Cornell box with 10000spp.
 <div style="text-align:center; margin-top:30px"><img src="gallery/objs_ground_truth.png"></div>
