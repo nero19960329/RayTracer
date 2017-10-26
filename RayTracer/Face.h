@@ -1,10 +1,7 @@
 #pragma once
 
-#include "Object.h"
-#include "Tri.h"
-
-#include <algorithm>
-#include <array>
+#include "constants.h"
+#include "object.h"
 
 class FaceIntersect;
 
@@ -12,59 +9,37 @@ class Face : public Object {
 	friend class FaceIntersect;
 
 protected:
-	Tri tri;
-
-	bool smoothShadingFlag;
-	std::array<Vec3, 3> normals;
+	glm::dvec3 a, b, c;
+	glm::dvec3 normals[3];
 
 public:
-	//Face() : Object(nullptr) {}
-	Face(const std::shared_ptr<Texture> &_texture, int _num, const Vec3 &_a, const Vec3 &_b, const Vec3 &_c, bool _smoothShadingFlag = false, const std::array<Vec3, 3> &_normals = {}) :
-		Object(_texture, _num), tri(_a, _b, _c), smoothShadingFlag(_smoothShadingFlag), normals(_normals) {}
-	Face(const std::shared_ptr<Texture> &_texture, int _num, const Tri &_tri, bool _smoothShadingFlag = false, const std::array<Vec3, 3> &_normals = {}) :
-		Object(_texture, _num), tri(_tri), smoothShadingFlag(_smoothShadingFlag), normals(_normals) {}
-	~Face() {}
-
-	std::shared_ptr<Intersect> getTrace(const Ray &ray, real_t dist = std::numeric_limits<real_t>::max()) const override;
-
-	AABB getAABB() const override {
-		if (aabb.bounds[1] != -Vec3::max()) return aabb;
-		Vec3 minVec, maxVec;
-		rep(k, 3) {
-			minVec[k] = std::min(std::min(tri.a[k], tri.b[k]), tri.c[k]);
-			maxVec[k] = std::max(std::max(tri.a[k], tri.b[k]), tri.c[k]);
-		}
-		aabb = AABB{ minVec - Vec3::epsilons(), maxVec + Vec3::epsilons() };
-		return aabb;
+	Face() : Object(nullptr) {}
+	Face(Texture * texture_, glm::dvec3 a_, glm::dvec3 b_, glm::dvec3 c_, glm::dvec3 na = zero_vec3, glm::dvec3 nb = zero_vec3, glm::dvec3 nc = zero_vec3)  :
+		Object(texture_), a(a_), b(b_), c(c_) {
+		normals[0] = na;
+		normals[1] = nb;
+		normals[2] = nc;
 	}
 
-	bool liesInPlane(const SplitPlane &p) const override {
-		return (fabs(tri.a[p.axis] - p.value) < epsilon &&
-			fabs(tri.b[p.axis] - p.value) < epsilon &&
-			fabs(tri.c[p.axis] - p.value) < epsilon);
-	}
+	std::shared_ptr<Intersect> getTrace(const Ray &ray, double dist = std::numeric_limits<double>::max()) const override;
+	AABB getAABB() const override;
+	bool liesInPlane(const SplitPlane &p) const override;
 };
 
 class FaceIntersect : public Intersect {
 private:
 	const Face &face;
+	mutable double u, v;
+	mutable glm::dvec3 normal;
 
-	mutable TriIntersectInfo info;
-	mutable Vec3 normal;
-
-	virtual std::shared_ptr<Surface> getInterPointSurfaceProperty() const override;
-
-	const Object *getObj() const override {
-		return &face;
-	}
+	virtual std::shared_ptr<Surface> getInterPointSurfaceProp() const override;
+	const Object *getObj() const override { return &face; }
 
 public:
-	FaceIntersect(const Face &_face, const Ray &_ray) :
-		Intersect(_ray), face(_face) {}
-	~FaceIntersect() {}
+	FaceIntersect(const Face &face_, const Ray &ray_) :
+		Intersect(ray_), face(face_) {}
 
-	real_t getDistToInter() const override;
-
+	double getDistToInter() const override;
 	bool isIntersect() const override;
-	Vec3 getNormal() const override;
+	glm::dvec3 getNormal() const override;
 };

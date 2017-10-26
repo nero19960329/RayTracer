@@ -1,12 +1,9 @@
 #pragma once
 
-#include "Face.h"
-#include "KDTree.h"
-#include "Object.h"
-#include "Tri.h"
-#include "Vec3.h"
+#include "face.h"
+#include "kdtree.h"
+#include "tiny_obj_loader.h"
 
-#include <array>
 #include <vector>
 
 class MeshIntersect;
@@ -15,53 +12,42 @@ class Mesh : public Object {
 	friend class MeshIntersect;
 
 protected:
-	std::shared_ptr<KDTree> tree;
-	std::vector<std::shared_ptr<Object>> faces;
+	KDTree * tree;
+	std::vector<Object *> faces;
+
+private:
+	tinyobj::shape_t shape;
+	tinyobj::material_t material;
+	tinyobj::attrib_t attrib;
 
 public:
-	Mesh(const std::shared_ptr<Texture> &_texture, int _num, const std::vector<Tri> &_tris, const std::vector<std::array<int, 3>> &_triIndices, const std::vector<Vec3> &_normals) :
-		Object(_texture, _num) {
-		if (_normals.size()) {
-			rep(i, _tris.size()) {
-				std::array<Vec3, 3> vertexNormals = { _normals[_triIndices[i][0]], _normals[_triIndices[i][1]], _normals[_triIndices[i][2]] };
-				faces.push_back(std::make_shared<Face>(nullptr, -1, _tris[i], true, vertexNormals));
-			}
-		} else {
-			for (const auto &tri : _tris) faces.push_back(std::make_shared<Face>(nullptr, -1, tri));
-		}
-		tree = std::make_shared<KDTree>(faces);
-	}
-	~Mesh() {}
+	Mesh(Texture * texture_, const std::string & filename);
+	Mesh(Texture * texture_, const tinyobj::shape_t & shape_, const tinyobj::material_t & material_, const tinyobj::attrib_t & attrib_);
+	Mesh(const tinyobj::shape_t & shape_, const tinyobj::material_t & material_, const tinyobj::attrib_t & attrib_);
 
-	std::shared_ptr<Intersect> getTrace(const Ray &ray, real_t dist = std::numeric_limits<real_t>::max()) const override;
+	std::shared_ptr<Intersect> getTrace(const Ray & ray, double dist = std::numeric_limits<double>::max()) const override;
+	AABB getAABB() const;
+	bool hasInside() const override;
 
-	AABB getAABB() const { return tree->getAABB(); }
-
-	bool hasInside() const override { return true; }
+	void scaleToBoundingSphere(glm::dvec3 center, double radius);
+	void update();
 };
 
 class MeshIntersect : public Intersect {
 private:
-	const Mesh &mesh;
+	const Mesh & mesh;
 	std::shared_ptr<KDTreeIntersect> intersect;
 
-	mutable std::vector<Tri>::size_type intersectFaceIdx;
-	mutable TriIntersectInfo info;
+	mutable bool inside;
+	mutable int intersectFaceIdx;
 
-	virtual std::shared_ptr<Surface> getInterPointSurfaceProperty() const override;
-
-	const Object *getObj() const override { return &mesh; }
+	virtual std::shared_ptr<Surface> getInterPointSurfaceProp() const override;
+	const Object * getObj() const override;
 
 public:
-	MeshIntersect(const Mesh &_mesh, const Ray &_ray) : Intersect(_ray), mesh(_mesh) {
-		intersect = std::make_shared<KDTreeIntersect>(*mesh.tree, ray);
-	}
+	MeshIntersect(const Mesh & mesh_, const Ray & ray_);
 
-	~MeshIntersect() {}
-
-	real_t getDistToInter() const override;
+	double getDistToInter() const override;
 	bool isIntersect() const override;
-
-private:
-	Vec3 getNormal() const override;
+	glm::dvec3 getNormal() const override;
 };

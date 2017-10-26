@@ -1,52 +1,44 @@
 #pragma once
 
-#include "BRDF.h"
-#include "Constants.h"
-#include "Surface.h"
+#include <glm.hpp>
+
+#include <opencv2/opencv.hpp>
 
 #include <memory>
 
-#include <opencv2/opencv.hpp>
+#include "material.h"
+#include "utils.h"
 
 class Texture {
 protected:
 	Material material;
 
 public:
-	Texture(const Material &_material) : material(_material) {}
+	explicit Texture(const Material &material_) : material(material_) {}
 	virtual ~Texture() {}
 
-	virtual std::shared_ptr<Surface> getSurfaceProperty() const {
-		return nullptr;
-	}
-
-	virtual std::shared_ptr<Surface> getSurfaceProperty(real_t x, real_t y) const = 0;
+	virtual std::shared_ptr<Surface> getProp() const { return nullptr; }
+	virtual std::shared_ptr<Surface> getProp(double x, double y) const = 0;
 };
 
-class PureTexture : public Texture {
+class PureTexture: public Texture {
 private:
-	Vec3 color;
+	glm::dvec3 color;
 	std::shared_ptr<Surface> surface;
 
 public:
-	explicit PureTexture(const Material &_material, const Vec3 &_color, BRDFType brdfType = LAMBERTIAN) :
-		Texture(_material), color(_color) {
-		if (brdfType == PHONG) {
-			real_t maxDiffuse = std::max(color[0], std::max(color[1], color[2]));
-			if (maxDiffuse + material.specular > 1.0) color *= (1.0 - material.specular);
+	PureTexture(const Material & material_, glm::dvec3 color_) :
+		Texture(material_), color(color_) {
+		double maxDiffuse = std::max(color[0], std::max(color[1], color[2]));
+		if (maxDiffuse + material.specular > 1.0 - ABSORB_COEFFICIENT) {
+			color *= (1.0 - ABSORB_COEFFICIENT) / (maxDiffuse + material.specular);
+			material.specular *= (1.0 - ABSORB_COEFFICIENT) / (maxDiffuse + material.specular);
 		}
-		surface = std::make_shared<Surface>(_material, color);
-	}
-	~PureTexture() {}
-
-	std::shared_ptr<Surface> getSurfaceProperty() const override {
-		return surface;
+		surface = std::make_shared<Surface>(material, color);
 	}
 
-	std::shared_ptr<Surface> getSurfaceProperty(real_t x, real_t y) const override {
-		assert(false);
-		return nullptr;
-	}
+	std::shared_ptr<Surface> getProp() const override { return surface; }
+	std::shared_ptr<Surface> getProp(double x, double y) const override { return nullptr; }
 };
 
 class GridTexture : public Texture {
@@ -54,18 +46,22 @@ private:
 	std::shared_ptr<Surface> white, black;
 	int dim;
 
+	glm::dvec3 whiteVec;
+
 public:
-	explicit GridTexture(const Material &_material, int _dim = 8) :
-		Texture(_material), dim(_dim) {}
+	GridTexture(const Material &material_, int dim_ = 8) :
+		Texture(material_), dim(dim_) {
+		whiteVec = one_vec3 * (1.0 - ABSORB_COEFFICIENT) / (1.0 + material.specular);
+		material.specular *= (1.0 - ABSORB_COEFFICIENT) / (1.0 + material.specular);
+	}
 	~GridTexture() {}
 
-	std::shared_ptr<Surface> getSurfaceProperty(real_t x, real_t y) const override {
-		int tmp = (int) (floor(x * dim) + floor(y * dim));
-		if (tmp % 2) {
-			return std::make_shared<Surface>(material, Vec3::WHITE);
-		} else {
-			return std::make_shared<Surface>(material, Vec3::BLACK);
-		}
+	std::shared_ptr<Surface> getProp(double x, double y) const override {
+		int tmp = (int)(std::floor(x * dim) + std::floor(y * dim));
+		if (tmp % 2)
+			return std::make_shared<Surface>(material, whiteVec);
+		else
+			return std::make_shared<Surface>(material, glm::dvec3(0.0, 0.0, 0.0));
 	}
 };
 
@@ -75,30 +71,39 @@ private:
 	int dim;
 
 public:
-	explicit ImageTexture(const Material &_material, const std::string &_inputFileName, int _dim = 4) :
+	ImageTexture(const Material &_material, const std::string &_inputFileName, int _dim = 4) :
 		Texture(_material), dim(_dim) {
 		cv::Mat image = cv::imread(_inputFileName);
 
-		if (!image.rows) {
-			error_exit("Texture image not found!\n");
-		} else if (image.rows != image.cols) {
-			error_exit("Texture image is not square!\n");
-		} else if (image.type() != CV_8UC3) {
-			error_exit("Should input a 8UC3 image!\n");
-		}
+		if (!image.rows || image.rows != image.cols || image.type() != CV_8UC3)
+			return;
 
 		rgbMat = cv::Mat{ image.rows, image.cols, CV_64FC3 };
 		image.convertTo(rgbMat, CV_64FC3, 1.0 / 255, 0.0);
+
+		double maxDiffuse = 0.0;
+		for (int i = 0; i < rgbMat.rows; ++i) {
+			for (int j = 0; j < rgbMat.cols; ++j) {
+				cv::Vec3d rgb = rgbMat.at<cv::Vec3d>(i, j);
+				updateMax(maxDiffuse, rgb[0]);
+				updateMax(maxDiffuse, rgb[1]);
+				updateMax(maxDiffuse, rgb[2]);
+			}
+		}
+		if (maxDiffuse + material.specular > 1.0 - ABSORB_COEFFICIENT) {
+			rgbMat *= (1.0 - ABSORB_COEFFICIENT) * maxDiffuse / (maxDiffuse + material.specular);
+			material.specular *= (1.0 - ABSORB_COEFFICIENT) / (maxDiffuse + material.specular);
+		}
 	}
 	~ImageTexture() {}
 
-	std::shared_ptr<Surface> getSurfaceProperty(real_t x, real_t y) const override {
+	std::shared_ptr<Surface> getProp(double x, double y) const override {
 		x /= dim;
 		y /= dim;
-		real_t tmpX = x - floor(x), tmpY = y - floor(y);
-		int row = (int) (tmpX * rgbMat.rows);
-		int col = (int) (tmpY * rgbMat.cols);
+		double tmpX = x - floor(x), tmpY = y - floor(y);
+		int row = (int)(tmpX * rgbMat.rows);
+		int col = (int)(tmpY * rgbMat.cols);
 		cv::Vec3d rgb = rgbMat.at<cv::Vec3d>(row, col);
-		return std::make_shared<Surface>(material, Vec3{ rgb[2], rgb[1], rgb[0] });
+		return std::make_shared<Surface>(material, glm::dvec3(rgb[2], rgb[1], rgb[0]));
 	}
 };

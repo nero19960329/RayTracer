@@ -1,31 +1,27 @@
 #pragma once
 
-#include "Constants.h"
-#include "Utils.h"
-#include "Vec3.h"
+#include <glm.hpp>
+
+#include "constants.h"
 
 class Ray {
 public:
-	Vec3 orig, dir;
-	real_t refrIdx;
+	glm::dvec3 ori, dir;
+	double refrIdx;
 
 public:
 	Ray() {}
-	Ray(const Vec3 &_orig, const Vec3 &_dir, real_t _refrIdx = VACUUM_REFRACTION_INDEX) :
-		orig(_orig), dir(_dir), refrIdx(_refrIdx) {}
-	virtual ~Ray() {}
+	Ray(glm::dvec3 ori_, glm::dvec3 dir_, double refrIdx_ = VACUUM_REFRACTION_INDEX) :
+		ori(ori_), dir(dir_), refrIdx(refrIdx_) {}
 
-	inline Vec3 getDistPoint(real_t t) const {
-		return orig + dir * t;
-	}
+	glm::dvec3 getDistPoint(double t) const { return ori + dir * t; }
 };
 
 class DistRay : public Ray {
 public:
-	real_t dist;
+	double dist;
 
 public:
-	DistRay(const Ray &_ray, real_t _dist = 0.0) :
-		Ray(_ray), dist(_dist) {}
-	~DistRay() {}
+	DistRay(const Ray &ray_, double dist_ = 0.0) :
+		Ray(ray_), dist(dist_) {}
 };

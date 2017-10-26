@@ -1,102 +1,93 @@
 #pragma once
 
-#include "AABB.h"
-#include "SplitPlane.h"
-#include "Ray.h"
-#include "Texture.h"
+#include <glm.hpp>
+
+#include <memory>
+
+#include "aabb.h"
+#include "constants.h"
+#include "material.h"
+#include "ray.h"
+#include "split_plane.h"
+#include "texture.h"
+#include "utils.h"
 
 class Intersect;
 
 class Object {
 	friend class Intersect;
 
-private:
-	std::shared_ptr<Texture> texture;
-	int num;
-
 protected:
+	Texture * texture;
+
 	mutable AABB aabb;
 
 public:
-	Object(const std::shared_ptr<Texture> &_texture, int _num) : texture(_texture), num(_num) {}
+	Object(Texture * texture_) : texture(texture_) {}
 	virtual ~Object() {}
 
 	virtual bool isInfinity() const { return false; }
 	virtual bool hasInside() const { return false; }
 
-	virtual std::shared_ptr<Intersect> getTrace(const Ray &ray, real_t dist = std::numeric_limits<real_t>::max()) const = 0;
+	virtual std::shared_ptr<Intersect> getTrace(const Ray &ray, double dist = std::numeric_limits<double>::max()) const = 0;
 
-	const std::shared_ptr<Texture> &getTexture() const {
-		return texture;
-	}
-	virtual void setTexture(const std::shared_ptr<Texture> &_texture) { texture = _texture; }
+	virtual void setTexture(Texture * texture_) { texture = texture_; }
+	const Texture *getTexture() const { return texture; }
 
-	virtual AABB getAABB() const { return{}; };
+	virtual AABB getAABB() const { return{}; }
 
 	virtual bool liesInPlane(const SplitPlane &p) const { return false; }
 	virtual AABB clipToBox(const AABB &aabb) const {
 		AABB B = getAABB();
-		rep(i, 3) {
+		for (int i = 0; i < 3; ++i) {
 			updateMax(B.bounds[0][i], aabb.bounds[0][i]);
 			updateMin(B.bounds[1][i], aabb.bounds[1][i]);
 		}
 		return B;
 	}
-
-	int getNum() const { return num; }
 };
 
 struct IntersectInfo {
-	Vec3 interPoint;
-	Vec3 normal;
-	std::shared_ptr<Surface> surface;
-	real_t nextRefrIdx;
-	int objNum;
+	glm::dvec3 interPoint;
+	glm::dvec3 normal;
+	std::shared_ptr<Surface> material;
+	double nextRefrIdx;
 };
 
 class Intersect {
 protected:
 	const Ray &ray;
 
-	mutable real_t distToInter = std::numeric_limits<real_t>::infinity();	// distance to intersection point
-	mutable Vec3 interPoint = Vec3::infinity();
+	mutable double distToInter = std::numeric_limits<double>::infinity();
+	mutable glm::dvec3 interPoint = inf_vec3;
 
-	virtual std::shared_ptr<Surface> getInterPointSurfaceProperty() const = 0;
+	virtual std::shared_ptr<Surface> getInterPointSurfaceProp() const = 0;
 
 public:
-	explicit Intersect(const Ray &_ray) : ray(_ray) {}
+	explicit Intersect(const Ray &ray_) : ray(ray_) {}
 	virtual ~Intersect() {}
 
 	Intersect(const Intersect &) = delete;
 	Intersect &operator = (const Intersect &) = delete;
-
-	virtual const Object *getObj() const = 0;
+	
+	virtual const Object * getObj() const = 0;
 	virtual bool hasInside() const { return getObj()->hasInside(); }
-
-	virtual real_t getDistToInter() const = 0;
-
-	virtual bool isIntersect() const = 0;		// only finding if they're intersected
-	virtual Vec3 getIntersection() const {		// find intersection point
-		interPoint = ray.getDistPoint(distToInter);
-		return interPoint;
-	}
-	virtual Vec3 getNormal() const = 0;			// get normal vector
+	virtual double getDistToInter() const = 0;
+	virtual bool isIntersect() const = 0;
+	virtual glm::dvec3 getIntersection() const { return (interPoint = ray.getDistPoint(distToInter)); }
+	virtual glm::dvec3 getNormal() const = 0;
+	virtual double getNextRefrIdx() const { return ray.refrIdx; }
 
 	virtual IntersectInfo getIntersectInfo() {
 		auto obj = getObj();
-		//assert(obj->getTexture());
-		return IntersectInfo{ getIntersection(), getNormal(), getSurface(), getNextRefractionIndex(), obj->getNum() };
+		return IntersectInfo{ getIntersection(), getNormal(), getSurface(), getNextRefrIdx() };
 	}
 
 	virtual std::shared_ptr<Surface> getSurface() const {
 		auto texture = getObj()->getTexture();
 		if (!texture) return nullptr;
-		auto surface = texture->getSurfaceProperty();
+		auto surface = texture->getProp();
 		if (surface) return surface;
-		return getInterPointSurfaceProperty();
-	};
-
-	virtual real_t getNextRefractionIndex() const {
-		return ray.refrIdx;
+		return getInterPointSurfaceProp();
 	}
 };

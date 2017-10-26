@@ -1,30 +1,26 @@
 #pragma once
 
-#include "Scene.h"
-#include "SceneReader.h"
-#include "TraceBase.h"
-#include "Viewer.h"
+#include "camera.h"
+#include "scene.h"
+#include "trace_base.h"
 
 #include <opencv2/opencv.hpp>
 
-#include <array>
-
 class Renderer {
 private:
-	Viewer viewer;
-	const Scene &scene;
-	std::shared_ptr<TraceBase> tracer;
-	TraceType traceType;
+	const Camera & camera;
+	TraceBase * tracer;
+	const RaySampler & sampler;
+	mutable RNG rng;
 
 public:
-	explicit Renderer(const SceneReader &reader) :
-		viewer(reader.viewer), scene(reader.scene), tracer(reader.tracer), traceType(reader.traceType) {}
-	~Renderer() {}
+	Renderer(const Camera & camera_, TraceBase * tracer_, const RaySampler & sampler_);
 
-	std::array<cv::Mat, 3> render(bool showBar = false) const;
-	Viewer &getViewer() { return viewer; }
+	cv::Mat render() const;
 
 private:
-	std::array<cv::Mat, 3> rawRender(bool showBar) const;
-	cv::Mat double2uchar(const cv::Mat &img) const;
+	glm::dvec3 rayTracingTrivialKernel(int i, int j) const;
+	glm::dvec3 rayTracingJitterKernel(int i, int j) const;
+	glm::dvec3 rayTracingDopKernel(int i, int j) const;
+	glm::dvec3 mcptTrivialKernel(int i, int j) const;
 };

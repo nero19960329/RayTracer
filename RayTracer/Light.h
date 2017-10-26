@@ -1,39 +1,58 @@
 #pragma once
 
-#include "Constants.h"
-#include "RectObj.h"
-#include "Vec3.h"
+#include <glm.hpp>
 
-#include <iostream>
+#include "face.h"
+#include "object.h"
+#include "rng.h"
 
-class Light : public RectObj {
+class Light : public Object {
 public:
-	Vec3 color;
-	real_t intensity;
+	glm::dvec3 center;
+	glm::dvec3 color;
+	double intensity;
 
 public:
-	Light() : RectObj() {}
-	Light(const RectGeo &rect, const Vec3 &_color, real_t _intensity) :
-		RectObj(std::make_shared<PureTexture>(Material{ 0.0, 0.0, 0.0, 0.0, 0.0, _color * _intensity }, _color), -1, rect), color(_color), intensity(_intensity) {}
-	~Light() {}
+	Light() : Object(nullptr) {}
+	Light(glm::dvec3 center_, glm::dvec3 color_, double intensity_) : 
+		Object(new PureTexture(Material(0.0, 0.0, 0.0, 0.0, 0.0, color_ * intensity_), color_)), center(center_), color(color_), intensity(intensity_) {}
 
-	Vec3 getCenter() const { return rectangle.center; }
-	void setCenter(const Vec3 &_center) { rectangle.center = _center; }
+	virtual double luminaireSample(RNG & rng, glm::dvec3 interPoint, glm::dvec3 & outDir) const = 0;
+	virtual bool equals(const Object * obj) const { return obj == this; };
+};
 
-	void luminaireSample(RNGenerator &rng, const Vec3 &interPoint, Vec3 &outDir) const {
-		real_t u = rng.randomReal() * rectangle.length_x * 2, v = rng.randomReal() * rectangle.length_y * 2;
-		Vec3 target = rectangle.a + u * rectangle.x - v * rectangle.y;
-		outDir = (target - interPoint).getNormalized();
+class PointLight : public Light {
+public:
+	PointLight(glm::dvec3 center_, glm::dvec3 color_, double intensity_) : Light(center_, color_, intensity_) {}
+
+	double luminaireSample(RNG & rng, glm::dvec3 interPoint, glm::dvec3 & outDir) const override;
+	std::shared_ptr<Intersect> getTrace(const Ray & ray, double dist = std::numeric_limits<double>::max()) const override;
+};
+
+class RectLight : public Light {
+private:
+	glm::dvec3 x, y, n;
+	Face f1, f2;
+	double area;
+
+public:
+	RectLight(glm::dvec3 center_, glm::dvec3 x_, glm::dvec3 y_, glm::dvec3 n_, glm::dvec3 color_, double intensity_) : Light(center_, color_, intensity_), x(x_), y(y_), n(n_) {
+		glm::dvec3 LT, RT, LB, RB;
+		LT = center_ + (-x + y) * 0.5;
+		RT = center_ + (x + y) * 0.5;
+		LB = center_ + (-x - y) * 0.5;
+		RB = center_ + (x - y) * 0.5;
+		if (glm::dot(n, glm::cross(RT - LT, LB - LT)) > 0.0) {
+			f1 = Face(texture, LT, RT, LB);
+			f2 = Face(texture, RT, RB, LB);
+		} else {
+			f1 = Face(texture, LT, LB, RT);
+			f2 = Face(texture, RT, LB, RB);
+		}
+		area = glm::length(x) * glm::length(y);
 	}
 
-	real_t area() const { return rectangle.area(); }
-
-	std::array<Vec3, 4> vertices() const {
-		std::array<Vec3, 4> res = { rectangle.a, rectangle.b, rectangle.c, rectangle.d };
-		return res;
-	}
-
-	real_t v1crossv2() const {
-		return (2 * rectangle.length_x * rectangle.x).cross(2 * rectangle.length_y * rectangle.y).norm();
-	}
+	double luminaireSample(RNG & rng, glm::dvec3 interPoint, glm::dvec3 & outDir) const override;
+	std::shared_ptr<Intersect> getTrace(const Ray & ray, double dist = std::numeric_limits<double>::max()) const override;
+	bool equals(const Object * obj) const override { return obj == &f1 || obj == &f2; }
 };

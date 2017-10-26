@@ -1,46 +1,31 @@
-#include "MatReader.h"
-#include "MonteCarloPathTracing.h"
-#include "NeuralNetwork.h"
-#include "PredictRayTracing.h"
-#include "RayTracing.h"
-#include "Scene.h"
+#include "constants.h"
+#include "scene.h"
+#include "utils.h"
 
-#include <sstream>
-
-using namespace std;
-
-void Scene::addLight(const shared_ptr<Light> &light) {
-	lights.push_back(light);
-}
-
-void Scene::addObject(const shared_ptr<Object> &object) {
-	objs.push_back(object);
-}
-
-bool Scene::isIntersect(const Ray &ray, real_t dist) const {
-	for (const auto &obj : objs) {
+bool Scene::isIntersect(const Ray & ray, double dist) const {
+	for (const auto & obj : objs) {
 		auto intersect = obj->getTrace(ray, dist);
 		if (intersect) return true;
 	}
 	return false;
 }
 
-shared_ptr<Intersect> Scene::getIntersect(const Ray &ray) const {
-	shared_ptr<Intersect> res = nullptr;
-	real_t minDist = std::numeric_limits<real_t>::max();
+std::shared_ptr<Intersect> Scene::getIntersect(const Ray & ray) const {
+	std::shared_ptr<Intersect> res = nullptr;
+	double minDist = std::numeric_limits<double>::max();
 
-	for (const auto &obj : objs) {
+	for (const auto & obj : objs) {
 		auto intersect = obj->getTrace(ray);
 		if (intersect) {
-			real_t dis = intersect->getDistToInter();
+			double dis = intersect->getDistToInter();
 			if (updateMin(minDist, dis)) res = intersect;
 		}
 	}
 
-	for (const auto &light : lights) {
+	for (const auto & light : lights) {
 		auto intersect = light->getTrace(ray);
 		if (intersect) {
-			real_t dis = intersect->getDistToInter();
+			double dis = intersect->getDistToInter();
 			if (updateMin(minDist, dis)) res = intersect;
 		}
 	}
@@ -48,10 +33,16 @@ shared_ptr<Intersect> Scene::getIntersect(const Ray &ray) const {
 	return res;
 }
 
-bool Scene::isInnerPoint(const Vec3 &p) const {
-	Vec3 dir{ 0.0, 1.0, 0.0 };
-	Ray testRay{ p, dir };
+bool Scene::isInnerPoint(const glm::dvec3 & p) const {
+	glm::dvec3 dir(0.0, 1.0, 0.0);
+	Ray testRay(p, dir);
 	auto intersect = getIntersect(testRay);
 	if (!intersect) return true;
 	return intersect->hasInside();
+}
+
+AABB Scene::getAABB() const {
+	if (objs.size() != 1 || (*objs.begin())->isInfinity())
+		return { -inf_vec3, inf_vec3 };
+	return (*objs.begin())->getAABB();
 }

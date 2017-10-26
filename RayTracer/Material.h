@@ -1,19 +1,25 @@
 #pragma once
 
-#include "Constants.h"
-#include "Utils.h"
-#include "Vec3.h"
+#include <glm.hpp>
+
+#include "constants.h"
 
 class Material {
 public:
-	real_t ambient, specular, shininess;
-	real_t refl, refr;
-	Vec3 emission;
+	double ambient, specular, shininess;
+	double refl, refr;
+	glm::dvec3 emission;
 
 public:
-	explicit Material(real_t _ambient = DEFAULT_AMBIENT, real_t _specular = DEFAULT_SPECULAR, real_t _shininess = DEFAULT_SHININESS, real_t _refl = 0.0, real_t _refr = 0.0, const Vec3 &_emission = Vec3::NONE) :
-		ambient(_ambient), specular(_specular), shininess(_shininess), refl(_refl), refr(_refr), emission(_emission) {}
-	virtual ~Material() {}
-	
-	static const Material FLOOR, A_BIT_MIRROR, MIRROR, MCPT_FROSTED_MIRROR, TRANSPARENT_MATERIAL, PLASTIC;
+	Material(double ambient_ = DEFAULT_AMBIENT, double specular_ = DEFAULT_SPECULAR, double shininess_ = DEFAULT_SHININESS, double refl_ = 0.0, double refr_ = 0.0, glm::dvec3 emission_ = zero_vec3) :
+		ambient(ambient_), specular(specular_), shininess(shininess_), refl(refl_), refr(refr_), emission(emission_) {}
+};
+
+class Surface : public Material {
+public:
+	glm::dvec3 diffuse;
+
+public:
+	Surface(const Material &material, glm::dvec3 diffuse_) :
+		Material(material), diffuse(diffuse_) {}
 };

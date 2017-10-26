@@ -1,8 +1,6 @@
 #pragma once
 
-#include "InfPlane.h"
-#include "Object.h"
-#include "Vec3.h"
+#include "object.h"
 
 class PlaneIntersect;
 
@@ -10,68 +8,30 @@ class Plane : public Object {
 	friend class PlaneIntersect;
 
 protected:
-	InfPlane infPlane;
+	glm::dvec3 normal;
+	double offset;
 
 public:
-	Plane() : Object(nullptr, -1) {}
+	Plane(Texture * texture_, glm::dvec3 normal_, double offset_);
+	Plane(Texture * texture_, glm::dvec3 normal_, glm::dvec3 point);
 
-	Plane(const std::shared_ptr<Texture> &_texture, int _num, const Vec3 &_normal, real_t _offset, bool isNormalized = true) :
-		Object(_texture, _num), infPlane(_normal, _offset) {
-		if (!isNormalized) infPlane.normal.normalize();
-	}
-
-	Plane(const std::shared_ptr<Texture> &_texture, int _num, const Vec3 &_normal, const Vec3 &_point, bool isNormalized = true) :
-		Object(_texture, _num), infPlane(_normal) {
-		if (!isNormalized) infPlane.normal.normalize();
-		infPlane.offset = _point.dot(infPlane.normal);
-	}
-
-	/*Plane(const std::shared_ptr<Texture> &_texture, const Vec3 &a, const Vec3 &b, const Vec3 &c) :
-		Object(_texture) {
-		infPlane.normal = (b - a).cross(c - b).getNormalized();
-		infPlane.offset = a.dot(infPlane.normal);
-	}*/
-
-	Plane(const std::shared_ptr<Texture> &_texture, int _num, const Vec3 &center, const Vec3 &x, const Vec3 &y) :
-		Object(_texture, _num) {
-		infPlane.normal = x.cross(y).getNormalized();
-		infPlane.offset = center.dot(infPlane.normal);
-	}
-
-	Plane(const std::shared_ptr<Texture> &_texture, int _num, real_t a, real_t b, real_t c, real_t w) :
-		Object(_texture, _num) {
-		infPlane.normal = Vec3{ a, b, c }.getNormalized();
-		infPlane.offset = -w;
-	}
-
-	~Plane() {}
-
-	bool isInfinity() const override {
-		return true;
-	}
-
-	std::shared_ptr<Intersect> getTrace(const Ray &ray, real_t dist = std::numeric_limits<real_t>::max()) const override;
+	bool isInfinity() const override;
+	std::shared_ptr<Intersect> getTrace(const Ray & ray, double dist = std::numeric_limits<double>::max()) const override;
 };
 
 class PlaneIntersect : public Intersect {
 protected:
-	const Plane &plane;
+	const Plane & plane;
 
-	mutable real_t projOrigToInter, projDir;
+	mutable double projOrigToInter, projDir;
 
-	virtual std::shared_ptr<Surface> getInterPointSurfaceProperty() const override;
-
-	const Object *getObj() const override {
-		return &plane;
-	}
+	virtual std::shared_ptr<Surface> getInterPointSurfaceProp() const override;
+	const Object * getObj() const override;
 
 public:
-	PlaneIntersect(const Plane &_plane, const Ray &_ray) : Intersect(_ray), plane(_plane) {}
-	~PlaneIntersect() {}
+	PlaneIntersect(const Plane & plane_, const Ray & ray_) : Intersect(ray_), plane(plane_) {}
 
-	real_t getDistToInter() const override;
+	double getDistToInter() const override;
 	bool isIntersect() const override;
-
-protected:
-	Vec3 getNormal() const override;
+	glm::dvec3 getNormal() const override;
 };

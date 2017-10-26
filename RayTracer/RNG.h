@@ -1,18 +1,15 @@
 #pragma once
 
-#include "Utils.h"
-
 #include <random>
 
-class RNGenerator {
+class RNG {
 private:
-	std::uniform_real_distribution<real_t> uni;
+	std::uniform_real_distribution<double> uni;
 	std::mt19937_64 eng;
 
 public:
-	RNGenerator(int seed = 1111) : eng(seed) {}
+	explicit RNG(int seed = 1234) : eng(seed) {}
 
 	void setSeed(int seed) { eng = std::mt19937_64(seed); }
-
-	real_t randomReal() { return uni(eng); }
+	double randomDouble() { return uni(eng); }
 };
