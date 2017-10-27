@@ -10,7 +10,7 @@ private:
 	std::shared_ptr<BRDF> brdf;
 
 public:
-	BidirectionalPathTracing(const Scene & scene, BRDFType brdfType = LAMBERTIAN, int _minDepth = MAX_BIDIRECTIONAL_PATH_TRACING_DEPTH) :
+	BidirectionalPathTracing(const Scene & scene, BRDFType brdfType = LAMBERTIAN, int _minDepth = MIN_BIDIRECTIONAL_PATH_TRACING_DEPTH) :
 		TraceBase(scene), minDepth(_minDepth) {
 		if (brdfType == LAMBERTIAN) brdf = std::make_shared<LambertianBRDF>();
 		else if (brdfType == PHONG) brdf = std::make_shared<PhongBRDF>();

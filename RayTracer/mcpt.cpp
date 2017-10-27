@@ -29,7 +29,9 @@ glm::dvec3 MonteCarloPathTracing::getDirectRadiance(DistRay & ray, std::shared_p
 
 	auto &[lightIdx, ratio] = scene.lightIdxSample(*rng);
 	auto sampleLight = scene.lights[lightIdx];
-	double pdf = ratio * sampleLight->luminaireSample(*rng, info.interPoint, outDir);
+	sampleLight->luminaireSample(*rng, info.interPoint, outDir);
+	double pdf = ratio * sampleLight->pdf(*rng, info.interPoint, outDir);
+	if (pdf == 0.0) return zero_vec3;
 
 	double cos_theta = glm::dot(outDir, info.normal);
 	if (cos_theta <= 0.0) return zero_vec3;
@@ -45,18 +47,18 @@ glm::dvec3 MonteCarloPathTracing::getDirectRadiance(DistRay & ray, std::shared_p
 }
 
 glm::dvec3 MonteCarloPathTracing::getIndirectRadiance(DistRay & ray, std::shared_ptr<Intersect> intersect, RNG * rng, int depth) const {
-	IntersectInfo info = intersect->getIntersectInfo();
-
 	double p = 1.0;
 	if (depth >= minDepth) {
 		p = RUSSIAN_ROULETTE_POSSIBILITY;
 		if (rng->randomDouble() >= p) return zero_vec3;
 	}
 
+	IntersectInfo info = intersect->getIntersectInfo();
 	glm::dvec3 inDir = glm::normalize(ray.ori - info.interPoint);
 	glm::dvec3 outDir;
 	BRDFSampleInfo sampleInfo(*rng, inDir, outDir, info.normal, info.material, ray.refrIdx, info.nextRefrIdx);
-	double pdf = brdf->brdfSample(sampleInfo);
+	brdf->brdfSample(sampleInfo);
+	double pdf = brdf->pdf(sampleInfo);
 	if (pdf == 0.0) return zero_vec3;
 	else {
 		DistRay newRay(Ray(info.interPoint + outDir * eps, outDir, sampleInfo.nextRefr), ray.dist);

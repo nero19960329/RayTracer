@@ -15,7 +15,6 @@ struct BRDFSampleInfo {
 	glm::dvec3 & outDir;
 	const glm::dvec3 & normal;
 	const std::shared_ptr<Surface> & surface;
-	//double refrRatio;
 	double thisRefr, nextRefr;
 
 	BRDFSampleInfo(RNG & rng_, glm::dvec3 & inDir_, glm::dvec3 & outDir_, const glm::dvec3 & normal_, const std::shared_ptr<Surface> & surface_, double thisRefr_, double nextRefr_) :
@@ -26,7 +25,8 @@ class BRDF {
 public:
 	BRDF() {}
 
-	virtual double brdfSample(BRDFSampleInfo & info) const = 0;	// return pdf
+	virtual void brdfSample(BRDFSampleInfo & info) const = 0;
+	virtual double pdf(BRDFSampleInfo & info) const = 0;
 	virtual glm::dvec3 eval(BRDFSampleInfo & info) const = 0;
 
 	glm::dvec3 change2World(const glm::dvec3 &normal, double theta, double phi) const;
@@ -38,7 +38,8 @@ class LambertianBRDF : public BRDF {
 public:
 	LambertianBRDF() {}
 
-	double brdfSample(BRDFSampleInfo & info) const override;
+	void brdfSample(BRDFSampleInfo & info) const override;
+	double pdf(BRDFSampleInfo & info) const override;
 	glm::dvec3 eval(BRDFSampleInfo & info) const override;
 };
 
@@ -46,6 +47,7 @@ class PhongBRDF : public BRDF {
 public:
 	PhongBRDF() {}
 
-	double brdfSample(BRDFSampleInfo & info) const override;
+	void brdfSample(BRDFSampleInfo & info) const override;
+	double pdf(BRDFSampleInfo & info) const override;
 	glm::dvec3 eval(BRDFSampleInfo & info) const override;
 };
