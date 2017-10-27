@@ -60,6 +60,9 @@
     <ClCompile Include="tiny_obj_loader.cc">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="bdpt.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aabb.h">

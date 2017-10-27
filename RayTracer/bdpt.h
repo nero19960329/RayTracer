@@ -1,4 +1,4 @@
-/*#pragma once
+#pragma once
 
 #include "brdf.h"
 #include "rng.h"
@@ -20,4 +20,4 @@ public:
 
 private:
 	glm::dvec3 getColor(DistRay & ray, RNG * rng, int depth = 0) const;
-};*/
+};

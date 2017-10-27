@@ -157,6 +157,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="aabb.cpp" />
+    <ClCompile Include="bdpt.cpp" />
     <ClCompile Include="brdf.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="face.cpp" />

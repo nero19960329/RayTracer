@@ -106,17 +106,17 @@ cv::Mat testScene2() {	// Cornell Box
 		glm::dvec3(0.0, 0.0, 0.38),
 		glm::dvec3(0.0, -1.0, 0.0),
 		glm::dvec3(1.0, 1.0, 1.0),
-		1.0
+		25.0
 	);
 
 	scene.lights.emplace_back(light);
 
-	glm::dvec3 center{ 0.0, 1.0, 2.8 };
+	glm::dvec3 center{ 0.0, 1.0, 3.4 };
 	glm::dvec3 target{ 0.0, 1.0, 0.0 };
 	glm::dvec3 up{ 0.0, 1.0, 0.0 };
 
 	Camera camera(
-		800, 600,
+		600, 600,
 		center,
 		target,
 		up,
@@ -127,7 +127,7 @@ cv::Mat testScene2() {	// Cornell Box
 	MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene, PHONG);
 	RaySampler sampler(camera);
 	sampler.mcptMode = true;
-	sampler.mcptSampleNum = 10;
+	sampler.mcptSampleNum = 100;
 	//sampler.rtMode = true;
 	//sampler.jitterMode = true;
 	//sampler.jitterSampleNum = 5;
@@ -155,13 +155,13 @@ cv::Mat testScene3() {	// Cornell Box With Sphere
 
 	Sphere * leftSphere = new Sphere(
 		new PureTexture(Material(0.01, 0.95, 1000.0), one_vec3 * 0.01),
-		/*new PureTexture(*floorMaterial, glm::dvec3(1.0, 0.51, 0.98)),*/
+		//new PureTexture(*floorMaterial, glm::dvec3(1.0, 1.0, 1.0)),
 		glm::dvec3(-0.4214, 0.3321, -0.28),
 		0.3263
 	);
 	Sphere * rightSphere = new Sphere(
 		new PureTexture(Material(0.01, 0.01, 200.0, 0.0, 0.95), one_vec3 * 0.01),
-		/*new PureTexture(*floorMaterial, glm::dvec3(0.53, 0.81, 0.98)),*/
+		//new PureTexture(*floorMaterial, glm::dvec3(1.0, 1.0, 1.0)),
 		glm::dvec3(0.4458, 0.3321, 0.3768),
 		0.3263,
 		1.5
@@ -175,17 +175,17 @@ cv::Mat testScene3() {	// Cornell Box With Sphere
 		glm::dvec3(0.0, 0.0, 0.38),
 		glm::dvec3(0.0, -1.0, 0.0),
 		glm::dvec3(1.0, 1.0, 1.0),
-		0.8
+		20.0
 	);
 
 	scene.lights.emplace_back(light);
 
-	glm::dvec3 center{ 0.0, 0.8, 2.8 };
+	glm::dvec3 center{ 0.0, 0.8, 2.9 };
 	glm::dvec3 target{ 0.0, 0.8, 0.0 };
 	glm::dvec3 up{ 0.0, 1.0, 0.0 };
 
 	Camera camera(
-		800, 600,
+		760, 600,
 		center,
 		target,
 		up,
@@ -206,7 +206,7 @@ cv::Mat testScene3() {	// Cornell Box With Sphere
 }
 
 int main() {
-	cv::Mat img = testScene3();
+	cv::Mat img = testScene2();
 	cv::imshow("result", img);
 	cv::imwrite("tmp.png", img);
 	cv::waitKey();

@@ -13,7 +13,7 @@ double RectLight::luminaireSample(RNG & rng, glm::dvec3 interPoint, glm::dvec3 &
 	glm::dvec3 u = (rng.randomDouble() - 0.5) * x, v = (rng.randomDouble() - 0.5) * y;
 	glm::dvec3 target = center + u + v;
 	outDir = glm::normalize(target - interPoint);
-	return area;
+	return 1.0 / area;
 }
 
 std::shared_ptr<Intersect> RectLight::getTrace(const Ray & ray, double dist) const {
