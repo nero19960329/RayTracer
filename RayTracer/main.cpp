@@ -206,7 +206,7 @@ cv::Mat testScene3() {	// Cornell Box With Sphere
 }
 
 int main() {
-	cv::Mat img = testScene2();
+	cv::Mat img = testScene3();
 	cv::imshow("result", img);
 	cv::imwrite("tmp.png", img);
 	cv::waitKey();

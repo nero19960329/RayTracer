@@ -27,6 +27,7 @@ double LambertianBRDF::brdfSample(BRDFSampleInfo & info) const {
 	double theta = std::acos(sqrt(info.rng.randomDouble()));
 	double phi = 2.0 * PI * info.rng.randomDouble();
 	info.outDir = change2World(info.normal, theta, phi);
+	info.nextRefr = info.thisRefr;
 	return std::max(0.0, glm::dot(info.outDir, info.normal) * INV_PI);
 }
 
@@ -46,17 +47,43 @@ double PhongBRDF::brdfSample(BRDFSampleInfo & info) const {
 		double theta = std::asin(std::sqrt(1.0 - info.rng.randomDouble()));
 		double phi = 2.0 * PI * info.rng.randomDouble();
 		info.outDir = change2World(info.normal, theta, phi);
+		info.nextRefr = info.thisRefr;
 		return k_d * std::max(0.0, glm::dot(info.outDir, info.normal) * INV_PI);
 	} else if (u < k_d + k_s) {
 		double theta = std::acos(std::pow(1.0 - info.rng.randomDouble(), 1.0 / (info.surface->shininess + 1)));
 		double phi = 2.0 * PI * info.rng.randomDouble();
 		glm::dvec3 ref = glm::reflect(-info.inDir, info.normal);
 		info.outDir = change2World(ref, theta, phi);
+		info.nextRefr = info.thisRefr;
 		return k_s * (info.surface->shininess + 1) * INV_PI * 0.5 *
 			pow(std::max(0.0, glm::dot(info.outDir, glm::reflect(-info.inDir, info.normal))), info.surface->shininess);
 	} else if (u < k_d + k_s + k_r) {
-		info.outDir = glm::refract(-info.inDir, info.normal, info.refrRatio);
-		return -1.0;
+		double refrRatio = info.thisRefr / info.nextRefr;
+		glm::dvec3 reflDir = glm::reflect(-info.inDir, info.normal);
+
+		double ddn = glm::dot(-info.inDir, info.normal);
+		double cos2t = 1.0 - refrRatio * refrRatio * (1.0 - ddn * ddn);
+		if (cos2t < 0.0) {
+			info.outDir = reflDir;
+			info.nextRefr = info.thisRefr;
+			return glm::dot(info.outDir, info.normal);
+		}
+
+		double R0 = (1.0 - refrRatio) * (1.0 - refrRatio) / ((1.0 + refrRatio) * (1.0 + refrRatio));
+		double c = 1 + ddn;
+		double Re = R0 + (1 - R0) * pow(c, 5.0);
+		double Tr = 1.0 - Re;
+		double P = .25 + .5 * Re;
+
+		glm::dvec3 refrDir = glm::refract(-info.inDir, info.normal, refrRatio);
+		if (info.rng.randomDouble() < P) {
+			info.outDir = reflDir;
+			info.nextRefr = info.thisRefr;
+			return glm::dot(info.outDir, info.normal) * P / Re;
+		} else {
+			info.outDir = refrDir;
+			return glm::dot(info.outDir, info.normal) * (1 - P) / Tr;
+		}
 	} else {
 		info.outDir = zero_vec3;
 		return 0.0;
@@ -64,6 +91,12 @@ double PhongBRDF::brdfSample(BRDFSampleInfo & info) const {
 }
 
 glm::dvec3 PhongBRDF::eval(BRDFSampleInfo & info) const {
+	if (info.nextRefr != info.thisRefr) {
+		if (info.outDir == glm::refract(-info.inDir, info.normal, info.thisRefr / info.nextRefr))
+			return one_vec3;
+		else return zero_vec3;
+	}
+
 	return info.surface->diffuse * INV_PI +
 			one_vec3 * info.surface->specular * (info.surface->shininess + 2) * INV_PI * 0.5 *
 			pow(std::max(0.0, glm::dot(info.outDir, glm::reflect(-info.inDir, info.normal))), info.surface->shininess);

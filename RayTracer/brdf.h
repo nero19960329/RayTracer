@@ -15,10 +15,11 @@ struct BRDFSampleInfo {
 	glm::dvec3 & outDir;
 	const glm::dvec3 & normal;
 	const std::shared_ptr<Surface> & surface;
-	double refrRatio;
+	//double refrRatio;
+	double thisRefr, nextRefr;
 
-	BRDFSampleInfo(RNG & rng_, glm::dvec3 & inDir_, glm::dvec3 & outDir_, const glm::dvec3 & normal_, const std::shared_ptr<Surface> & surface_, double refrRatio_ = 1.0) :
-		rng(rng_), inDir(inDir_), outDir(outDir_), normal(normal_), surface(surface_), refrRatio(refrRatio_) {}
+	BRDFSampleInfo(RNG & rng_, glm::dvec3 & inDir_, glm::dvec3 & outDir_, const glm::dvec3 & normal_, const std::shared_ptr<Surface> & surface_, double thisRefr_, double nextRefr_) :
+		rng(rng_), inDir(inDir_), outDir(outDir_), normal(normal_), surface(surface_), thisRefr(thisRefr_), nextRefr(nextRefr_) {}
 };
 
 class BRDF {
