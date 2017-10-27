@@ -46,3 +46,22 @@ AABB Scene::getAABB() const {
 		return { -inf_vec3, inf_vec3 };
 	return (*objs.begin())->getAABB();
 }
+
+void Scene::computeLightCDF() {
+	double sum = 0.0;
+	for (const auto & light : lights)
+		sum += light->area;
+	lightCDF.clear();
+	lightCDF.push_back(0.0);
+	for (const auto & light : lights)
+		lightCDF.push_back(light->area);
+	for (auto i = 1; i < lightCDF.size(); ++i)
+		lightCDF[i] += lightCDF[i - 1];
+	for (auto & e : lightCDF)
+		e /= sum;
+}
+
+std::tuple<int, double> Scene::lightIdxSample(RNG & rng) const {
+	int idx = rng.randomIdx(lightCDF);
+	return std::make_tuple(idx, lightCDF[idx + 1] - lightCDF[idx]);
+}

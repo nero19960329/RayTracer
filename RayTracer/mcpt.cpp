@@ -26,26 +26,22 @@ glm::dvec3 MonteCarloPathTracing::getDirectRadiance(DistRay & ray, std::shared_p
 
 	glm::dvec3 inDir = glm::normalize(ray.ori - info.interPoint);
 	glm::dvec3 outDir;
-	double pdf;
-	if (scene.lights.size() == 1)
-		pdf = scene.lights[0]->luminaireSample(*rng, info.interPoint, outDir);
-	else exit(0);
+
+	auto &[lightIdx, ratio] = scene.lightIdxSample(*rng);
+	auto sampleLight = scene.lights[lightIdx];
+	double pdf = ratio * sampleLight->luminaireSample(*rng, info.interPoint, outDir);
 
 	double cos_theta = glm::dot(outDir, info.normal);
 	if (cos_theta <= 0.0) return zero_vec3;
 
 	DistRay newRay(Ray{ info.interPoint + outDir * eps, outDir }, ray.dist);
 	auto newIntersect = scene.getIntersect(newRay);
-	if (newIntersect && !scene.lights[0]->equals(newIntersect->getObj())) return zero_vec3;
+	if (!newIntersect || (newIntersect && !sampleLight->equals(newIntersect->getObj()))) return zero_vec3;
 
-	if (!newIntersect) {	// 点光源
-		return zero_vec3;
-	} else {	//面光源
-		BRDFSampleInfo sampleInfo(*rng, inDir, outDir, info.normal, info.material, ray.refrIdx, ray.refrIdx);
-		IntersectInfo newInfo = newIntersect->getIntersectInfo();
-		double r2 = glm::length2(info.interPoint - newInfo.interPoint);
-		return newInfo.material->emission * brdf->eval(sampleInfo) * cos_theta * std::max(glm::dot(-outDir, newInfo.normal), 0.0) / (r2 * pdf);
-	}
+	BRDFSampleInfo sampleInfo(*rng, inDir, outDir, info.normal, info.material, ray.refrIdx, ray.refrIdx);
+	IntersectInfo newInfo = newIntersect->getIntersectInfo();
+	double r2 = glm::length2(info.interPoint - newInfo.interPoint);
+	return newInfo.material->emission * brdf->eval(sampleInfo) * cos_theta * std::max(glm::dot(-outDir, newInfo.normal), 0.0) / (r2 * pdf);
 }
 
 glm::dvec3 MonteCarloPathTracing::getIndirectRadiance(DistRay & ray, std::shared_ptr<Intersect> intersect, RNG * rng, int depth) const {
@@ -65,7 +61,6 @@ glm::dvec3 MonteCarloPathTracing::getIndirectRadiance(DistRay & ray, std::shared
 	else {
 		DistRay newRay(Ray(info.interPoint + outDir * eps, outDir, sampleInfo.nextRefr), ray.dist);
 		auto newIntersect = scene.getIntersect(newRay);
-
 		return glm::dot(outDir, info.normal) * brdf->eval(sampleInfo) * getRayRadiance(newRay, newIntersect, rng, depth + 1) / (p * pdf);
 	}
 }

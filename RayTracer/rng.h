@@ -1,6 +1,7 @@
 #pragma once
 
 #include <random>
+#include <vector>
 
 class RNG {
 private:
@@ -12,4 +13,5 @@ public:
 
 	void setSeed(int seed) { eng = std::mt19937_64(seed); }
 	double randomDouble() { return uni(eng); }
+	int randomIdx(const std::vector<double> & cdf);
 };

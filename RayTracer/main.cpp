@@ -100,7 +100,7 @@ cv::Mat testScene2() {	// Cornell Box
 		scene.objs.emplace_back(mesh);
 	}
 
-	RectLight * light = new RectLight(
+	RectLight * light1 = new RectLight(
 		glm::dvec3(-0.005, 1.98, -0.03),
 		glm::dvec3(0.47, 0.0, 0.0),
 		glm::dvec3(0.0, 0.0, 0.38),
@@ -109,7 +109,18 @@ cv::Mat testScene2() {	// Cornell Box
 		25.0
 	);
 
-	scene.lights.emplace_back(light);
+	RectLight * light2 = new RectLight(
+		glm::dvec3(0.98, 0.795, -0.025),
+		glm::dvec3(0.0, 0.2, 0.0),
+		glm::dvec3(0.0, 0.0, 0.2),
+		glm::dvec3(-1.0, 0.0, 0.0),
+		glm::dvec3(1.0, 1.0, 1.0),
+		10.0
+	);
+
+	scene.lights.emplace_back(light1);
+	//scene.lights.emplace_back(light2);
+	scene.computeLightCDF();
 
 	glm::dvec3 center{ 0.0, 1.0, 3.4 };
 	glm::dvec3 target{ 0.0, 1.0, 0.0 };
@@ -127,7 +138,7 @@ cv::Mat testScene2() {	// Cornell Box
 	MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene, PHONG);
 	RaySampler sampler(camera);
 	sampler.mcptMode = true;
-	sampler.mcptSampleNum = 100;
+	sampler.mcptSampleNum = 10;
 	//sampler.rtMode = true;
 	//sampler.jitterMode = true;
 	//sampler.jitterSampleNum = 5;
@@ -175,10 +186,11 @@ cv::Mat testScene3() {	// Cornell Box With Sphere
 		glm::dvec3(0.0, 0.0, 0.38),
 		glm::dvec3(0.0, -1.0, 0.0),
 		glm::dvec3(1.0, 1.0, 1.0),
-		20.0
+		30.0
 	);
 
 	scene.lights.emplace_back(light);
+	scene.computeLightCDF();
 
 	glm::dvec3 center{ 0.0, 0.8, 2.9 };
 	glm::dvec3 target{ 0.0, 0.8, 0.0 };
@@ -206,7 +218,7 @@ cv::Mat testScene3() {	// Cornell Box With Sphere
 }
 
 int main() {
-	cv::Mat img = testScene3();
+	cv::Mat img = testScene2();
 	cv::imshow("result", img);
 	cv::imwrite("tmp.png", img);
 	cv::waitKey();

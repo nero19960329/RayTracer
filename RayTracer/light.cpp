@@ -1,8 +1,7 @@
 #include "light.h"
 
 double PointLight::luminaireSample(RNG & rng, glm::dvec3 interPoint, glm::dvec3 & outDir) const {
-	outDir = glm::normalize(center - interPoint);
-	return 1.0;
+	return 0.0;
 }
 
 std::shared_ptr<Intersect> PointLight::getTrace(const Ray & ray, double dist) const {

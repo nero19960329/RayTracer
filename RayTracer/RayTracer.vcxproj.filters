@@ -63,6 +63,9 @@
     <ClCompile Include="bdpt.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="rng.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aabb.h">

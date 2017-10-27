@@ -4,6 +4,7 @@
 #include "Object.h"
 
 #include <list>
+#include <tuple>
 #include <vector>
 
 class TraceBase;
@@ -12,6 +13,9 @@ class Scene {
 public:
 	std::list<Object *> objs;
 	std::vector<Light *> lights;
+
+private:
+	std::vector<double> lightCDF;
 
 public:
 	Scene() {}
@@ -22,4 +26,7 @@ public:
 	bool isInnerPoint(const glm::dvec3 & p) const;
 
 	AABB getAABB() const;
+
+	void computeLightCDF();
+	std::tuple<int, double> lightIdxSample(RNG & rng) const;
 };

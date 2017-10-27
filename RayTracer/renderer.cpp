@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <omp.h>
+#include <random>
 
 Renderer::Renderer(const Camera & camera_, TraceBase * tracer_, const RaySampler & sampler_) :
 	camera(camera_), tracer(tracer_), sampler(sampler_) {}
@@ -19,8 +20,11 @@ cv::Mat Renderer::render() const {
 	std::vector<int> widthVec, heightVec;
 	for (int i = 0; i < camera.width; ++i) widthVec.push_back(i);
 	for (int j = 0; j < camera.height; ++j) heightVec.push_back(j);
-	random_shuffle(widthVec.begin(), widthVec.end());
-	random_shuffle(heightVec.begin(), heightVec.end());
+
+	std::random_device rng;
+	std::mt19937 urng(rng());
+	std::shuffle(widthVec.begin(), widthVec.end(), urng);
+	std::shuffle(heightVec.begin(), heightVec.end(), urng);
 
 	cv::Mat res = cv::Mat::zeros(camera.height, camera.width, CV_64FC3);
 	#pragma omp parallel for

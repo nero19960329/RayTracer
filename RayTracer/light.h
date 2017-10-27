@@ -11,6 +11,7 @@ public:
 	glm::dvec3 center;
 	glm::dvec3 color;
 	double intensity;
+	double area;
 
 public:
 	Light() : Object(nullptr) {}
@@ -23,7 +24,7 @@ public:
 
 class PointLight : public Light {
 public:
-	PointLight(glm::dvec3 center_, glm::dvec3 color_, double intensity_) : Light(center_, color_, intensity_) {}
+	PointLight(glm::dvec3 center_, glm::dvec3 color_, double intensity_) : Light(center_, color_, intensity_) { area = 0.0; }
 
 	double luminaireSample(RNG & rng, glm::dvec3 interPoint, glm::dvec3 & outDir) const override;
 	std::shared_ptr<Intersect> getTrace(const Ray & ray, double dist = std::numeric_limits<double>::max()) const override;
@@ -33,7 +34,6 @@ class RectLight : public Light {
 private:
 	glm::dvec3 x, y, n;
 	Face f1, f2;
-	double area;
 
 public:
 	RectLight(glm::dvec3 center_, glm::dvec3 x_, glm::dvec3 y_, glm::dvec3 n_, glm::dvec3 color_, double intensity_) : Light(center_, color_, intensity_), x(x_), y(y_), n(n_) {
