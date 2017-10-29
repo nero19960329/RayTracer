@@ -26,6 +26,8 @@ public:
 	Object(Texture * texture_) : texture(texture_) {}
 	virtual ~Object() {}
 
+	virtual bool isLight() const { return false; }
+
 	virtual bool isInfinity() const { return false; }
 	virtual bool hasInside() const { return false; }
 
@@ -45,6 +47,8 @@ public:
 		}
 		return B;
 	}
+
+	virtual bool equals(const Object * obj) const { return obj == this; };
 };
 
 struct IntersectInfo {
@@ -78,10 +82,7 @@ public:
 	virtual glm::dvec3 getNormal() const = 0;
 	virtual double getNextRefrIdx() const { return ray.refrIdx; }
 
-	virtual IntersectInfo getIntersectInfo() {
-		auto obj = getObj();
-		return IntersectInfo{ getIntersection(), getNormal(), getSurface(), getNextRefrIdx() };
-	}
+	virtual IntersectInfo getIntersectInfo() { return IntersectInfo{ getIntersection(), getNormal(), getSurface(), getNextRefrIdx() }; }
 
 	virtual std::shared_ptr<Surface> getSurface() const {
 		auto texture = getObj()->getTexture();

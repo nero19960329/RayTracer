@@ -5,6 +5,7 @@
 
 #include <list>
 #include <tuple>
+#include <unordered_map>
 #include <vector>
 
 class TraceBase;
@@ -13,6 +14,8 @@ class Scene {
 public:
 	std::list<Object *> objs;
 	std::vector<Light *> lights;
+
+	double lightAreaSum;
 
 private:
 	std::vector<double> lightCDF;

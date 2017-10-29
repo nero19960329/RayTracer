@@ -51,6 +51,7 @@ void Scene::computeLightCDF() {
 	double sum = 0.0;
 	for (const auto & light : lights)
 		sum += light->area;
+	lightAreaSum = sum;
 	lightCDF.clear();
 	lightCDF.push_back(0.0);
 	for (const auto & light : lights)

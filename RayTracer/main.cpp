@@ -1,3 +1,4 @@
+#include "bdpt.h"
 #include "camera.h"
 #include "face.h"
 #include "material.h"
@@ -110,10 +111,10 @@ cv::Mat testScene2() {	// Cornell Box
 	);
 
 	RectLight * light2 = new RectLight(
-		glm::dvec3(0.98, 0.795, -0.025),
+		glm::dvec3(-0.98, 0.795, -0.025),
 		glm::dvec3(0.0, 0.2, 0.0),
 		glm::dvec3(0.0, 0.0, 0.2),
-		glm::dvec3(-1.0, 0.0, 0.0),
+		glm::dvec3(1.0, 0.0, 0.0),
 		glm::dvec3(1.0, 1.0, 1.0),
 		10.0
 	);
@@ -134,14 +135,11 @@ cv::Mat testScene2() {	// Cornell Box
 		45.0
 	);
 
-	//RayTracing * tracer = new RayTracing(scene);
-	MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene, PHONG);
+	BidirectionalPathTracing * tracer = new BidirectionalPathTracing(scene, PHONG);
+	//MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene, PHONG);
 	RaySampler sampler(camera);
 	sampler.mcptMode = true;
-	sampler.mcptSampleNum = 10;
-	//sampler.rtMode = true;
-	//sampler.jitterMode = true;
-	//sampler.jitterSampleNum = 5;
+	sampler.mcptSampleNum = 100;
 
 	Renderer renderer(camera, tracer, sampler);
 	return renderer.render();
@@ -165,14 +163,14 @@ cv::Mat testScene3() {	// Cornell Box With Sphere
 	}
 
 	Sphere * leftSphere = new Sphere(
-		new PureTexture(Material(0.01, 0.95, 1000.0), one_vec3 * 0.01),
-		//new PureTexture(*floorMaterial, glm::dvec3(1.0, 1.0, 1.0)),
+		//new PureTexture(Material(0.01, 0.95, 1000.0), one_vec3 * 0.01),
+		new PureTexture(*floorMaterial, glm::dvec3(1.0, 1.0, 1.0)),
 		glm::dvec3(-0.4214, 0.3321, -0.28),
 		0.3263
 	);
 	Sphere * rightSphere = new Sphere(
-		new PureTexture(Material(0.01, 0.01, 200.0, 0.0, 0.95), one_vec3 * 0.01),
-		//new PureTexture(*floorMaterial, glm::dvec3(1.0, 1.0, 1.0)),
+		//new PureTexture(Material(0.01, 0.01, 200.0, 0.0, 0.95), one_vec3 * 0.01),
+		new PureTexture(*floorMaterial, glm::dvec3(1.0, 1.0, 1.0)),
 		glm::dvec3(0.4458, 0.3321, 0.3768),
 		0.3263,
 		1.5
@@ -181,12 +179,12 @@ cv::Mat testScene3() {	// Cornell Box With Sphere
 	scene.objs.push_back(rightSphere);
 
 	RectLight * light = new RectLight(
-		glm::dvec3(-0.005, 1.58, -0.03),
+		glm::dvec3(-0.005, 1.585, -0.03),
 		glm::dvec3(0.47, 0.0, 0.0),
 		glm::dvec3(0.0, 0.0, 0.38),
 		glm::dvec3(0.0, -1.0, 0.0),
 		glm::dvec3(1.0, 1.0, 1.0),
-		30.0
+		12.5
 	);
 
 	scene.lights.emplace_back(light);
@@ -204,14 +202,11 @@ cv::Mat testScene3() {	// Cornell Box With Sphere
 		45.0
 	);
 
-	//RayTracing * tracer = new RayTracing(scene);
-	MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene, PHONG);
+	BidirectionalPathTracing * tracer = new BidirectionalPathTracing(scene, LAMBERTIAN);
+	//MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene, PHONG);
 	RaySampler sampler(camera);
 	sampler.mcptMode = true;
 	sampler.mcptSampleNum = 10;
-	//sampler.rtMode = true;
-	//sampler.jitterMode = true;
-	//sampler.jitterSampleNum = 5;
 
 	Renderer renderer(camera, tracer, sampler);
 	return renderer.render();

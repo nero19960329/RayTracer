@@ -24,20 +24,24 @@ void BRDF::uniformSample(BRDFSampleInfo & info) const {
 }
 
 void LambertianBRDF::brdfSample(BRDFSampleInfo & info) const {
-	double theta = std::acos(sqrt(info.rng.randomDouble()));
-	double phi = 2.0 * PI * info.rng.randomDouble();
-	info.outDir = change2World(info.normal, theta, phi);
-	info.nextRefr = info.thisRefr;
+	double u = info.rng.randomDouble();
+	double k_d = std::max(info.surface->diffuse[0], std::max(info.surface->diffuse[1], info.surface->diffuse[2]));
+
+	if (u < k_d) {
+		double theta = std::acos(sqrt(info.rng.randomDouble()));
+		double phi = 2.0 * PI * info.rng.randomDouble();
+		info.outDir = change2World(info.normal, theta, phi);
+		info.nextRefr = info.thisRefr;
+	} else info.outDir = zero_vec3;
 }
 
 double LambertianBRDF::pdf(BRDFSampleInfo & info) const {
-	return std::max(0.0, glm::dot(info.outDir, info.normal) * INV_PI);
+	double k_d = std::max(info.surface->diffuse[0], std::max(info.surface->diffuse[1], info.surface->diffuse[2]));
+	return k_d * glm::dot(info.outDir, info.normal) * INV_PI;
 }
 
 glm::dvec3 LambertianBRDF::eval(BRDFSampleInfo & info) const {
-	if (glm::dot(info.inDir, info.normal) >= 0 && 
-		glm::dot(info.outDir, info.normal) >= 0) return info.surface->diffuse * INV_PI;
-	else return zero_vec3;
+	return info.surface->diffuse * INV_PI;
 }
 
 void PhongBRDF::brdfSample(BRDFSampleInfo & info) const {
@@ -61,12 +65,6 @@ void PhongBRDF::brdfSample(BRDFSampleInfo & info) const {
 		double refrRatio = info.thisRefr / info.nextRefr;
 
 		double ddn = glm::dot(-info.inDir, info.normal);
-		/*double cos2t = 1.0 - refrRatio * refrRatio * (1.0 - ddn * ddn);
-		if (cos2t < 0.0) {
-			info.outDir = reflDir;
-			info.nextRefr = info.thisRefr;
-			return glm::dot(info.outDir, info.normal);
-		}*/
 		double R0 = (1.0 - refrRatio) * (1.0 - refrRatio) / ((1.0 + refrRatio) * (1.0 + refrRatio));
 		double Re = R0 + (1 - R0) * pow(1 + ddn, 5.0);
 		double P = .25 + .5 * Re;
@@ -104,11 +102,11 @@ double PhongBRDF::pdf(BRDFSampleInfo & info) const {
 		glm::dvec3 reflDir = glm::reflect(-info.inDir, info.normal);
 		glm::dvec3 refrDir = glm::refract(-info.inDir, info.normal, refrRatio);
 		if (info.outDir == refrDir)
-			return glm::dot(info.outDir, info.normal) * (1 - P) / Tr;
+			return k_r * glm::dot(info.outDir, info.normal) * (1 - P) / Tr;
 		else if (info.outDir == reflDir && refrDir == zero_vec3)
-			return glm::dot(info.outDir, info.normal);
+			return k_r * glm::dot(info.outDir, info.normal);
 		else if (info.outDir == reflDir && refrDir != zero_vec3)
-			return glm::dot(info.outDir, info.normal) * P / Re;
+			return k_r * glm::dot(info.outDir, info.normal) * P / Re;
 		else
 			return 0.0;
 	}
@@ -117,7 +115,7 @@ double PhongBRDF::pdf(BRDFSampleInfo & info) const {
 glm::dvec3 PhongBRDF::eval(BRDFSampleInfo & info) const {
 	if (info.nextRefr != info.thisRefr) {
 		if (info.outDir == glm::refract(-info.inDir, info.normal, info.thisRefr / info.nextRefr))
-			return one_vec3;
+			return info.surface->refr * one_vec3;
 		else return zero_vec3;
 	}
 

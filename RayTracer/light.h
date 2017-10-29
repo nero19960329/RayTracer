@@ -16,19 +16,26 @@ public:
 public:
 	Light() : Object(nullptr) {}
 	Light(glm::dvec3 center_, glm::dvec3 color_, double intensity_) : 
-		Object(new PureTexture(Material(0.0, 0.0, 0.0, 0.0, 0.0, color_ * intensity_), color_)), center(center_), color(color_), intensity(intensity_) {}
+		Object(new PureTexture(Material(0.0, 0.0, 0.0, 0.0, 0.0, color_ * intensity_), color_ * intensity_)), center(center_), color(color_), intensity(intensity_) {}
 
+	virtual bool isLight() const { return true; }
+
+	virtual glm::dvec3 getNormal(glm::dvec3 p) const = 0;
+
+	virtual glm::dvec3 luminaireSample(RNG & rng) const = 0;
 	virtual void luminaireSample(RNG & rng, glm::dvec3 interPoint, glm::dvec3 & outDir) const = 0;
-	virtual double pdf(RNG & rng, glm::dvec3 interPoint, glm::dvec3 & outDir) const = 0;
-	virtual bool equals(const Object * obj) const { return obj == this; };
+	
+	virtual double pdf(RNG & rng) const = 0;
 };
 
 class PointLight : public Light {
 public:
 	PointLight(glm::dvec3 center_, glm::dvec3 color_, double intensity_) : Light(center_, color_, intensity_) { area = 0.0; }
 
+	glm::dvec3 getNormal(glm::dvec3 p) const override;
+	glm::dvec3 luminaireSample(RNG & rng) const override;
 	void luminaireSample(RNG & rng, glm::dvec3 interPoint, glm::dvec3 & outDir) const override;
-	double pdf(RNG & rng, glm::dvec3 interPoint, glm::dvec3 & outDir) const override;
+	double pdf(RNG & rng) const override;
 	std::shared_ptr<Intersect> getTrace(const Ray & ray, double dist = std::numeric_limits<double>::max()) const override;
 };
 
@@ -54,8 +61,10 @@ public:
 		area = glm::length(x) * glm::length(y);
 	}
 
+	glm::dvec3 getNormal(glm::dvec3 p) const override;
+	glm::dvec3 luminaireSample(RNG & rng) const override;
 	void luminaireSample(RNG & rng, glm::dvec3 interPoint, glm::dvec3 & outDir) const override;
-	double pdf(RNG & rng, glm::dvec3 interPoint, glm::dvec3 & outDir) const override;
+	double pdf(RNG & rng) const override;
 	std::shared_ptr<Intersect> getTrace(const Ray & ray, double dist = std::numeric_limits<double>::max()) const override;
 	bool equals(const Object * obj) const override { return obj == &f1 || obj == &f2; }
 };
