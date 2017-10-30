@@ -13,7 +13,7 @@ glm::dvec3 RayTracing::getColor(DistRay & ray, int depth) const {
 		IntersectInfo info = intersect->getIntersectInfo();
 
 		glm::dvec3 emission = info.material->emission;
-		glm::dvec3 ambient = AMBIENT_INTENSITY * info.material->ambient;
+		glm::dvec3 ambient = AMBIENT_INTENSITY * info.material->bsdf->toRayTracingBSDF()->ambient;
 		glm::dvec3 local = getPhongLocal(info, ray);
 		ray.dist += intersect->getDistToInter();
 		local *= std::exp(-ray.dist * DEFAULT_ATTENUATION_COEFFICIENT);
@@ -38,12 +38,12 @@ glm::dvec3 RayTracing::getPhongLocal(const IntersectInfo & info, const DistRay &
 		glm::dvec3 L = glm::normalize(toLight);
 		glm::dvec3 I = light->color * light->intensity * std::exp(-glm::length(toLight) * DEFAULT_ATTENUATION_COEFFICIENT);
 		double tmp = glm::dot(L, N);
-		if (tmp > 0.0) diffuse += I * info.material->diffuse * tmp;
+		if (tmp > 0.0) diffuse += I * info.material->bsdf->toRayTracingBSDF()->diffuse * tmp;
 
-		if (info.material->specular > eps) {
+		if (info.material->bsdf->toRayTracingBSDF()->specular > eps) {
 			glm::dvec3 R = glm::normalize(glm::reflect(-L, N));
 			tmp = glm::dot(R, V);
-			if (tmp > 0.0) specular += I * info.material->specular * std::pow(tmp, info.material->shininess);
+			if (tmp > 0.0) specular += I * info.material->bsdf->toRayTracingBSDF()->specular * std::pow(tmp, info.material->bsdf->toRayTracingBSDF()->shininess);
 		}
 	}
 	
@@ -51,7 +51,7 @@ glm::dvec3 RayTracing::getPhongLocal(const IntersectInfo & info, const DistRay &
 }
 
 glm::dvec3 RayTracing::getReflection(const IntersectInfo & info, const DistRay & ray, int depth) const {
-	if (info.material->refl < eps) return zero_vec3;
+	if (info.material->bsdf->toRayTracingBSDF()->refl < eps) return zero_vec3;
 
 	glm::dvec3 N = info.normal;
 	glm::dvec3 V = glm::normalize(ray.ori - info.interPoint);
@@ -59,11 +59,11 @@ glm::dvec3 RayTracing::getReflection(const IntersectInfo & info, const DistRay &
 	DistRay newRay(Ray{ info.interPoint + eps * R, R, ray.refrIdx }, ray.dist);
 	glm::dvec3 reflection = getColor(newRay, depth + 1);
 
-	return info.material->refl * reflection;
+	return info.material->bsdf->toRayTracingBSDF()->refl * reflection;
 }
 
 glm::dvec3 RayTracing::getRefraction(const IntersectInfo & info, const DistRay & ray, int depth) const {
-	if (info.material->refr < eps) return zero_vec3;
+	if (info.material->bsdf->toRayTracingBSDF()->refr < eps) return zero_vec3;
 
 	glm::dvec3 N = info.normal;
 	glm::dvec3 V = glm::normalize(ray.ori - info.interPoint);
@@ -71,7 +71,7 @@ glm::dvec3 RayTracing::getRefraction(const IntersectInfo & info, const DistRay &
 	DistRay newRay(Ray{ info.interPoint + eps * T, T, info.nextRefrIdx }, ray.dist);
 	glm::dvec3 refraction = getColor(newRay, depth + 1);
 
-	return info.material->refr * refraction;
+	return info.material->bsdf->toRayTracingBSDF()->refr * refraction;
 }
 
 bool RayTracing::isShadow(Light * light, const IntersectInfo & info) const {

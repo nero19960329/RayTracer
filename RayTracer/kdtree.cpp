@@ -206,7 +206,7 @@ std::shared_ptr<Intersect> KDTree::getTrace(const Ray &ray, double dist) const {
 	return nullptr;
 }
 
-std::shared_ptr<Surface> KDTreeIntersect::getInterPointSurfaceProp() const {
+std::shared_ptr<Material> KDTreeIntersect::getInterPointMaterialProp() const {
 	return nullptr;
 }
 
@@ -245,7 +245,7 @@ bool KDTreeIntersect::leafIntersect(const std::vector<Object*> &objs) const {
 		if (intersect) {
 			if (updateMin(distToInter, intersect->getDistToInter())) {
 				normal = intersect->getNormal();
-				surface = intersect->getSurface();
+				material = intersect->getMaterial();
 				refrIdx = intersect->getNextRefrIdx();
 				insideFlag = intersect->getObj()->hasInside();
 			}

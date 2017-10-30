@@ -41,7 +41,7 @@ private:
 	mutable bool inside;
 	mutable int intersectFaceIdx;
 
-	virtual std::shared_ptr<Surface> getInterPointSurfaceProp() const override;
+	virtual std::shared_ptr<Material> getInterPointMaterialProp() const override;
 	const Object * getObj() const override;
 
 public:

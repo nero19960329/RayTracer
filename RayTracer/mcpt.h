@@ -1,6 +1,5 @@
 #pragma once
 
-#include "brdf.h"
 #include "rng.h"
 #include "trace_base.h"
 
@@ -9,14 +8,10 @@
 class MonteCarloPathTracing : public TraceBase {
 private:
 	int minDepth;
-	std::shared_ptr<BRDF> brdf;
 
 public:
-	MonteCarloPathTracing(const Scene & scene, BRDFType brdfType = LAMBERTIAN, int _minDepth = MIN_MONTE_CARLO_PATH_TRACING_DEPTH) :
-		TraceBase(scene), minDepth(_minDepth) {
-		if (brdfType == LAMBERTIAN) brdf = std::make_shared<LambertianBRDF>();
-		else if (brdfType == PHONG) brdf = std::make_shared<PhongBRDF>();
-	}
+	MonteCarloPathTracing(const Scene & scene, int _minDepth = MIN_MONTE_CARLO_PATH_TRACING_DEPTH) :
+		TraceBase(scene), minDepth(_minDepth) {}
 
 	glm::dvec3 color(const Ray & ray, RNG * rng) const override;
 

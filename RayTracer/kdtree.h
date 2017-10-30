@@ -61,10 +61,10 @@ private:
 
 	mutable glm::dvec3 normal;
 	mutable double refrIdx;
-	mutable std::shared_ptr<Surface> surface;
+	mutable std::shared_ptr<Material> material;
 	mutable bool insideFlag;
 
-	virtual std::shared_ptr<Surface> getInterPointSurfaceProp() const override;
+	virtual std::shared_ptr<Material> getInterPointMaterialProp() const override;
 
 public:
 	KDTreeIntersect(const KDTree &_tree, const Ray &_ray) :
@@ -75,10 +75,10 @@ public:
 	double getDistToInter() const override;
 	bool isIntersect() const override;
 	glm::dvec3 getNormal() const override;
-	IntersectInfo getIntersectInfo() override { return IntersectInfo{ getIntersection(), getNormal(), getSurface(), getNextRefrIdx() }; }
+	IntersectInfo getIntersectInfo() override { return IntersectInfo{ getIntersection(), getNormal(), getMaterial(), getNextRefrIdx() }; }
 
 private:
-	std::shared_ptr<Surface> getSurface() const override { return surface; }
+	std::shared_ptr<Material> getMaterial() const override { return material; }
 	bool isIntersect(KDNode *node, const Ray &ray) const;
 	bool leafIntersect(const std::vector<Object *> &objs) const;
 	double getNextRefrIdx() const override { return refrIdx; }

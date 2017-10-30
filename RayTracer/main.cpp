@@ -1,3 +1,8 @@
+#include "bsdf.h"
+#include "lambertian_bsdf.h"
+#include "phong_bsdf.h"
+#include "ideal_refr_bsdf.h"
+
 #include "bdpt.h"
 #include "camera.h"
 #include "face.h"
@@ -13,7 +18,7 @@
 
 #include <iostream>
 
-Material * floorMaterial = new Material(0.0, 0.0);
+/*Material * floorMaterial = new Material(0.0, 0.0);
 Material * plasticMaterial = new Material;
 Material * transparentMaterial = new Material(0.0, 0.0, 0, 0.0, 1.0);
 
@@ -21,31 +26,31 @@ PureTexture * redTexture = new PureTexture(*plasticMaterial, glm::dvec3{ 1.0, 0.
 PureTexture * greenTexture = new PureTexture(*plasticMaterial, glm::dvec3{ 0.0, 1.0, 0.0 });
 PureTexture * blueTexture = new PureTexture(*plasticMaterial, glm::dvec3{ 0.0, 0.0, 1.0 });
 PureTexture * whiteTexture = new PureTexture(*plasticMaterial, glm::dvec3{ 1.0, 1.0, 1.0 });
-PureTexture * transparentTexture = new PureTexture(*transparentMaterial, glm::dvec3{ 0.0, 0.0, 0.0 });
-GridTexture * gridTexture = new GridTexture(*floorMaterial);
+PureTexture * transparentTexture = new PureTexture(*transparentMaterial, glm::dvec3{ 0.0, 0.0, 0.0 });*/
 
 cv::Mat testScene1() {
 	Mesh * mesh = new Mesh(
-		redTexture,
+		new PureTexture(Material(std::make_shared<RayTracingBSDF>()), glm::dvec3(1.0, 0.0, 0.0)),
 		"../objs/dragon.obj"
 	);
 	mesh->scaleToBoundingSphere(glm::dvec3(1.0, 0.0, 0.0), 1.0);
 	mesh->update();
 
 	Sphere * sphere1 = new Sphere(
-		greenTexture,
+		new PureTexture(Material(std::make_shared<RayTracingBSDF>()), glm::dvec3(0.0, 1.0, 0.0)),
 		glm::dvec3{ -1.0, 0.0, 2.0 },
 		0.5
 	);
 
 	Sphere * sphere2 = new Sphere(
-		redTexture,
+		new PureTexture(Material(std::make_shared<RayTracingBSDF>()), glm::dvec3(1.0, 0.0, 0.0)),
 		glm::dvec3{ 1.0, 0.0, 0.0 },
 		0.5
 	);
 
 	Plane * plane = new Plane(
-		new ImageTexture(*floorMaterial, "../texture/floor.jpg"),
+		new GridTexture(Material(std::make_shared<RayTracingBSDF>())),
+		//new ImageTexture(*floorMaterial, "../texture/floor.jpg"),
 		glm::dvec3{ 0.0, 1.0, 0.0 },
 		glm::dvec3{ 0.0, -0.5, 0.0 }
 	);
@@ -54,7 +59,7 @@ cv::Mat testScene1() {
 	glm::dvec3 target{ 0.0, 0.0, 0.0 };
 	glm::dvec3 up{ 0.0, 1.0, 0.0 };
 
-	PointLight * light1 = new PointLight(glm::dvec3{ 0.0, 5.0, 3.0 }, glm::dvec3{ 1.0, 1.0, 1.0 }, 2.0);
+	PointLight * light1 = new PointLight(glm::dvec3{ 0.0, 5.0, 3.0 }, glm::dvec3{ 1.0, 1.0, 1.0 }, 0.8);
 
 	Scene scene;
 	scene.objs.push_back(mesh);
@@ -71,14 +76,11 @@ cv::Mat testScene1() {
 		45.0
 	);
 
-	//RayTracing * tracer = new RayTracing(scene);
-	MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene, PHONG);
+	RayTracing * tracer = new RayTracing(scene);
 	RaySampler sampler(camera);
-	sampler.mcptMode = true;
-	sampler.mcptSampleNum = 10;
-	//sampler.rtMode = true;
-	//sampler.jitterMode = true;
-	//sampler.jitterSampleNum = 5;
+	sampler.rtMode = true;
+	sampler.jitterMode = true;
+	sampler.jitterSampleNum = 5;
 
 	Renderer renderer(camera, tracer, sampler);
 	return renderer.render();
@@ -135,11 +137,11 @@ cv::Mat testScene2() {	// Cornell Box
 		45.0
 	);
 
-	BidirectionalPathTracing * tracer = new BidirectionalPathTracing(scene, PHONG);
-	//MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene, PHONG);
+	BidirectionalPathTracing * tracer = new BidirectionalPathTracing(scene);
+	//MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene);
 	RaySampler sampler(camera);
 	sampler.mcptMode = true;
-	sampler.mcptSampleNum = 100;
+	sampler.mcptSampleNum = 10;
 
 	Renderer renderer(camera, tracer, sampler);
 	return renderer.render();
@@ -163,14 +165,14 @@ cv::Mat testScene3() {	// Cornell Box With Sphere
 	}
 
 	Sphere * leftSphere = new Sphere(
-		//new PureTexture(Material(0.01, 0.95, 1000.0), one_vec3 * 0.01),
-		new PureTexture(*floorMaterial, glm::dvec3(1.0, 1.0, 1.0)),
+		new PureTexture(Material(std::make_shared<PhongBSDF>(0.95, 1000.0)), one_vec3 * 0.01),
+		//new PureTexture(Material(std::make_shared<LambertianBSDF>()), glm::dvec3(1.0, 1.0, 1.0)),
 		glm::dvec3(-0.4214, 0.3321, -0.28),
 		0.3263
 	);
 	Sphere * rightSphere = new Sphere(
-		//new PureTexture(Material(0.01, 0.01, 200.0, 0.0, 0.95), one_vec3 * 0.01),
-		new PureTexture(*floorMaterial, glm::dvec3(1.0, 1.0, 1.0)),
+		new PureTexture(Material(std::make_shared<IdealRefrBSDF>())),
+		//new PureTexture(Material(std::make_shared<LambertianBSDF>()), glm::dvec3(1.0, 1.0, 1.0)),
 		glm::dvec3(0.4458, 0.3321, 0.3768),
 		0.3263,
 		1.5
@@ -184,7 +186,7 @@ cv::Mat testScene3() {	// Cornell Box With Sphere
 		glm::dvec3(0.0, 0.0, 0.38),
 		glm::dvec3(0.0, -1.0, 0.0),
 		glm::dvec3(1.0, 1.0, 1.0),
-		12.5
+		20.0
 	);
 
 	scene.lights.emplace_back(light);
@@ -202,8 +204,8 @@ cv::Mat testScene3() {	// Cornell Box With Sphere
 		45.0
 	);
 
-	BidirectionalPathTracing * tracer = new BidirectionalPathTracing(scene, LAMBERTIAN);
-	//MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene, PHONG);
+	BidirectionalPathTracing * tracer = new BidirectionalPathTracing(scene);
+	//MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene);
 	RaySampler sampler(camera);
 	sampler.mcptMode = true;
 	sampler.mcptSampleNum = 10;

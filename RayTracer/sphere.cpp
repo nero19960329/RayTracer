@@ -18,7 +18,7 @@ AABB Sphere::getAABB() const {
 	return aabb;
 }
 
-std::shared_ptr<Surface> SphereIntersect::getInterPointSurfaceProp() const {
+std::shared_ptr<Material> SphereIntersect::getInterPointMaterialProp() const {
 	if (std::abs(interPoint.x) < eps && std::abs(interPoint.y) < eps) {
 		return sphere.getTexture()->getProp(0, 0);
 	} else {

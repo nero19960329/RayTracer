@@ -2,7 +2,10 @@
 
 #include <glm.hpp>
 
+#include <memory>
+
 #include "face.h"
+#include "lambertian_bsdf.h"
 #include "object.h"
 #include "rng.h"
 
@@ -16,7 +19,7 @@ public:
 public:
 	Light() : Object(nullptr) {}
 	Light(glm::dvec3 center_, glm::dvec3 color_, double intensity_) : 
-		Object(new PureTexture(Material(0.0, 0.0, 0.0, 0.0, 0.0, color_ * intensity_), color_ * intensity_)), center(center_), color(color_), intensity(intensity_) {}
+		Object(new PureTexture(Material(std::make_shared<LambertianBSDF>(), color_ * intensity_), color_ * intensity_)), center(center_), color(color_), intensity(intensity_) {}
 
 	virtual bool isLight() const { return true; }
 

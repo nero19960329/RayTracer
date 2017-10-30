@@ -21,7 +21,7 @@ std::shared_ptr<Intersect> Plane::getTrace(const Ray & ray, double dist) const {
 	return nullptr;
 }
 
-std::shared_ptr<Surface> PlaneIntersect::getInterPointSurfaceProp() const {
+std::shared_ptr<Material> PlaneIntersect::getInterPointMaterialProp() const {
 	glm::dvec3 x(-plane.normal.y, plane.normal.x, 0);
 	glm::dvec3 y(0, -plane.normal.z, plane.normal.y);
 	if (glm::length(x) < eps) x = glm::dvec3(-plane.normal.z, 0, plane.normal.x);

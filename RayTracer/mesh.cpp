@@ -1,3 +1,4 @@
+#include "lambertian_bsdf.h"
 #include "mesh.h"
 
 #include <algorithm>
@@ -30,7 +31,8 @@ Mesh::Mesh(const tinyobj::shape_t & shape_, const tinyobj::material_t &material_
 	glm::dvec3 diffuse(material.diffuse[0], material.diffuse[1], material.diffuse[2]);
 	glm::dvec3 transmittance(material.transmittance[0], material.transmittance[1], material.transmittance[2]);
 	texture = new PureTexture(
-		Material(DEFAULT_AMBIENT, glm::length(specular), material.shininess, 0.0, glm::length(transmittance)),
+		//Material(DEFAULT_AMBIENT, glm::length(specular), material.shininess, 0.0, glm::length(transmittance)),
+		Material(std::make_shared<LambertianBSDF>()),
 		diffuse
 	);
 }
@@ -115,7 +117,7 @@ void Mesh::update() {
 	tree = new KDTree(faces);
 }
 
-std::shared_ptr<Surface> MeshIntersect::getInterPointSurfaceProp() const {
+std::shared_ptr<Material> MeshIntersect::getInterPointMaterialProp() const {
 	return nullptr;
 }
 

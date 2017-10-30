@@ -16,6 +16,7 @@ protected:
 public:
 	Sphere(Texture * texture_, glm::dvec3 center_, double radius_, double innerRefrIdx_ = VACUUM_REFRACTION_INDEX);
 
+	double insideRefr() const override { return innerRefrIdx; }
 	bool hasInside() const override { return true; }
 	std::shared_ptr<Intersect> getTrace(const Ray & ray, double dist = std::numeric_limits<double>::max()) const override;
 	AABB getAABB() const override;
@@ -31,7 +32,7 @@ private:
 	mutable glm::dvec3 interPoint;
 	mutable glm::dvec3 normal;
 
-	virtual std::shared_ptr<Surface> getInterPointSurfaceProp() const override;
+	virtual std::shared_ptr<Material> getInterPointMaterialProp() const override;
 	const Object * getObj() const override { return &sphere; }
 
 public:

@@ -49,12 +49,13 @@ public:
 	}
 
 	virtual bool equals(const Object * obj) const { return obj == this; };
+	virtual double insideRefr() const { return VACUUM_REFRACTION_INDEX; };
 };
 
 struct IntersectInfo {
 	glm::dvec3 interPoint;
 	glm::dvec3 normal;
-	std::shared_ptr<Surface> material;
+	std::shared_ptr<Material> material;
 	double nextRefrIdx;
 };
 
@@ -65,7 +66,7 @@ protected:
 	mutable double distToInter = std::numeric_limits<double>::infinity();
 	mutable glm::dvec3 interPoint = inf_vec3;
 
-	virtual std::shared_ptr<Surface> getInterPointSurfaceProp() const = 0;
+	virtual std::shared_ptr<Material> getInterPointMaterialProp() const = 0;
 
 public:
 	explicit Intersect(const Ray &ray_) : ray(ray_) {}
@@ -82,13 +83,13 @@ public:
 	virtual glm::dvec3 getNormal() const = 0;
 	virtual double getNextRefrIdx() const { return ray.refrIdx; }
 
-	virtual IntersectInfo getIntersectInfo() { return IntersectInfo{ getIntersection(), getNormal(), getSurface(), getNextRefrIdx() }; }
+	virtual IntersectInfo getIntersectInfo() { return IntersectInfo{ getIntersection(), getNormal(), getMaterial(), getNextRefrIdx() }; }
 
-	virtual std::shared_ptr<Surface> getSurface() const {
+	virtual std::shared_ptr<Material> getMaterial() const {
 		auto texture = getObj()->getTexture();
 		if (!texture) return nullptr;
-		auto surface = texture->getProp();
-		if (surface) return surface;
-		return getInterPointSurfaceProp();
+		auto material = texture->getProp();
+		if (material) return material;
+		return getInterPointMaterialProp();
 	}
 };

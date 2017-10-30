@@ -32,7 +32,7 @@ private:
 	mutable double u, v;
 	mutable glm::dvec3 normal;
 
-	virtual std::shared_ptr<Surface> getInterPointSurfaceProp() const override;
+	virtual std::shared_ptr<Material> getInterPointMaterialProp() const override;
 	const Object *getObj() const override { return &face; }
 
 public:

@@ -25,7 +25,7 @@ protected:
 
 	mutable double projOrigToInter, projDir;
 
-	virtual std::shared_ptr<Surface> getInterPointSurfaceProp() const override;
+	virtual std::shared_ptr<Material> getInterPointMaterialProp() const override;
 	const Object * getObj() const override;
 
 public:

@@ -25,7 +25,7 @@ bool Face::liesInPlane(const SplitPlane & p) const {
 		std::abs(c[p.axis] - p.value) < eps;
 }
 
-std::shared_ptr<Surface> FaceIntersect::getInterPointSurfaceProp() const {
+std::shared_ptr<Material> FaceIntersect::getInterPointMaterialProp() const {
 	return nullptr;
 }
 

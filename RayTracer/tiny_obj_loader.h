@@ -70,7 +70,7 @@ namespace tinyobj {
 //  -clamp on | off                        # only render texels in the clamped
 //  0-1 range (default off)
 //                                         #   When unclamped, textures are
-//                                         repeated across a surface,
+//                                         repeated across a material,
 //                                         #   when clamped, only texels which
 //                                         fall within the 0-1
 //                                         #   range are rendered.
