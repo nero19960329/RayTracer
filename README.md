@@ -8,13 +8,11 @@ This is a photo-realistic ray tracing renderer written in C++.
 ## Features
 
 + Monte Carlo Path Tracing & Bidirectional Path Tracing.
-+ <a href="https://en.wikipedia.org/wiki/Phong_reflection_model">Phong model</a>.
++ Some BSDFs like Lambertian, Phong, smooth dielectric.
 + Rendering of infinite plane, sphere and obj mesh model.
 + Reflection & refraction.
-+ Orthographic projection & perspective projection.
-+ Soft shadow.
-+ Anti aliasing by jitter sampling.
-+ Depth of field by super sampling.
++ Area light.
++ Anti aliasing & Depth of field.
 + Texture including pure color, grid texture and image texture.
 + Implemented <a href="http://www.eng.utah.edu/~cs6965/papers/kdtree.pdf">SAH-based</a> KD-Tree.
 + Smooth shading.
