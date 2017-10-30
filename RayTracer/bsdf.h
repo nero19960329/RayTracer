@@ -3,7 +3,6 @@
 #include "constants.h"
 #include "rng.h"
 
-#include <iostream>
 #include <memory>
 
 #include <glm.hpp>

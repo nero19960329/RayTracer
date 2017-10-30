@@ -18,16 +18,6 @@
 
 #include <iostream>
 
-/*Material * floorMaterial = new Material(0.0, 0.0);
-Material * plasticMaterial = new Material;
-Material * transparentMaterial = new Material(0.0, 0.0, 0, 0.0, 1.0);
-
-PureTexture * redTexture = new PureTexture(*plasticMaterial, glm::dvec3{ 1.0, 0.0, 0.0 });
-PureTexture * greenTexture = new PureTexture(*plasticMaterial, glm::dvec3{ 0.0, 1.0, 0.0 });
-PureTexture * blueTexture = new PureTexture(*plasticMaterial, glm::dvec3{ 0.0, 0.0, 1.0 });
-PureTexture * whiteTexture = new PureTexture(*plasticMaterial, glm::dvec3{ 1.0, 1.0, 1.0 });
-PureTexture * transparentTexture = new PureTexture(*transparentMaterial, glm::dvec3{ 0.0, 0.0, 0.0 });*/
-
 cv::Mat testScene1() {
 	Mesh * mesh = new Mesh(
 		new PureTexture(Material(std::make_shared<RayTracingBSDF>()), glm::dvec3(1.0, 0.0, 0.0)),
@@ -49,8 +39,8 @@ cv::Mat testScene1() {
 	);
 
 	Plane * plane = new Plane(
-		new GridTexture(Material(std::make_shared<RayTracingBSDF>())),
-		//new ImageTexture(*floorMaterial, "../texture/floor.jpg"),
+		//new GridTexture(Material(std::make_shared<RayTracingBSDF>())),
+		new ImageTexture(Material(std::make_shared<RayTracingBSDF>()), "../texture/floor.jpg"),
 		glm::dvec3{ 0.0, 1.0, 0.0 },
 		glm::dvec3{ 0.0, -0.5, 0.0 }
 	);
