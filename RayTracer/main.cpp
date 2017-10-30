@@ -198,14 +198,14 @@ cv::Mat testScene3() {	// Cornell Box With Sphere
 	//MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene);
 	RaySampler sampler(camera);
 	sampler.mcptMode = true;
-	sampler.mcptSampleNum = 10;
+	sampler.mcptSampleNum = 300;
 
 	Renderer renderer(camera, tracer, sampler);
 	return renderer.render();
 }
 
 int main() {
-	cv::Mat img = testScene1();
+	cv::Mat img = testScene3();
 	cv::imshow("result", img);
 	cv::imwrite("tmp.png", img);
 	cv::waitKey();
