@@ -3,6 +3,7 @@
 #include "constants.h"
 #include "rng.h"
 
+#include <iostream>
 #include <memory>
 
 #include <glm.hpp>
@@ -47,7 +48,8 @@ public:
 		return glm::normalize(xs * x + ys * y + zs * z);
 	}
 
-	virtual RayTracingBSDF * toRayTracingBSDF() { return (RayTracingBSDF *) this; }
+	virtual RayTracingBSDF * toRayTracingBSDF() { return nullptr; }
+	virtual std::shared_ptr<BSDF> clone() const = 0;
 };
 
 class RayTracingBSDF : public BSDF {
@@ -62,4 +64,6 @@ public:
 
 	void setColor(glm::dvec3 color) override { diffuse = color; }
 	RayTracingBSDF * toRayTracingBSDF() { return this; }
+
+	std::shared_ptr<BSDF> clone() const override { return std::make_shared<RayTracingBSDF>(*this); }
 };

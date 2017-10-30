@@ -6,6 +6,8 @@ class IdealRefrBSDF : public BSDF {
 public:
 	IdealRefrBSDF() {}
 
+	std::shared_ptr<BSDF> clone() const override { return std::make_shared<IdealRefrBSDF>(*this); }
+
 	void bsdfSample(BSDFSampleInfo & info) const override {
 		double refrRatio = info.thisRefr / info.nextRefr;
 

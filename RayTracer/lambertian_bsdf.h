@@ -10,6 +10,8 @@ private:
 public:
 	LambertianBSDF() {}
 
+	std::shared_ptr<BSDF> clone() const override { return std::make_shared<LambertianBSDF>(*this); }
+
 	void setColor(glm::dvec3 color) override {
 		diffuse = color;
 		k_d = std::max(diffuse[0], std::max(diffuse[1], diffuse[2]));

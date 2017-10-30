@@ -11,10 +11,10 @@
 
 class Texture {
 protected:
-	Material material;
+	std::shared_ptr<Material> material;
 
 public:
-	explicit Texture(const Material &material_) : material(material_) {}
+	explicit Texture(const Material &material_) { material = std::make_shared<Material>(material_); }
 	virtual ~Texture() {}
 
 	virtual std::shared_ptr<Material> getProp() const { return nullptr; }
@@ -22,45 +22,34 @@ public:
 };
 
 class PureTexture : public Texture {
-private:
-	std::shared_ptr<Material> pureMaterial;
-
 public:
 	PureTexture(const Material & material_, glm::dvec3 color = zero_vec3) :
-		Texture(material_) {
-		pureMaterial = std::make_shared<Material>(material);
-		pureMaterial->bsdf->setColor(color);
-	}
+		Texture(material_) { material->bsdf->setColor(color); }
 
-	std::shared_ptr<Material> getProp() const override { return pureMaterial; }
+	std::shared_ptr<Material> getProp() const override { return material; }
 	std::shared_ptr<Material> getProp(double x, double y) const override { return nullptr; }
 };
 
 class GridTexture : public Texture {
 private:
-	std::shared_ptr<Material> whiteMaterial, blackMaterial;
+	std::shared_ptr<Material> white, black;
 	int dim;
 
 public:
 	GridTexture(const Material & material_, int dim_ = 8) :
 		Texture(material_), dim(dim_) {
-		whiteMaterial = std::make_shared<Material>();
-		whiteMaterial->bsdf = std::make_shared<RayTracingBSDF>();
-		*whiteMaterial->bsdf = *material_.bsdf;
-		whiteMaterial->bsdf->setColor(glm::dvec3(1.0, 1.0, 1.0));
-
-		blackMaterial = std::make_shared<Material>();
-		blackMaterial->bsdf = std::make_shared<RayTracingBSDF>();
-		*blackMaterial->bsdf = *material_.bsdf;
-		blackMaterial->bsdf->setColor(glm::dvec3(0.0, 0.0, 0.0));
+		white = Material::clone(material);
+		white->bsdf->setColor(glm::dvec3(1.0, 1.0, 1.0));
+		black = Material::clone(material);
+		black->bsdf->setColor(glm::dvec3(0.0, 0.0, 0.0));
 	}
 
 	std::shared_ptr<Material> getProp(double x, double y) const override {
 		int tmp = (int)(std::floor(x * dim) + std::floor(y * dim));
 		if (tmp % 2)
-			return whiteMaterial;
+			return white;
 		else
-			return blackMaterial;
+			return black;
 	}
 };
 
