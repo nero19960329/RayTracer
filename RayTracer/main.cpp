@@ -198,7 +198,7 @@ cv::Mat testScene3() {	// Cornell Box With Sphere
 	//MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene);
 	RaySampler sampler(camera);
 	sampler.mcptMode = true;
-	sampler.mcptSampleNum = 300;
+	sampler.mcptSampleNum = 2000;
 
 	Renderer renderer(camera, tracer, sampler);
 	return renderer.render();
@@ -207,7 +207,7 @@ cv::Mat testScene3() {	// Cornell Box With Sphere
 int main() {
 	cv::Mat img = testScene3();
 	cv::imshow("result", img);
-	cv::imwrite("tmp.png", img);
+	cv::imwrite("bdpt_2000_glass_balls.png", img);
 	cv::waitKey();
 
 	return 0;

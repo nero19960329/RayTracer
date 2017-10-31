@@ -19,14 +19,11 @@ This is a photo-realistic ray tracing renderer written in C++.
 
 ## Gallery
 
-+ Render two balls in Cornell Box with 300spp by using bidirectional path tracing.
-<div style="text-align:center; margin-top:30px"><img src="gallery/bdpt_300_glass_balls.png"></div>
++ Render two balls in Cornell Box with 2000spp by using bidirectional path tracing.
+<div style="text-align:center; margin-top:30px"><img src="gallery/bdpt_2000_glass_balls.png"></div>
 
 + Stanford dragon and 10,000 spheres with depth-of-field & anti-aliasing & soft shadow.
 <div style="text-align:center; margin-top:30px"><img src="gallery/dragon_dof20_anti20_soft49.png"></div>
-
-+ Two spheres with dof & anti-aliasing & soft shadow.
-<div style="text-align:center; margin-top:30px"><img src="gallery/two_balls_dof20_anti20_soft49.png"></div>
 
 + Several spheres with with dof & anti-aliasing & soft shadow.
 <div style="text-align:center; margin-top:30px"><img src="gallery/balls_dof20_anti20_soft49.png"></div>
