@@ -22,6 +22,8 @@ public:
 	}
 
 	std::shared_ptr<BSDFSampler> getSampler(const Ray & ray_, const IntersectInfo & info_) const;
+
+	glm::dvec3 getColor() const { return diffuse; }
 };
 
 class LambertianBSDFSampler : public BSDFSampler {

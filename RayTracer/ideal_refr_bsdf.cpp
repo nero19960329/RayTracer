@@ -29,7 +29,11 @@ double IdealRefrBSDFSampler::pdf() const {
 
 glm::dvec3 IdealRefrBSDFSampler::eval() const {
 	double p = 1.0 / std::abs(glm::dot(outDir, info.normal));
-	if (outDir == refrDir) return (1.0 - fresnelTerm) * p * one_vec3 / sqr(ray.refrIdx / info.nextRefrIdx);
+	if (refrDir == zero_vec3) return p * one_vec3;
+	else if (outDir == refrDir) {
+		double scaleFactor = sqr(info.nextRefrIdx / ray.refrIdx);
+		return (1.0 - fresnelTerm) * p * one_vec3 * scaleFactor;
+	}
 	else if (outDir == reflDir && refrDir != zero_vec3) return fresnelTerm * p * one_vec3;
 	else return zero_vec3;
 }

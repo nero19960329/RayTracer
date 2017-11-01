@@ -29,13 +29,11 @@ public:
 		refrDir = glm::refract(ray.dir, info.normal, eta1 / eta2);
 
 		double cos_theta1 = glm::dot(-ray.dir, info.normal);
-		double cos_theta2 = std::sqrt(1.0 - sqr(eta1 / eta2) * (1.0 - sqr(cos_theta1)));
-
-		double Rs = (eta1 * cos_theta1 - eta2 * cos_theta2) / (eta2 * cos_theta1 + eta1 * cos_theta2);
-		double Rp = (eta2 * cos_theta1 - eta1 * cos_theta2) / (eta2 * cos_theta1 + eta1 * cos_theta2);
-		double Re = 0.5 * (sqr(Rs) + sqr(Rp));
-		fresnelTerm = Re;
-		P = 0.25 + 0.5 * Re;
+		double cos_theta2 = glm::dot(refrDir, -info.normal);
+		double Rs = sqr((eta1 * cos_theta1 - eta2 * cos_theta2) / (eta1 * cos_theta1 + eta2 * cos_theta2));
+		double Rp = sqr((eta1 * cos_theta2 - eta2 * cos_theta1) / (eta1 * cos_theta2 + eta2 * cos_theta1));
+		fresnelTerm = 0.5 * (Rs + Rp);
+		P = 0.25 + 0.5 * fresnelTerm;
 	}
 
 	Ray sample(RNG * rng) const override;

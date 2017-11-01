@@ -19,7 +19,7 @@
 
 #include <iostream>
 
-/*cv::Mat testScene1() {
+cv::Mat testScene1() {
 	Mesh * mesh = new Mesh(
 		new PureTexture(Material(std::make_shared<RayTracingBSDF>()), glm::dvec3(1.0, 0.0, 0.0)),
 		"../objs/dragon.obj"
@@ -132,7 +132,7 @@ cv::Mat testScene2() {	// Cornell Box
 	MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene);
 	RaySampler sampler(camera);
 	sampler.mcptMode = true;
-	sampler.mcptSampleNum = 10;
+	sampler.mcptSampleNum = 3;
 
 	Renderer renderer(camera, tracer, sampler);
 	return renderer.render();
@@ -200,12 +200,12 @@ cv::Mat testScene3() {	// Cornell Box With Sphere
 	MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene);
 	RaySampler sampler(camera);
 	sampler.mcptMode = true;
-	sampler.mcptSampleNum = 10;
+	sampler.mcptSampleNum = 3;
 
 	Renderer renderer(camera, tracer, sampler);
 	return renderer.render();
 }
-*/
+
 cv::Mat testScene4() {
 	Scene scene;
 	Plane * planes[] = {
@@ -218,6 +218,7 @@ cv::Mat testScene4() {
 	};
 	for (int i = 0; i < 5; ++i)
 		scene.objs.push_back(planes[i]);
+	//scene.objs.push_back(planes[3]);
 
 	Sphere * spheres[] = {
 		new Sphere(new PureTexture(Material(std::make_shared<IdealReflBSDF>(1.0))), glm::dvec3(27, 16.5, 47), 16.5),
@@ -254,7 +255,7 @@ cv::Mat testScene4() {
 	MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene);
 	RaySampler sampler(camera);
 	sampler.mcptMode = true;
-	sampler.mcptSampleNum = 10;
+	sampler.mcptSampleNum = 100;
 
 	Renderer renderer(camera, tracer, sampler);
 	return renderer.render();
@@ -263,7 +264,7 @@ cv::Mat testScene4() {
 int main() {
 	cv::Mat img = testScene4();
 	cv::imshow("result", img);
-	cv::imwrite("tmp.png", img);
+	cv::imwrite("mcpt_400_glass_balls.png", img);
 	cv::waitKey();
 
 	return 0;

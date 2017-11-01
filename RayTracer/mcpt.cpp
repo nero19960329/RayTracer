@@ -15,9 +15,9 @@ glm::dvec3 MonteCarloPathTracing::getColor(Ray & ray, RNG * rng, int depth) cons
 glm::dvec3 MonteCarloPathTracing::getRayRadiance(Ray & ray, std::shared_ptr<Intersect> intersect, RNG * rng) const {
 	if (!intersect) return zero_vec3;
 	IntersectInfo info = intersect->getIntersectInfo();
-	glm::dvec3 emittance = info.material->emission;
+	//glm::dvec3 emittance = info.material->emission;
 	glm::dvec3 reflectance = getReflectedRadiance(ray, intersect, rng);
-	return emittance + reflectance;
+	return reflectance;
 }
 
 glm::dvec3 MonteCarloPathTracing::getReflectedRadiance(Ray & ray, std::shared_ptr<Intersect> intersect, RNG * rng, int depth) const {
@@ -26,7 +26,6 @@ glm::dvec3 MonteCarloPathTracing::getReflectedRadiance(Ray & ray, std::shared_pt
 	IntersectInfo info = intersect->getIntersectInfo();
 	glm::dvec3 reflectedRadiance = info.material->emission;
 
-	glm::dvec3 inDir = glm::normalize(ray.ori - info.interPoint);
 	glm::dvec3 outDir;
 
 	// Direct Radiance
@@ -60,6 +59,7 @@ glm::dvec3 MonteCarloPathTracing::getReflectedRadiance(Ray & ray, std::shared_pt
 		reflectedRadiance += newInfo.material->emission * sampler->eval() * glm::dot(outDir, info.normal) / (pdf1 + pdf2);
 	}
 
+	// Indirect Radiance
 	double p = 1.0;
 	if (depth >= minDepth) {
 		p = RUSSIAN_ROULETTE_POSSIBILITY;
@@ -73,42 +73,4 @@ glm::dvec3 MonteCarloPathTracing::getReflectedRadiance(Ray & ray, std::shared_pt
 	}
 
 	return reflectedRadiance;
-
-	/*BSDFSampleInfo sampleInfo(*rng, inDir, outDir, info.normal, ray.refrIdx, ray.refrIdx);
-
-	Ray newRay(info.interPoint + outDir * eps, outDir);
-	auto newIntersect = scene.getIntersect(newRay);
-	if (newIntersect && sampleLight->equals(newIntersect->getObj()) && glm::dot(-outDir, newIntersect->getIntersectInfo().normal) > 0.0) {
-		IntersectInfo newInfo = newIntersect->getIntersectInfo();
-		pdf1 *= glm::length2(info.interPoint - newInfo.interPoint) / glm::dot(-outDir, newInfo.normal);
-		pdf2 = info.material->bsdf->pdf(sampleInfo);
-		reflectedRadiance += newInfo.material->emission * info.material->bsdf->eval(sampleInfo) * glm::dot(outDir, info.normal) / (pdf1 + pdf2);
-	}
-
-	sampleInfo.nextRefr = info.nextRefrIdx;
-	info.material->bsdf->bsdfSample(sampleInfo);
-	newRay = Ray(info.interPoint + sampleInfo.outDir * eps, sampleInfo.outDir, sampleInfo.nextRefr);
-	newIntersect = scene.getIntersect(newRay);
-	if (newIntersect && newIntersect->getObj()->isLight() && glm::dot(-outDir, newIntersect->getIntersectInfo().normal) > 0.0) {
-		IntersectInfo newInfo = newIntersect->getIntersectInfo();
-		ratio = ((Light *)(newIntersect->getObj()))->area / scene.lightAreaSum;
-		pdf1 = ratio * sampleLight->pdf(*rng) * glm::length2(info.interPoint - newInfo.interPoint) / glm::dot(-outDir, newInfo.normal);
-		pdf2 = info.material->bsdf->pdf(sampleInfo);
-		reflectedRadiance += newInfo.material->emission * info.material->bsdf->eval(sampleInfo) * glm::dot(outDir, info.normal) / (pdf1 + pdf2);
-	}
-
-	// Indirect Radiance
-	double p = 1.0;
-	if (depth >= minDepth) {
-		p = RUSSIAN_ROULETTE_POSSIBILITY;
-		if (rng->randomDouble() >= p) return reflectedRadiance;
-	}
-
-	double pdf = info.material->bsdf->pdf(sampleInfo);
-	if (pdf != 0.0) {
-		glm::dvec3 indirect = getReflectedRadiance(newRay, newIntersect, rng, depth + 1);
-		reflectedRadiance += std::abs(glm::dot(outDir, info.normal)) * info.material->bsdf->eval(sampleInfo) * indirect / (p * pdf);
-	}
-
-	return reflectedRadiance;*/
 }

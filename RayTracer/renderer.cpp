@@ -71,9 +71,13 @@ glm::dvec3 Renderer::rayTracingDopKernel(int i, int j) const {
 glm::dvec3 Renderer::mcptTrivialKernel(int i, int j) const {
 	int sample = sampler.mcptSampleNum;
 	glm::dvec3 color = zero_vec3;
-	for (int k = 0; k < sample; ++k) {
-		Ray ray = sampler.randomRay(i, j);
-		color += clamp(tracer->color(ray, &rng)) / (sample * 1.0);
+	for (int p = 0; p < 4; ++p) {
+		glm::dvec3 c = zero_vec3;
+		for (int k = 0; k < sample; ++k) {
+			Ray ray = sampler.randomRay(i, j);
+			c += tracer->color(ray, &rng) / (sample * 1.0);
+		}
+		color += clamp(c) * .25;
 	}
 	return color;
 }
