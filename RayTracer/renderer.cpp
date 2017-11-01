@@ -32,9 +32,9 @@ cv::Mat Renderer::render() const {
 		for (int j = 0; j < camera.height; ++j) {
 			int i_ = widthVec[i], j_ = heightVec[j];
 			glm::dvec3 color = kernel(*this, i_, j_);
-			res.at<cv::Vec3d>(j_, i_)[0] += color[2];
-			res.at<cv::Vec3d>(j_, i_)[1] += color[1];
-			res.at<cv::Vec3d>(j_, i_)[2] += color[0];
+			res.at<cv::Vec3d>(j_, i_)[0] = std::pow(color[2], 1.0 / 2.2);
+			res.at<cv::Vec3d>(j_, i_)[1] = std::pow(color[1], 1.0 / 2.2);
+			res.at<cv::Vec3d>(j_, i_)[2] = std::pow(color[0], 1.0 / 2.2);
 		}
 	}
 

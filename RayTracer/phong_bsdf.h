@@ -1,5 +1,5 @@
 #pragma once
-
+/*
 #include "bsdf.h"
 
 class PhongBSDF : public BSDF {
@@ -53,4 +53,4 @@ public:
 			one_vec3 * specular * (shininess + 2) * INV_PI * 0.5 *
 			pow(std::max(0.0, glm::dot(info.outDir, glm::reflect(-info.inDir, info.normal))), shininess);
 	}
-};
+};*/

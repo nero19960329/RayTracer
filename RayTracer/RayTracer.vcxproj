@@ -141,7 +141,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../External/glm;../External/opencv/build/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4819;5033</DisableSpecificWarnings>
@@ -162,9 +162,13 @@
     <ClCompile Include="bdpt.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="face.cpp" />
+    <ClCompile Include="ideal_refl_bsdf.cpp" />
+    <ClCompile Include="ideal_refr_bsdf.cpp" />
     <ClCompile Include="kdtree.cpp" />
+    <ClCompile Include="lambertian_bsdf.cpp" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="material.cpp" />
     <ClCompile Include="mcpt.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="plane.cpp" />
@@ -173,6 +177,7 @@
     <ClCompile Include="rng.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="sphere.cpp" />
+    <ClCompile Include="texture.cpp" />
     <ClCompile Include="tiny_obj_loader.cc" />
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +187,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="face.h" />
+    <ClInclude Include="ideal_refl_bsdf.h" />
     <ClInclude Include="ideal_refr_bsdf.h" />
     <ClInclude Include="kdtree.h" />
     <ClInclude Include="lambertian_bsdf.h" />
@@ -202,6 +208,7 @@
     <ClInclude Include="texture.h" />
     <ClInclude Include="tiny_obj_loader.h" />
     <ClInclude Include="trace_base.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

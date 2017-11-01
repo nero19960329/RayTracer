@@ -28,6 +28,9 @@
     <Filter Include="源文件\objects">
       <UniqueIdentifier>{e5d41bd1-4f64-45d8-abe7-494d6f0cecd1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\bsdf">
+      <UniqueIdentifier>{83d95f0f-b75c-47da-ac97-c759cb29bc02}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="aabb.cpp">
@@ -77,6 +80,21 @@
     </ClCompile>
     <ClCompile Include="plane.cpp">
       <Filter>源文件\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="lambertian_bsdf.cpp">
+      <Filter>源文件\bsdf</Filter>
+    </ClCompile>
+    <ClCompile Include="material.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="texture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ideal_refl_bsdf.cpp">
+      <Filter>源文件\bsdf</Filter>
+    </ClCompile>
+    <ClCompile Include="ideal_refr_bsdf.cpp">
+      <Filter>源文件\bsdf</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +175,12 @@
     </ClInclude>
     <ClInclude Include="ideal_refr_bsdf.h">
       <Filter>头文件\bsdf</Filter>
+    </ClInclude>
+    <ClInclude Include="ideal_refl_bsdf.h">
+      <Filter>头文件\bsdf</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-#include "bdpt.h"
+/*#include "bdpt.h"
 
 #include <gtx/norm.hpp>
 
@@ -170,3 +170,4 @@ std::tuple<glm::dvec3, double> BidirectionalPathTracing::evalPath(RNG * rng, con
 
 	return std::tuple<glm::dvec3, double>(f, p);
 }
+*/

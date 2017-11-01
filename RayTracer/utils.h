@@ -30,3 +30,6 @@ inline glm::dvec3 clamp(glm::dvec3 v) {
 	else if (r.z > 1.0) r.z = 1.0;
 	return r;
 }
+
+template <typename T>
+inline T sqr(const T & e) { return e * e; }

@@ -1,34 +1,55 @@
 #pragma once
 
 #include "constants.h"
+#include "object.h"
+#include "ray.h"
 #include "rng.h"
 
 #include <memory>
 
 #include <glm.hpp>
 
-struct BSDFSampleInfo {
+/*struct BSDFSampleInfo {
 	RNG & rng;
 	glm::dvec3 & inDir;
 	glm::dvec3 & outDir;
 	const glm::dvec3 & normal;
 	double thisRefr, nextRefr;
 
+	double fresnelTerm;
+
 	BSDFSampleInfo(RNG & rng_, glm::dvec3 & inDir_, glm::dvec3 & outDir_, const glm::dvec3 & normal_, double thisRefr_, double nextRefr_) :
 		rng(rng_), inDir(inDir_), outDir(outDir_), normal(normal_), thisRefr(thisRefr_), nextRefr(nextRefr_) {}
-};
+};*/
 
 class RayTracingBSDF;
+class BSDFSampler;
 
 class BSDF {
 public:
 	BSDF() {}
 
 	virtual void setColor(glm::dvec3 color) {}
+	virtual std::shared_ptr<BSDFSampler> getSampler(const Ray & ray, const IntersectInfo & info) const { return nullptr; };
+	virtual RayTracingBSDF * toRayTracingBSDF() { return nullptr; }
+	virtual std::shared_ptr<BSDF> clone() const = 0;
+};
 
-	virtual void bsdfSample(BSDFSampleInfo & info) const {};
-	virtual double pdf(BSDFSampleInfo & info) const { return 0.0; };
-	virtual glm::dvec3 eval(BSDFSampleInfo & info) const { return zero_vec3; };
+class BSDFSampler {
+protected:
+	const Ray & ray;
+	const IntersectInfo & info;
+	mutable glm::dvec3 outDir;
+
+public:
+	BSDFSampler(const Ray & ray_, const IntersectInfo & info_) :
+		ray(ray_), info(info_), outDir(zero_vec3) {}
+
+	virtual void setOutDir(const glm::dvec3 & outDir_) const { outDir = outDir_; }
+
+	virtual Ray sample(RNG * rng) const = 0;
+	virtual double pdf() const = 0;
+	virtual glm::dvec3 eval() const = 0;
 
 	glm::dvec3 change2World(const glm::dvec3 &normal, double theta, double phi) const {
 		double xs = std::sin(theta) * std::cos(phi);
@@ -46,9 +67,6 @@ public:
 
 		return glm::normalize(xs * x + ys * y + zs * z);
 	}
-
-	virtual RayTracingBSDF * toRayTracingBSDF() { return nullptr; }
-	virtual std::shared_ptr<BSDF> clone() const = 0;
 };
 
 class RayTracingBSDF : public BSDF {
