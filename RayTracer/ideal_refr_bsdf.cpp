@@ -1,5 +1,7 @@
 #include "ideal_refr_bsdf.h"
 
+#include <cmath>
+
 std::shared_ptr<BSDFSampler> IdealRefrBSDF::getSampler(const Ray & ray_, const IntersectInfo & info_) const {
 	return std::make_shared<IdealRefrBSDFSampler>(*this, ray_, info_);
 }
@@ -45,11 +47,14 @@ double IdealRefrBSDFSampler::pdf_ortho() const {
 
 glm::dvec3 IdealRefrBSDFSampler::eval() const {
 	double p = 1.0 / std::abs(glm::dot(outDir, info.normal));
-	if (refrDir == zero_vec3) return p * one_vec3;
+	if (refrDir == zero_vec3)
+		return p * one_vec3;
 	else if (outDir == refrDir) {
 		double scaleFactor = sqr(info.nextRefrIdx / ray.refrIdx);
 		return (1.0 - fresnelTerm) * p * one_vec3 * scaleFactor;
 	}
-	else if (outDir == reflDir && refrDir != zero_vec3) return fresnelTerm * p * one_vec3;
-	else return zero_vec3;
+	else if (outDir == reflDir && refrDir != zero_vec3)
+		return fresnelTerm * p * one_vec3;
+	else
+		return zero_vec3;
 }

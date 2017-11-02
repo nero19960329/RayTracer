@@ -15,16 +15,16 @@ glm::dvec3 MonteCarloPathTracing::getColor(Ray & ray, RNG * rng, int depth) cons
 glm::dvec3 MonteCarloPathTracing::getRayRadiance(Ray & ray, std::shared_ptr<Intersect> intersect, RNG * rng) const {
 	if (!intersect) return zero_vec3;
 	IntersectInfo info = intersect->getIntersectInfo();
-	//glm::dvec3 emittance = info.material->emission;
+	glm::dvec3 emittance = info.material->emission;
 	glm::dvec3 reflectance = getReflectedRadiance(ray, intersect, rng);
-	return reflectance;
+	return emittance + reflectance;
 }
 
 glm::dvec3 MonteCarloPathTracing::getReflectedRadiance(Ray & ray, std::shared_ptr<Intersect> intersect, RNG * rng, int depth) const {
 	if (!intersect) return zero_vec3;
 
 	IntersectInfo info = intersect->getIntersectInfo();
-	glm::dvec3 reflectedRadiance = info.material->emission;
+	glm::dvec3 reflectedRadiance = zero_vec3;
 
 	glm::dvec3 outDir;
 

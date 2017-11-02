@@ -34,6 +34,7 @@ public:
 	virtual std::shared_ptr<BSDFSampler> getSampler(const glm::dvec3 & inDir, const glm::dvec3 & outDir, const glm::dvec3 & normal, double inRefr, double outRefr) const { return nullptr; }
 	virtual RayTracingBSDF * toRayTracingBSDF() { return nullptr; }
 	virtual std::shared_ptr<BSDF> clone() const = 0;
+	virtual bool canTransmit() const { return false; }
 };
 
 class BSDFSampler {
