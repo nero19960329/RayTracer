@@ -31,10 +31,9 @@ public:
 
 	virtual void setColor(glm::dvec3 color) {}
 	virtual std::shared_ptr<BSDFSampler> getSampler(const Ray & ray, const IntersectInfo & info) const { return nullptr; };
+	virtual std::shared_ptr<BSDFSampler> getSampler(const glm::dvec3 & inDir, const glm::dvec3 & outDir, const glm::dvec3 & normal, double inRefr, double outRefr) const { return nullptr; }
 	virtual RayTracingBSDF * toRayTracingBSDF() { return nullptr; }
 	virtual std::shared_ptr<BSDF> clone() const = 0;
-
-	virtual glm::dvec3 getColor() const { return zero_vec3; }
 };
 
 class BSDFSampler {
@@ -51,6 +50,7 @@ public:
 
 	virtual Ray sample(RNG * rng) const = 0;
 	virtual double pdf() const = 0;
+	virtual double pdf_ortho() const = 0;
 	virtual glm::dvec3 eval() const = 0;
 
 	glm::dvec3 change2World(const glm::dvec3 &normal, double theta, double phi) const {

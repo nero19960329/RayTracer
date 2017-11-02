@@ -4,6 +4,18 @@ std::shared_ptr<BSDFSampler> LambertianBSDF::getSampler(const Ray & ray_, const 
 	return std::make_shared<LambertianBSDFSampler>(*this, ray_, info_);
 }
 
+std::shared_ptr<BSDFSampler> LambertianBSDF::getSampler(const glm::dvec3 & inDir, const glm::dvec3 & outDir, const glm::dvec3 & normal, double inRefr, double outRefr) const {
+	Ray ray(zero_vec3, -inDir, inRefr);
+	IntersectInfo info;
+	info.interPoint = zero_vec3;
+	info.normal = normal;
+	info.material = nullptr;
+	info.nextRefrIdx = outRefr;
+	auto res = std::make_shared<LambertianBSDFSampler>(*this, ray, info);
+	res->setOutDir(outDir);
+	return res;
+}
+
 Ray LambertianBSDFSampler::sample(RNG * rng) const {
 	double u = rng->randomDouble();
 	if (u < bsdf.k_d) {
@@ -15,7 +27,11 @@ Ray LambertianBSDFSampler::sample(RNG * rng) const {
 }
 
 double LambertianBSDFSampler::pdf() const {
-	return glm::dot(outDir, info.normal) * INV_PI;
+	return glm::dot(outDir, info.normal) * pdf_ortho();
+}
+
+double LambertianBSDFSampler::pdf_ortho() const {
+	return INV_PI;
 }
 
 glm::dvec3 LambertianBSDFSampler::eval() const {

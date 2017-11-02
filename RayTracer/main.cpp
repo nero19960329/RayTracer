@@ -178,7 +178,7 @@ cv::Mat testScene3() {	// Cornell Box With Sphere
 		glm::dvec3(0.0, 0.0, 0.38),
 		glm::dvec3(0.0, -1.0, 0.0),
 		glm::dvec3(1.0, 1.0, 1.0),
-		30.0
+		20.0
 	);
 
 	scene.lights.emplace_back(light);
@@ -196,11 +196,11 @@ cv::Mat testScene3() {	// Cornell Box With Sphere
 		45.0
 	);
 
-	//BidirectionalPathTracing * tracer = new BidirectionalPathTracing(scene);
-	MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene);
+	BidirectionalPathTracing * tracer = new BidirectionalPathTracing(scene);
+	//MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene);
 	RaySampler sampler(camera);
 	sampler.mcptMode = true;
-	sampler.mcptSampleNum = 3;
+	sampler.mcptSampleNum = 1;
 
 	Renderer renderer(camera, tracer, sampler);
 	return renderer.render();
@@ -225,7 +225,7 @@ cv::Mat testScene4() {
 		new Sphere(new PureTexture(Material(std::make_shared<IdealRefrBSDF>())), glm::dvec3(73, 16.5, 78), 16.5, 1.5),
 	};
 	scene.objs.push_back(spheres[0]);
-	scene.objs.push_back(spheres[1]);
+	//scene.objs.push_back(spheres[1]);
 
 	RectLight * light = new RectLight(
 		glm::dvec3(50.0, 81.33, 81.6),
@@ -244,18 +244,18 @@ cv::Mat testScene4() {
 	glm::dvec3 up{ 0.0, 1.0, 0.0 };
 
 	Camera camera(
-		800, 600,
+		600, 450,
 		center,
 		target,
 		up,
 		30.0
 	);
 
-	//BidirectionalPathTracing * tracer = new BidirectionalPathTracing(scene);
-	MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene);
+	BidirectionalPathTracing * tracer = new BidirectionalPathTracing(scene);
+	//MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene);
 	RaySampler sampler(camera);
 	sampler.mcptMode = true;
-	sampler.mcptSampleNum = 100;
+	sampler.mcptSampleNum = 3;
 
 	Renderer renderer(camera, tracer, sampler);
 	return renderer.render();
@@ -264,7 +264,7 @@ cv::Mat testScene4() {
 int main() {
 	cv::Mat img = testScene4();
 	cv::imshow("result", img);
-	cv::imwrite("mcpt_400_glass_balls.png", img);
+	cv::imwrite("tmp.png", img);
 	cv::waitKey();
 
 	return 0;

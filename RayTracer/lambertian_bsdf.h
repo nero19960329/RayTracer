@@ -22,8 +22,7 @@ public:
 	}
 
 	std::shared_ptr<BSDFSampler> getSampler(const Ray & ray_, const IntersectInfo & info_) const;
-
-	glm::dvec3 getColor() const { return diffuse; }
+	std::shared_ptr<BSDFSampler> getSampler(const glm::dvec3 & inDir, const glm::dvec3 & outDir, const glm::dvec3 & normal, double inRefr, double outRefr) const;
 };
 
 class LambertianBSDFSampler : public BSDFSampler {
@@ -36,5 +35,6 @@ public:
 
 	Ray sample(RNG * rng) const override;
 	double pdf() const override;
+	double pdf_ortho() const override;
 	glm::dvec3 eval() const override;
 };

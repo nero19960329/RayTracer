@@ -4,6 +4,18 @@ std::shared_ptr<BSDFSampler> IdealRefrBSDF::getSampler(const Ray & ray_, const I
 	return std::make_shared<IdealRefrBSDFSampler>(*this, ray_, info_);
 }
 
+std::shared_ptr<BSDFSampler> IdealRefrBSDF::getSampler(const glm::dvec3 & inDir, const glm::dvec3 & outDir, const glm::dvec3 & normal, double inRefr, double outRefr) const {
+	Ray ray(zero_vec3, -inDir, inRefr);
+	IntersectInfo info;
+	info.interPoint = zero_vec3;
+	info.normal = normal;
+	info.material = nullptr;
+	info.nextRefrIdx = outRefr;
+	auto res = std::make_shared<IdealRefrBSDFSampler>(*this, ray, info);
+	res->setOutDir(outDir);
+	return res;
+}
+
 Ray IdealRefrBSDFSampler::sample(RNG * rng) const {
 	if (refrDir == zero_vec3) {
 		outDir = reflDir;
@@ -25,6 +37,10 @@ double IdealRefrBSDFSampler::pdf() const {
 	else if (outDir == refrDir) return 1.0 - P;
 	else if (outDir == reflDir) return P;
 	else return 0.0;
+}
+
+double IdealRefrBSDFSampler::pdf_ortho() const {
+	return pdf() / std::abs(glm::dot(outDir, info.normal));
 }
 
 glm::dvec3 IdealRefrBSDFSampler::eval() const {

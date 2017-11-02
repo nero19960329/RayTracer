@@ -1,5 +1,5 @@
 #pragma once
-/*
+
 #include "bsdf.h"
 #include "rng.h"
 #include "trace_base.h"
@@ -37,4 +37,4 @@ private:
 	std::vector<PathNode> getPathNodes(const std::vector<PathNode> & nodes, Ray & startRay, RNG * rng) const;
 
 	std::tuple<glm::dvec3, double> evalPath(RNG * rng, const std::vector<PathNode> & eyeNodes, int eyeIdx, const std::vector<PathNode> & lightNodes, int lightIdx) const;
-};*/
+};

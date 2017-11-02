@@ -12,6 +12,7 @@ public:
 	std::shared_ptr<BSDF> clone() const override { return std::make_shared<IdealRefrBSDF>(*this); }
 
 	std::shared_ptr<BSDFSampler> getSampler(const Ray & ray_, const IntersectInfo & info_) const;
+	std::shared_ptr<BSDFSampler> getSampler(const glm::dvec3 & inDir, const glm::dvec3 & outDir, const glm::dvec3 & normal, double inRefr, double outRefr) const;
 };
 
 class IdealRefrBSDFSampler : public BSDFSampler {
@@ -38,5 +39,6 @@ public:
 
 	Ray sample(RNG * rng) const override;
 	double pdf() const override;
+	double pdf_ortho() const override;
 	glm::dvec3 eval() const override;
 };
