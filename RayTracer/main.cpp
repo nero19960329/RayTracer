@@ -255,20 +255,17 @@ cv::Mat testScene4() {
 	//MonteCarloPathTracing * tracer = new MonteCarloPathTracing(scene);
 	RaySampler sampler(camera);
 	sampler.mcptMode = true;
-	sampler.mcptSampleNum = 250;
+	sampler.mcptSampleNum = 4096;
 
 	Renderer renderer(camera, tracer, sampler);
 	return renderer.render();
 }
 
 int main() {
-	cv::Mat img = testScene3();
-	//cv::imshow("result", img);
-	cv::imwrite("bdpt_1000_diffuse_balls.png", img);
-	//cv::waitKey();
-
-	img = testScene4();
-	cv::imwrite("bdpt_1000_glass_balls.png", img);
+	cv::Mat img = testScene4();
+	cv::imshow("result", img);
+	cv::imwrite("tmp.png", img);
+	cv::waitKey();
 
 	return 0;
 }
