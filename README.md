@@ -22,6 +22,9 @@ This is a photo-realistic ray tracing renderer written in C++.
 + Render two balls in Cornell Box with 4096spp by using bidirectional path tracing.
 <div style="text-align:center; margin-top:30px"><img src="gallery/bdpt_4096_glass_balls.png"></div>
 
++ Living room scene rendered by stochastic progressive photon mapping.
+<div style="text-align:center; margin-top:30px"><img src="gallery/living_room_iteration_1001_sppm.png"></div>
+
 + Stanford dragon and 10,000 spheres with depth-of-field & anti-aliasing & soft shadow.
 <div style="text-align:center; margin-top:30px"><img src="gallery/dragon_dof20_anti20_soft49.png"></div>
 
